@@ -15,7 +15,6 @@
 int	main(int ac, char **av)
 {
 	IRCServer	ParameterParser;
-	(void)av;
 	if (ac != 3)
 	{
 		std::cout << "Wrong number of arguments!" << std::endl;

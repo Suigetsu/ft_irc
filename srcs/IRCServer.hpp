@@ -26,8 +26,8 @@
 # include <map>
 # include <iterator>
 
-# define PORT 0
-# define PASSWORD 1
+# define PORT_INDEX 0
+# define PW_INDEX 1
 
 class	IRCServer
 {
