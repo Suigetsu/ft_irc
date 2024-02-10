@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/08 18:34:50 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/10 17:05:04 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,21 @@ const char	*IRCServer::errorException::what() const throw()
 void	IRCServer::checkParameters(char **args)
 {
 	char *pEnd = NULL;
-	int ac = 1;
 	
 	errno = 0;
-	while (ac < 3)
-	{
-		const long i = std::strtol(args[ac], &pEnd, 10);
-		if (errno == ERANGE || errno == EINVAL || *pEnd)
-			throw (IRCServer::errorException());
-		this->PortPasswordMap[ac - 1] = i;
-		ac++;
-	}
+	const long i = std::strtol(args[1], &pEnd, 10);
+	if (errno == ERANGE || errno == EINVAL || *pEnd)
+		throw (IRCServer::errorException());
+	this->port = i;
+	this->password = args[2];
+}
+
+long	IRCServer::getPort() const
+{
+	return (this->port);
+}
+
+std::string	IRCServer::getPassword() const
+{
+	return (this->password);
 }

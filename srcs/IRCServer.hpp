@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/08 18:08:36 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/10 17:05:43 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,11 @@
 # include <map>
 # include <iterator>
 
-# define PORT_INDEX 0
-# define PW_INDEX 1
-
 class	IRCServer
 {
 	private:
-		std::map<int, long> PortPasswordMap;
+		int	port;
+		std::string password;
 	public:
 		IRCServer();
 		IRCServer(const IRCServer &obj);
@@ -44,6 +42,8 @@ class	IRCServer
 			public:
 				const char *what() const throw();
 		};
+		long	getPort() const;
+		std::string	getPassword() const;
 };
 
 
