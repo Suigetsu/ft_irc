@@ -37,6 +37,7 @@ class	IRCServer
 		IRCServer	&operator=(const IRCServer &obj);
 		~IRCServer();
 		void	checkParameters(char **args);
+		void	init(int port);
 		class	errorException : public std::exception
 		{
 			public:

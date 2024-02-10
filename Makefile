@@ -10,7 +10,7 @@
 #                                                                              #
 # **************************************************************************** #
 
-SRC		= ./srcs/main.cpp ./srcs/IRCServer.cpp
+SRC		= ./srcs/main.cpp ./srcs/IRCServer.cpp 
 OBJ		= ${SRC:.cpp=.o}
 CC		= c++
 FLAGS	= -Wall -Wextra -Werror -std=c++98

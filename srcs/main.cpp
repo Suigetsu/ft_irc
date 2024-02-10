@@ -23,6 +23,7 @@ int	main(int ac, char **av)
 	try
 	{
 		ParameterParser.checkParameters(av);
+		ParameterParser.init(ParameterParser.getPort());
 	}
 	catch(const std::exception& e)
 	{
