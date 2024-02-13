@@ -26,6 +26,8 @@
 # include <map>
 # include <iterator>
 
+const int PENDLOGS = 100;
+
 class	IRCServer
 {
 	private:

@@ -50,6 +50,7 @@ std::string	IRCServer::getPassword() const
 }
 void IRCServer::init(int port)
 {
+    int clientSocket;
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
     if (serverSocket == -1)
     {
@@ -58,9 +59,38 @@ void IRCServer::init(int port)
     }
     std::cout << "Socket has been created!" << std::endl;
 
-    sockaddr_in serverAddress;
+    struct sockaddr_in serverAddress, clientAddress;
+    socklen_t clientAddrLen = sizeof(clientAddress);
     std::memset(&serverAddress, 0, sizeof(serverAddress));
     serverAddress.sin_family = AF_INET;
     serverAddress.sin_addr.s_addr = INADDR_ANY;
     serverAddress.sin_port = htons(port);
+    if (bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)))
+    {
+        perror("Error binding socket");
+        std::cout << "Binding error details; " << strerror(errno) << std::endl;
+        close(serverSocket);
+        return ;
+    }
+    if (listen(serverSocket, PENDLOGS) == -1)
+    {
+        perror("Error while listening for connections");
+        close(serverSocket);
+        return ;
+    }
+    std::cout << "Server is listening on port " << port << "..." << std::endl;
+    while (1)
+    {
+        if ((clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientAddrLen) == -1))
+        {
+            perror("Error while accepting connection");
+            continue ;
+        }
+        std::cout << "Connection accepted from " << inet_ntoa(clientAddress.sin_addr) << std::endl;
+        char buffer[1024];
+        int bread;
+        bread = recv(clientSocket, buffer, sizeof(buffer), 0);
+        if (bread == -1)
+            perror("Error while reading from the client");
+    }
 }
