@@ -92,5 +92,15 @@ void IRCServer::init(int port)
         bread = recv(clientSocket, buffer, sizeof(buffer), 0);
         if (bread == -1)
             perror("Error while reading from the client");
+        else if (bread == 0)
+            std::cout << "connection closed by the client" << std::endl;
+        else
+        {
+            std::cout << "Recieved data from the client: " << buffer << std::endl;
+            const char *resp = "Hello, client! This is server! I recieved your message!";
+            send(clientSocket, resp, strlen(resp), 0);
+        }
+        close(clientSocket);
     }
+    close(serverSocket);
 }
