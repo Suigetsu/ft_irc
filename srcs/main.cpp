@@ -18,6 +18,7 @@ int	main(int ac, char **av)
 	if (ac != 3)
 	{
 		std::cout << "Wrong number of arguments!" << std::endl;
+		std::cout << "Usage: " << av[0] << " <port> <password>" << std::endl;
 		return (1);
 	}
 	try

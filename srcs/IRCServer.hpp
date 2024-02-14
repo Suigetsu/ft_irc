@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/11 15:33:49 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/14 12:19:46 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,6 @@
 # include <fcntl.h>
 # include <map>
 # include <iterator>
-
-# define BACKLOG 10
 
 class	IRCServer
 {
