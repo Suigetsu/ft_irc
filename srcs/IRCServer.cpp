@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/14 12:18:50 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/15 12:28:40 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,22 +50,73 @@ std::string	IRCServer::getPassword() const
 }
 void IRCServer::init(int port)
 {
-	int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
-	if (serverSocket == -1)
-	{
-		std::cerr << "Error creating socket" << std::endl;
-		return ;
-	}
-	std::cout << "Socket has been created!" << std::endl;
+    int clientSocket;
+    struct addrinfo hints, *serverInfo;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    int status = getaddrinfo(NULL, std::to_string(port).c_str(), &hints, &serverInfo);
+    if (status != 0)
+    {
+        std::cout << "Error getting address info" << std::endl;
+        return;
+    }
+    int serverSocket = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
+    if (serverSocket == -1)
+    {
+        std::cerr << "Error creating socket" << std::endl;
+        return ;
+    }
+    std::cout << "Socket has been created!" << std::endl;
+    
+    int flag = 1;
+    if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(int)) == -1)
+    {
+        perror("Setsocketopt");
+        close(serverSocket);
+        freeaddrinfo(serverInfo);
+        return ;
+    }
+    struct sockaddr_in clientAddress;
+    socklen_t clientAddrLen = sizeof(clientAddress);
+    if (bind(serverSocket, serverInfo->ai_addr, serverInfo->ai_addrlen))
+    {
+        perror("Error binding socket");
+        std::cout << "Binding error details; " << strerror(errno) << std::endl;
+        close(serverSocket);
+        return ;
+    }
+    freeaddrinfo(serverInfo);
 
-	sockaddr_in serverAddress;
-	std::memset(&serverAddress, 0, sizeof(serverAddress));
-	serverAddress.sin_family = AF_INET;
-	serverAddress.sin_addr.s_addr = INADDR_ANY;
-	serverAddress.sin_port = htons(port);
-}
-
-void	IRCServer::initServer()
-{
-	
+    if (listen(serverSocket, PENDLOGS) == -1)
+    {
+        perror("Error while listening for connections");
+        close(serverSocket);
+        return ;
+    }
+    std::cout << "Server is listening on port " << port << "..." << std::endl;
+    while (1)
+    {
+        if ((clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientAddrLen) == -1))
+        {
+            perror("Error while accepting connection");
+            continue ;
+        }
+        std::cout << "Connection accepted from " << inet_ntoa(clientAddress.sin_addr) << std::endl;
+        char buffer[1024];
+        int bread;
+        bread = recv(clientSocket, buffer, sizeof(buffer), 0);
+        if (bread == -1)
+            perror("Error while reading from the client");
+        else if (bread == 0)
+            std::cout << "connection closed by the client" << std::endl;
+        else
+        {
+            std::cout << "Recieved data from the client: " << buffer << std::endl;
+            const char *resp = "Hello, client! This is server! I recieved your message!";
+            send(clientSocket, resp, strlen(resp), 0);
+        }
+        close(clientSocket);
+    }
+    close(serverSocket);
 }
