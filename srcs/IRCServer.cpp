@@ -51,27 +51,43 @@ std::string	IRCServer::getPassword() const
 void IRCServer::init(int port)
 {
     int clientSocket;
-    int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
+    struct addrinfo hints, *serverInfo;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_socktype = SOCK_STREAM;
+    int status = getaddrinfo(NULL, std::to_string(port).c_str(), &hints, &serverInfo);
+    if (status != 0)
+    {
+        std::cout << "Error getting address info" << std::endl;
+        return;
+    }
+    int serverSocket = socket(serverInfo->ai_family, serverInfo->ai_socktype, serverInfo->ai_protocol);
     if (serverSocket == -1)
     {
         std::cerr << "Error creating socket" << std::endl;
         return ;
     }
     std::cout << "Socket has been created!" << std::endl;
-
-    struct sockaddr_in serverAddress, clientAddress;
+    
+    int flag = 1;
+    if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(int)) == -1)
+    {
+        perror("Setsocketopt");
+        close(serverSocket);
+        freeaddrinfo(serverInfo);
+        return ;
+    }
+    struct sockaddr_in clientAddress;
     socklen_t clientAddrLen = sizeof(clientAddress);
-    std::memset(&serverAddress, 0, sizeof(serverAddress));
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_addr.s_addr = INADDR_ANY;
-    serverAddress.sin_port = htons(port);
-    if (bind(serverSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)))
+    if (bind(serverSocket, serverInfo->ai_addr, serverInfo->ai_addrlen))
     {
         perror("Error binding socket");
         std::cout << "Binding error details; " << strerror(errno) << std::endl;
         close(serverSocket);
         return ;
     }
+    freeaddrinfo(serverInfo);
+
     if (listen(serverSocket, PENDLOGS) == -1)
     {
         perror("Error while listening for connections");
