@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:35 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/10 17:06:45 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/15 17:25:50 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,13 @@ int	main(int ac, char **av)
 	try
 	{
 		ParameterParser.checkParameters(av);
-		ParameterParser.init(ParameterParser.getPort());
+		ParameterParser.initServer();
 	}
 	catch(const std::exception& e)
 	{
 		std::cerr << e.what() << std::endl;
 		return (1);
 	}
-	std::cout << ParameterParser.getPassword() << " " << ParameterParser.getPort() << std::endl;
+	// ParameterParser.init(ParameterParser.getPort());
 	return (0);
 }

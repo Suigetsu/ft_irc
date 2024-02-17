@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/11 15:34:21 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/11 15:36:41 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/15 18:12:11 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,32 @@
 class	Client
 {
 	private:
-		struct sockaddr *clientAddr;
+		struct sockaddr_in clientAddr;
+		int clientFd; 
+	public:
+		Client(){
+			
+		};
+		~Client()
+		{
+			
+		};
+		void	setAddr(struct sockaddr_in addr)
+		{
+			this->clientAddr = addr;
+		}
+		void	setClientFd(int fd)
+		{
+			this->clientFd = fd;
+		}
+		struct sockaddr_in getClientAddr()
+		{
+			return (this->clientAddr);
+		}
+		int	getClientFd()
+		{
+			return (this->clientFd);
+		}
 };
 
 #endif
