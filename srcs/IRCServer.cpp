@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/16 15:32:26 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/17 18:33:35 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,30 @@ std::string	IRCServer::getPassword() const
 
 void	IRCServer::createServerSocket()
 {
-	std::memset(&this->servAddr, 0, sizeof(this->servAddr));
-	this->servAddr.sin_family = AF_INET;
-	this->servAddr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-	this->servAddr.sin_port = htons(this->port);
-	this->serverFd = socket(this->servAddr.sin_family, SOCK_STREAM, 0);
+	int status = 0;
+	
+	std::memset(&this->hints, 0, sizeof(this->hints));
+	this->hints.ai_family = AF_INET;
+	this->hints.ai_socktype = SOCK_STREAM;
+	status = getaddrinfo(NULL, std::to_string(this->port).c_str(), &this->hints, &this->serverAddr);
+	if (status != 0)
+	{
+		std::cout << "Error getting address info" << std::endl;
+		throw (IRCServer::errorException());
+	}
+	this->serverFd = socket(this->serverAddr->ai_family, this->serverAddr->ai_socktype, 0);
 	if (this->serverFd == -1)
 	{
-		std::cout << 1 << std::endl;
+		std::cerr << "Error creating socket" << std::endl;
+		throw (IRCServer::errorException());
+	}
+	int flag = 1;
+	std::cout << "Socket has been created!" << std::endl;
+	if (setsockopt(this->serverFd, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(int)) == -1)
+	{
+		perror("Setsocketopt");
+		close(this->serverFd);
+		freeaddrinfo(this->serverAddr);
 		throw (IRCServer::errorException());
 	}
 }
@@ -66,18 +82,24 @@ void	IRCServer::createServerSocket()
 void	IRCServer::bindSocket()
 {
 	errno = 0;
-	int status = bind(this->serverFd, (struct sockaddr *)&this->servAddr, sizeof(this->servAddr));
+	int status = bind(this->serverFd, this->serverAddr->ai_addr, this->serverAddr->ai_addrlen);
 	if (status != 0)
 	{
-		std::cout << 2 << std::endl;
+		perror("Error binding socket");
+		std::cout << "Binding error details; " << strerror(errno) << std::endl;
+		close(this->serverFd);
+		freeaddrinfo(this->serverAddr);
 		throw(IRCServer::errorException());
 	}
 	status = listen(this->serverFd, 10);
 	if (status != 0)
 	{
-		std::cout << 3 << std::endl;
+		perror("Error while listening for connections");
+		close(this->serverFd);
+		freeaddrinfo(this->serverAddr);
 		throw(IRCServer::errorException());
 	}
+	std::cout << "Server is listening on port " << port << "..." << std::endl;
 }
 
 void	IRCServer::acceptConnection()
@@ -87,15 +109,16 @@ void	IRCServer::acceptConnection()
 	this->clientObj.setClientFd(accept(this->serverFd, (struct sockaddr *)&clientAddr, &addrSize));
 	if (this->clientObj.getClientFd() == -1)
 	{
-		std::cout << 4 << std::endl;
+		perror("Error while accepting connection");
 		throw(IRCServer::errorException());
 	}
+	std::cout << "Connection accepted from " << inet_ntoa(this->clientObj.getClientAddr().sin_addr) << std::endl;
 }
 
 void    IRCServer::initServer()
 {
 	int bytesRead = 1;
-	char buffer[1000];
+	char buffer[1024];
 	this->createServerSocket();
 	this->bindSocket();
 	this->acceptConnection();
@@ -104,14 +127,23 @@ void    IRCServer::initServer()
 		bytesRead = recv(this->clientObj.getClientFd(), buffer, 1000, 0);
 		if (bytesRead < 0)
 		{
-			std::cout << "chi haja" << std::endl;
+			perror("Error while reading from the client");
 			throw (errorException());
 		}
-		if (bytesRead == 0)
+		else if (bytesRead == 0)
+		{
+			std::cout << "connection closed by the client" << std::endl;
 			break ;
-		buffer[bytesRead] = '\0';
-		std::cout << buffer << std::endl;
+		}
+		else
+		{
+			buffer[bytesRead] = '\0';
+			std::cout << buffer << std::endl;
+			send(this->clientObj.getClientFd(), "hello there\n", 13, 0);
+		}
+		// close(this->clientObj.getClientFd());
 	}
+	close(this->serverFd);
 }
 
 void IRCServer::init(int port)

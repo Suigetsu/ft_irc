@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/15 17:16:18 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/17 17:30:48 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ class	IRCServer
 	private:
 		int	port;
 		std::string password;
-		// struct addrinfo hints;
-		// struct addrinfo *serverAddr;
+		struct addrinfo hints;
+		struct addrinfo *serverAddr;
 		struct sockaddr_in servAddr;
 		int status;
 		int	serverFd;
