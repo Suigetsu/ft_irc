@@ -117,27 +117,27 @@ void	IRCServer::acceptConnection()
 
 void    IRCServer::initServer()
 {
-	int bytesRead = 1;
+	int bread = 1;
 	char buffer[1024];
 	this->createServerSocket();
 	this->bindSocket();
 	this->acceptConnection();
 	while (1)
 	{
-		bytesRead = recv(this->clientObj.getClientFd(), buffer, 1000, 0);
-		if (bytesRead < 0)
+		bread = recv(this->clientObj.getClientFd(), buffer, 1000, 0);
+		if (bread < 0)
 		{
 			perror("Error while reading from the client");
 			throw (errorException());
 		}
-		else if (bytesRead == 0)
+		else if (bread == 0)
 		{
 			std::cout << "connection closed by the client" << std::endl;
 			break ;
 		}
 		else
 		{
-			buffer[bytesRead] = '\0';
+			buffer[bread] = '\0';
 			std::cout << buffer << std::endl;
 			send(this->clientObj.getClientFd(), "hello there\n", 13, 0);
 		}
