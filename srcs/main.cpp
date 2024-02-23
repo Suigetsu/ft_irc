@@ -24,6 +24,8 @@ int	main(int ac, char **av)
 	try
 	{
 		ParameterParser.checkParameters(av);
+		std::signal(SIGINT, Server::signalHandler);
+		std::signal(SIGQUIT, Server::signalHandler);
 		ParameterParser.initServer();
 	}
 	catch(const std::exception& e)

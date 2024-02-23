@@ -20,7 +20,7 @@
 # include <sys/types.h>
 # include <arpa/inet.h>
 # include <netinet/in.h>
-# include <signal.h>
+# include <csignal>
 # include <sys/stat.h>
 # include <fcntl.h>
 # include <map>
@@ -30,6 +30,8 @@
 # include "Client.hpp"
 # include "Pass.hpp"
 # include "User.hpp"
+# include "poll.h"
+# define BACKLOG 10
 
 class	Server
 {
@@ -39,13 +41,16 @@ class	Server
 		struct addrinfo hints;
 		struct addrinfo *serverAddr;
 		struct sockaddr_in servAddr;
-		int status;
+		// int status;
 		int	serverFd;
 		Client clientObj;
 		std::vector<std::string> parser;
 		std::map<int, User *> usersMap;
 		std::map<std::string, Command *> commandsMap;
+		std::vector<struct pollfd> fds;
 	public:
+		static bool status;
+		static void signalHandler(int signum);
 		Server();
 		Server(const Server &obj);
 		Server	&operator=(const Server &obj);

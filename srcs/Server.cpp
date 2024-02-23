@@ -12,6 +12,17 @@
 
 #include "Server.hpp"
 
+bool Server::status = false;
+
+void	Server::signalHandler(int signum)
+{
+	if (signum == SIGINT)
+		std::cout << "We received SIGINT" << std::endl;
+	else if (signum == SIGQUIT)
+		std::cout << "This is SIGQUIT" << std::endl;
+	Server::status = true;
+}
+
 Server::Server() {}
 
 Server::~Server() {}
@@ -46,6 +57,7 @@ std::string	Server::getPassword() const
 void	Server::createServerSocket()
 {
 	int status = 0;
+	struct pollfd npoll;
 
 	std::memset(&this->hints, 0, sizeof(this->hints));
 	this->hints.ai_family = AF_INET;
@@ -57,9 +69,10 @@ void	Server::createServerSocket()
 		throw(Server::errorException());
 	}
 	this->serverFd = socket(this->serverAddr->ai_family, this->serverAddr->ai_socktype, 0);
+	fcntl(this->serverFd, F_SETFL, O_NONBLOCK);
 	if (this->serverFd == -1)
 	{
-		std::cerr << "Error creating socket" << std::endl;
+		std::cout << "Error creating socket" << std::endl;
 		throw(Server::errorException());
 	}
 	int flag = 1;
@@ -71,6 +84,10 @@ void	Server::createServerSocket()
 		freeaddrinfo(this->serverAddr);
 		throw(Server::errorException());
 	}
+	npoll.fd = this->serverFd;
+	npoll.events = POLLIN;
+	npoll.revents = 0;
+	this->fds.push_back(npoll);
 }
 
 void	Server::bindSocket()
@@ -85,7 +102,7 @@ void	Server::bindSocket()
 		freeaddrinfo(this->serverAddr);
 		throw(Server::errorException());
 	}
-	status = listen(this->serverFd, 10);
+	status = listen(this->serverFd, BACKLOG);
 	if (status != 0)
 	{
 		perror("Error while listening for connections");
@@ -101,12 +118,18 @@ void	Server::acceptConnection()
 	struct sockaddr_in clientAddr = this->clientObj.getClientAddr();
 	socklen_t addrSize = sizeof(this->clientObj.getClientAddr());
 	this->clientObj.setClientFd(accept(this->serverFd, (struct sockaddr *)&clientAddr, &addrSize));
+	fcntl(this->clientObj.getClientFd(), F_SETFL, O_NONBLOCK);
 	if (this->clientObj.getClientFd() == -1)
 	{
 		perror("Error while accepting connection");
 		throw(Server::errorException());
 	}
 	std::cout << "Connection accepted from " << inet_ntoa(this->clientObj.getClientAddr().sin_addr) << std::endl;
+	struct pollfd poll;
+	poll.fd = this->clientObj.getClientFd();
+	poll.events = POLLIN;
+	poll.revents = 0;
+	this->fds.push_back(poll);
 }
 
 void	Server::parseCommands(std::string buffer, int clientFd)
@@ -138,95 +161,61 @@ void Server::initServer()
 	char buffer[1024];
 	this->createServerSocket();
 	this->bindSocket();
-	this->acceptConnection();
-	while (1)
+	// this->acceptConnection();
+	while (!Server::status)
 	{
-		bread = recv(this->clientObj.getClientFd(), buffer, 1000, 0);
-		if (bread < 0)
+		if (poll(&this->fds[0], this->fds.size(), -1) == -1 && !Server::status)
 		{
-			perror("Error while reading from the client");
+			perror("poll failed");
 			throw(errorException());
-		} else if (bread == 0)
+		}
+		for (size_t i = 0; i < this->fds.size(); i++)
 		{
-			std::cout << "connection closed by the client" << std::endl;
-			break;
-		} else
-		{
-			buffer[bread] = '\0';
-			std::cout << buffer << std::endl;
-			this->parseCommands(buffer, this->clientObj.getClientFd());
-			std::cout << "-------" << std::endl;
+			if (this->fds[i].revents && POLLIN)
+			{
+				if (this->fds[i].fd == this->serverFd)
+					this->acceptConnection();
+				else
+				{
+					bread = recv(this->clientObj.getClientFd(), buffer, 1000, 0);
+					if (bread < 0)
+					{
+						perror("Error while reading from the client");
+						throw(errorException());
+					} else if (bread == 0)
+					{
+						std::cout << "connection closed by the client" << std::endl;
+						break;
+					} else
+					{
+						buffer[bread] = '\0';
+						std::cout << buffer << std::endl;
+						this->parseCommands(buffer, this->clientObj.getClientFd());
+						std::cout << "-------" << std::endl;
+					}
+				}
+			}
 		}
 	}
+	// while (1)
+	// {
+	// 	bread = recv(this->clientObj.getClientFd(), buffer, 1000, 0);
+	// 	if (bread < 0)
+	// 	{
+	// 		perror("Error while reading from the client");
+	// 		throw(errorException());
+	// 	} else if (bread == 0)
+	// 	{
+	// 		std::cout << "connection closed by the client" << std::endl;
+	// 		break;
+	// 	} else
+	// 	{
+	// 		buffer[bread] = '\0';
+	// 		std::cout << buffer << std::endl;
+	// 		this->parseCommands(buffer, this->clientObj.getClientFd());
+	// 		std::cout << "-------" << std::endl;
+	// 	}
+	// }
 	close(this->serverFd);
 }
 
-void Server::init(int port) {
-	int clientSocket;
-	struct addrinfo hints, *serverInfo;
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET;
-	hints.ai_socktype = SOCK_STREAM;
-	int status =
-			getaddrinfo(NULL, std::to_string(port).c_str(), &hints, &serverInfo);
-	if (status != 0) {
-		std::cout << "Error getting address info" << std::endl;
-		return;
-	}
-	int serverSocket = socket(serverInfo->ai_family, serverInfo->ai_socktype,
-														serverInfo->ai_protocol);
-	if (serverSocket == -1) {
-		std::cerr << "Error creating socket" << std::endl;
-		return;
-	}
-	std::cout << "Socket has been created!" << std::endl;
-
-	int flag = 1;
-	if (setsockopt(serverSocket, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(int)) ==
-			-1) {
-		perror("Setsocketopt");
-		close(serverSocket);
-		freeaddrinfo(serverInfo);
-		return;
-	}
-	struct sockaddr_in clientAddress;
-	socklen_t clientAddrLen = sizeof(clientAddress);
-	if (bind(serverSocket, serverInfo->ai_addr, serverInfo->ai_addrlen)) {
-		perror("Error binding socket");
-		std::cout << "Binding error details; " << strerror(errno) << std::endl;
-		close(serverSocket);
-		return;
-	}
-	freeaddrinfo(serverInfo);
-
-	if (listen(serverSocket, 10) == -1) {
-		perror("Error while listening for connections");
-		close(serverSocket);
-		return;
-	}
-	std::cout << "Server is listening on port " << port << "..." << std::endl;
-	while (1) {
-		if ((clientSocket = accept(serverSocket, (struct sockaddr *)&clientAddress,
-															 &clientAddrLen) == -1)) {
-			perror("Error while accepting connection");
-			continue;
-		}
-		std::cout << "Connection accepted from "
-							<< inet_ntoa(clientAddress.sin_addr) << std::endl;
-		char buffer[1024];
-		int bread;
-		bread = recv(clientSocket, buffer, sizeof(buffer), 0);
-		if (bread == -1)
-			perror("Error while reading from the client");
-		else if (bread == 0)
-			std::cout << "connection closed by the client" << std::endl;
-		else {
-			std::cout << "Recieved data from the client: " << buffer << std::endl;
-			const char *resp =
-					"Hello, client! This is server! I recieved your message!";
-			send(clientSocket, resp, strlen(resp), 0);
-		}
-		close(clientSocket);
-	}
-	close(serverSocket);
-}
