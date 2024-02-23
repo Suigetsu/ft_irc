@@ -6,15 +6,15 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:35 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/15 17:25:50 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/21 17:14:47 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "IRCServer.hpp"
+#include "Server.hpp"
 
 int	main(int ac, char **av)
 {
-	IRCServer	ParameterParser;
+	Server	ParameterParser;
 	if (ac != 3)
 	{
 		std::cout << "Wrong number of arguments!" << std::endl;

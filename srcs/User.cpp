@@ -1,0 +1,76 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   User.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/02/21 16:00:01 by mlagrini          #+#    #+#             */
+/*   Updated: 2024/02/23 10:00:18 by mlagrini         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "User.hpp"
+
+User::User() {}
+
+User::User(std::string pass)
+{
+	this->auth = false;
+	this->serverPass = pass;
+}
+
+User::~User()
+{
+	
+}
+
+User	*User::clone(std::string pass) const
+{
+	return (new User(pass));
+}
+
+void	User::setNickname(std::string name)
+{
+	this->nickname = name;
+}
+
+void	User::setUsername(std::string name)
+{
+	this->username = name;
+}
+
+void	User::setUserPass(std::string pass)
+{
+	this->userPass = pass;
+}
+
+void	User::setAuth(bool auth)
+{
+	this->auth = auth;
+}
+
+std::string	User::getNickname()
+{
+	return (this->nickname);
+}
+
+std::string	User::getUsername()
+{
+	return (this->username);
+}
+
+std::string	User::getUserPass()
+{
+	return (this->userPass);
+}
+
+std::string	User::getServerPass()
+{
+	return (this->serverPass);
+}
+
+bool	User::isAuth()
+{
+	return (this->auth);
+}

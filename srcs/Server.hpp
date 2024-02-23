@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   IRCServer.hpp                                      :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/17 17:30:48 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/22 19:35:10 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef IRCSERVER_HPP
-# define IRCSERVER_HPP
+#ifndef SERVER_HPP
+# define SERVER_HPP
 
 # include <iostream>
 # include <sys/socket.h>
@@ -25,9 +25,13 @@
 # include <fcntl.h>
 # include <map>
 # include <iterator>
-# include "IRCClient.hpp"
+# include <vector>
+# include "Command.hpp"
+# include "Client.hpp"
+# include "Pass.hpp"
+# include "User.hpp"
 
-class	IRCServer
+class	Server
 {
 	private:
 		int	port;
@@ -38,11 +42,14 @@ class	IRCServer
 		int status;
 		int	serverFd;
 		Client clientObj;
+		std::vector<std::string> parser;
+		std::map<int, User *> usersMap;
+		std::map<std::string, Command *> commandsMap;
 	public:
-		IRCServer();
-		IRCServer(const IRCServer &obj);
-		IRCServer	&operator=(const IRCServer &obj);
-		~IRCServer();
+		Server();
+		Server(const Server &obj);
+		Server	&operator=(const Server &obj);
+		~Server();
 		void	checkParameters(char **args);
 		void	init(int port);
 		class	errorException : public std::exception
@@ -56,7 +63,7 @@ class	IRCServer
 		void	createServerSocket();
 		void	bindSocket();
 		void	acceptConnection();
-		// void	
+		void	parseCommands(std::string buffer, int clientFd);
 };
 
 
