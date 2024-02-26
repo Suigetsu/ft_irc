@@ -171,13 +171,13 @@ void Server::initServer()
 		}
 		for (size_t i = 0; i < this->fds.size(); i++)
 		{
-			if (this->fds[i].revents && POLLIN)
+			if (this->fds[i].revents & POLLIN)
 			{
 				if (this->fds[i].fd == this->serverFd)
 					this->acceptConnection();
 				else
 				{
-					bread = recv(this->clientObj.getClientFd(), buffer, 1000, 0);
+					bread = recv(this->fds[i].fd, buffer, 1000, 0);
 					if (bread < 0)
 					{
 						perror("Error while reading from the client");
@@ -190,9 +190,10 @@ void Server::initServer()
 					{
 						buffer[bread] = '\0';
 						std::cout << buffer << std::endl;
-						this->parseCommands(buffer, this->clientObj.getClientFd());
+						// this->parseCommands(buffer, this->fds[i].fd);
 						std::cout << "-------" << std::endl;
 					}
+					sleep(2);
 				}
 			}
 		}
