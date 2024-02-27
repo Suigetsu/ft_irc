@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/23 11:04:26 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/27 12:00:09 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,6 +185,7 @@ void Server::initServer()
 					} else if (bread == 0)
 					{
 						std::cout << "connection closed by the client" << std::endl;
+						close(this->fds[i].fd);
 						break;
 					} else
 					{
