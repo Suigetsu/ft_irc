@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/22 19:35:10 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/29 12:28:38 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ class	Server
 		std::map<int, User *> usersMap;
 		std::map<std::string, Command *> commandsMap;
 		std::vector<struct pollfd> fds;
+		std::vector<int> registeredFds;
 	public:
 		static bool status;
 		static void signalHandler(int signum);
@@ -69,6 +70,9 @@ class	Server
 		void	bindSocket();
 		void	acceptConnection();
 		void	parseCommands(std::string buffer, int clientFd);
+		bool	isRegistered(int fd);
+		void	addUser(int fd);
+		const int	getServerFd() const;
 };
 
 

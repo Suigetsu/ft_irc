@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/27 12:00:09 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/29 12:29:24 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,11 @@ void	Server::signalHandler(int signum)
 	Server::status = true;
 }
 
-Server::Server() {}
+Server::Server()
+{
+	Pass obj;
+	this->commandsMap["PASS"] = obj.clone();
+}
 
 Server::~Server() {}
 
@@ -134,25 +138,42 @@ void	Server::acceptConnection()
 
 void	Server::parseCommands(std::string buffer, int clientFd)
 {
-	if (!buffer.find("CAP"))
+	if (buffer.find("CAP") != std::string::npos)
 	{
-		User obj;
-		this->usersMap[clientFd] = obj.clone(this->getPassword());
-		return;
-		// if (buffer.find("PASS"))
-		// 	send(clientFd, "<client> :Password incorrect\r\n", 31, 0);
+		this->addUser(clientFd);
+		buffer.erase(0, buffer.find("\n") + 1);
 	}
-	if (this->usersMap[clientFd]->isAuth() == false)
+	if (!this->usersMap[clientFd])
+		this->addUser(clientFd);
+	if (buffer.find("PASS") != std::string::npos)
 	{
-		std::string line = buffer.substr(0, buffer.find("\r"));
-		std::cout << "this is before erase:" << line << std::endl;
+		std::string line = buffer.substr(0, buffer.find("\r\n"));
 		line.erase(0, line.find(" ") + 1);
 		this->usersMap[clientFd]->setUserPass(line);
-		std::cout << "this is pass:" << line << std::endl;
+		buffer.erase(0, buffer.find("\n") + 1);
 	}
-	Pass ptr;
-	this->commandsMap["PASS"] = ptr.clone();
+	if (buffer.find("NICK")!= std::string::npos)
+	{
+		std::string line = buffer.substr(0, buffer.find("\r\n"));
+		line.erase(0, line.find(" ") + 1);
+		this->usersMap[clientFd]->setNickname(line);
+		buffer.erase(0, buffer.find("\n") + 1);
+	}
+	if (buffer.find("USER")!= std::string::npos)
+	{
+		buffer.erase(0, buffer.find(" ") + 1);
+		std::string line = buffer.substr(0, buffer.find(" "));
+		this->usersMap[clientFd]->setUsername(line);
+		buffer.erase(0, buffer.find(" ") + 1);
+		buffer.erase(0, buffer.find(" ") + 1);
+		line = buffer.substr(0, buffer.find(" :"));
+		this->usersMap[clientFd]->setHost(line);
+		buffer.erase(0, buffer.find(":") + 1);
+		line = buffer.substr(0, buffer.find("\r\n"));
+		this->usersMap[clientFd]->setRealname(line);
+	}
 	this->commandsMap["PASS"]->execute(this->usersMap, clientFd);
+	
 }
 
 void Server::initServer()
@@ -161,7 +182,6 @@ void Server::initServer()
 	char buffer[1024];
 	this->createServerSocket();
 	this->bindSocket();
-	// this->acceptConnection();
 	while (!Server::status)
 	{
 		if (poll(&this->fds[0], this->fds.size(), -1) == -1 && !Server::status)
@@ -178,46 +198,53 @@ void Server::initServer()
 				else
 				{
 					bread = recv(this->fds[i].fd, buffer, 1000, 0);
-					if (bread < 0)
+					switch (bread)
 					{
-						perror("Error while reading from the client");
-						throw(errorException());
-					} else if (bread == 0)
-					{
-						std::cout << "connection closed by the client" << std::endl;
-						close(this->fds[i].fd);
-						break;
-					} else
-					{
-						buffer[bread] = '\0';
-						std::cout << buffer << std::endl;
-						// this->parseCommands(buffer, this->fds[i].fd);
-						std::cout << "-------" << std::endl;
+						case -1:
+							perror("Error while reading from the client");
+							throw(errorException());
+						case 0:
+							std::cout << "connection closed by the client " << this->fds[i].fd << std::endl;
+							close(this->fds[i].fd);
+							break ;
+						default:
+							if (this->isRegistered(this->fds[i].fd))
+								std::cout << "client " << this->fds[i].fd << " is registered!" << std::endl;
+							else
+							{
+								buffer[bread] = '\0';
+								std::cout << "client " << this->fds[i].fd << ": " << buffer << std::endl;
+								// this->registeredFds.push_back(this->fds[i].fd);
+								this->parseCommands(buffer, this->fds[i].fd);
+							}
 					}
+					std::cout << "-------" << std::endl;
 					sleep(2);
 				}
 			}
 		}
 	}
-	// while (1)
-	// {
-	// 	bread = recv(this->clientObj.getClientFd(), buffer, 1000, 0);
-	// 	if (bread < 0)
-	// 	{
-	// 		perror("Error while reading from the client");
-	// 		throw(errorException());
-	// 	} else if (bread == 0)
-	// 	{
-	// 		std::cout << "connection closed by the client" << std::endl;
-	// 		break;
-	// 	} else
-	// 	{
-	// 		buffer[bread] = '\0';
-	// 		std::cout << buffer << std::endl;
-	// 		this->parseCommands(buffer, this->clientObj.getClientFd());
-	// 		std::cout << "-------" << std::endl;
-	// 	}
-	// }
 	close(this->serverFd);
 }
 
+bool	Server::isRegistered(int fd)
+{
+	std::vector<int>::iterator it = std::find(this->registeredFds.begin(), this->registeredFds.end(), fd);
+	if (it == this->registeredFds.end())
+		return (false);
+	return (true);
+}
+
+void	Server::addUser(int fd)
+{
+	if (!this->usersMap[fd])
+	{
+		User obj;
+		this->usersMap[fd] = obj.clone(this->getPassword());
+	}
+}
+
+const int	Server::getServerFd() const
+{
+	return (this->serverFd);
+}
