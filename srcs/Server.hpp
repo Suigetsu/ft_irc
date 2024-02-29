@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/29 12:28:38 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/29 13:14:15 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 # include "Client.hpp"
 # include "Pass.hpp"
 # include "User.hpp"
+# include "Nick.hpp"
 # include "poll.h"
 # define BACKLOG 10
 
@@ -63,16 +64,20 @@ class	Server
 			public:
 				const char *what() const throw();
 		};
+		template <typename T>
+		void	registerCommand(std::string commandName)
+		{
+			this->commandsMap[commandName] = new T;
+		}
 		long	getPort() const;
 		std::string	getPassword() const;
 		void	initServer();
 		void	createServerSocket();
 		void	bindSocket();
 		void	acceptConnection();
-		void	parseCommands(std::string buffer, int clientFd);
+		void	registerUser(std::string buffer, int clientFd);
 		bool	isRegistered(int fd);
 		void	addUser(int fd);
-		const int	getServerFd() const;
 };
 
 

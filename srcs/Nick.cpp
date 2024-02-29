@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:47:46 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/28 16:59:53 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/29 14:29:48 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,12 @@ Nick	*Nick::clone() const
 
 bool	Nick::doesNameExist(std::map<int, User *> userMap, std::string name) const
 {
-	std::map<int, User *>::iterator it = std::find(userMap.begin(), userMap.end(), name);
-	if (it == userMap.end())
-		return (false);
-	return (true);
+	std::map<int, User *>::iterator it = userMap.begin();
+	while (it != userMap.end())
+	{
+		if (it->second->getNickname() == name)
+			return (true);
+		it++;
+	}
+	return (false);
 }

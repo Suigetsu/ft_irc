@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/29 12:29:24 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/29 14:21:28 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ void	Server::signalHandler(int signum)
 
 Server::Server()
 {
-	Pass obj;
-	this->commandsMap["PASS"] = obj.clone();
+	this->registerCommand<Pass>("PASS");
+	this->registerCommand<Nick>("NICK");
 }
 
 Server::~Server() {}
@@ -136,7 +136,7 @@ void	Server::acceptConnection()
 	this->fds.push_back(poll);
 }
 
-void	Server::parseCommands(std::string buffer, int clientFd)
+void	Server::registerUser(std::string buffer, int clientFd)
 {
 	if (buffer.find("CAP") != std::string::npos)
 	{
@@ -215,7 +215,7 @@ void Server::initServer()
 								buffer[bread] = '\0';
 								std::cout << "client " << this->fds[i].fd << ": " << buffer << std::endl;
 								// this->registeredFds.push_back(this->fds[i].fd);
-								this->parseCommands(buffer, this->fds[i].fd);
+								this->registerUser(buffer, this->fds[i].fd);
 							}
 					}
 					std::cout << "-------" << std::endl;
@@ -242,9 +242,4 @@ void	Server::addUser(int fd)
 		User obj;
 		this->usersMap[fd] = obj.clone(this->getPassword());
 	}
-}
-
-const int	Server::getServerFd() const
-{
-	return (this->serverFd);
 }

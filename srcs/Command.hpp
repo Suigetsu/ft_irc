@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:21:08 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/28 16:33:53 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/29 14:24:27 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include <iostream>
 #include <map>
 #include <iterator>
+#include <algorithm>
 #include "User.hpp"
 
 class	Command
