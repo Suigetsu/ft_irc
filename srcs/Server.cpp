@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/29 14:21:28 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/29 18:31:26 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,12 +150,15 @@ void	Server::registerUser(std::string buffer, int clientFd)
 		std::string line = buffer.substr(0, buffer.find("\r\n"));
 		line.erase(0, line.find(" ") + 1);
 		this->usersMap[clientFd]->setUserPass(line);
+		this->commandsMap["PASS"]->execute(this->usersMap, clientFd);
 		buffer.erase(0, buffer.find("\n") + 1);
 	}
 	if (buffer.find("NICK")!= std::string::npos)
 	{
 		std::string line = buffer.substr(0, buffer.find("\r\n"));
 		line.erase(0, line.find(" ") + 1);
+		this->usersMap[clientFd]->setNickHelper(line);
+		this->commandsMap["NICK"]->execute(this->usersMap, clientFd);
 		this->usersMap[clientFd]->setNickname(line);
 		buffer.erase(0, buffer.find("\n") + 1);
 	}

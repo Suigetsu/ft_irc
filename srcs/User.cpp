@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 16:00:01 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/28 14:57:57 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/02/29 18:32:30 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,11 @@ void	User::setRealname(std::string name)
 	this->realname = name;
 }
 
+void	User::setNickHelper(std::string name)
+{
+	this->nicknameHelper = name;
+}
+
 std::string	User::getNickname()
 {
 	return (this->nickname);
@@ -93,4 +98,9 @@ std::string	User::getHost()
 std::string	User::getRealname()
 {
 	return (this->realname);
+}
+
+std::string	User::getNickHelper()
+{
+	return (this->nicknameHelper);
 }
