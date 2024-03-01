@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 16:50:37 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 16:56:21 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,9 @@
 # include "Client.hpp"
 # include "Pass.hpp"
 # include "User.hpp"
-# include "Channel.hpp"
 # include "Nick.hpp"
+# include "Channel.hpp"
+>>>>>>>>> Temporary merge branch 2
 # include "poll.h"
 # define BACKLOG 10
 
@@ -91,6 +92,9 @@ class	Server
 		void	bindSocket();
 		void	acceptConnection();
 		void	registerUser(std::string buffer, int clientFd);
+		bool	isRegistered(int fd);
+		void	addUser(int fd);
+		void	closeFds();
 		void	createChannel(const std::string &name);
 		void	joinChannel(int id, const std::string &name);
 		void	leaveChannel(int id, const std::string &name);
