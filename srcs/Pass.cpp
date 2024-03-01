@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 18:18:31 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/28 16:40:21 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 15:37:33 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	Pass::execute(std::map<int, User *> userMap, int clientFd) const
 	{
 		send(clientFd, ERR_PASSWDMISMATCH, sizeof(ERR_PASSWDMISMATCH), 0);
 		userMap[clientFd]->setAuth(false);
-		return ;
+		throw (Pass::registrationException());
 	}
 }
 

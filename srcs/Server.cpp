@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 12:25:06 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 16:28:53 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,45 +142,64 @@ void	Server::acceptConnection()
 
 void	Server::registerUser(std::string buffer, int clientFd)
 {
-	if (buffer.find("CAP") != std::string::npos)
+	static int flag = 0;
+	try
 	{
-		this->addUser(clientFd);
-		buffer.erase(0, buffer.find("\n") + 1);
+		if (buffer.find("CAP") != std::string::npos)
+		{
+			this->addUser(clientFd);
+			buffer.erase(0, buffer.find("\n") + 1);
+		}
+		if (!this->usersMap[clientFd])
+			this->addUser(clientFd);
+		if (buffer.find("PASS") != std::string::npos)
+		{
+			std::string line = buffer.substr(0, buffer.find("\r\n"));
+			line.erase(0, line.find(" ") + 1);
+			this->usersMap[clientFd]->setUserPass(line);
+			this->commandsMap["PASS"]->execute(this->usersMap, clientFd);
+			buffer.erase(0, buffer.find("\n") + 1);
+		}
+		if (buffer.find("NICK")!= std::string::npos)
+		{
+			std::string line = buffer.substr(0, buffer.find("\r\n"));
+			line.erase(0, line.find(" ") + 1);
+			this->usersMap[clientFd]->setNickHelper(line);
+			this->commandsMap["NICK"]->execute(this->usersMap, clientFd);
+			this->usersMap[clientFd]->setNickname(line);
+			buffer.erase(0, buffer.find("\n") + 1);
+		}
+		if (buffer.find("USER")!= std::string::npos)
+		{
+			buffer.erase(0, buffer.find(" ") + 1);
+			std::string line = buffer.substr(0, buffer.find(" "));
+			this->usersMap[clientFd]->setUsername(line);
+			if (this->usersMap[clientFd]->getUsername().length() < 1)
+			{
+				send(clientFd, ERR_NEEDMOREPARAMS, sizeof(ERR_NEEDMOREPARAMS), 0);
+				throw(Command::registrationException());
+			}
+			buffer.erase(0, buffer.find(" ") + 1);
+			buffer.erase(0, buffer.find(" ") + 1);
+			line = buffer.substr(0, buffer.find(" :"));
+			this->usersMap[clientFd]->setHost(line);
+			buffer.erase(0, buffer.find(":") + 1);
+			line = buffer.substr(0, buffer.find("\r\n"));
+			this->usersMap[clientFd]->setRealname(line);
+			flag = 1;
+		}
 	}
-	if (!this->usersMap[clientFd])
-		this->addUser(clientFd);
-	if (buffer.find("PASS") != std::string::npos)
+	catch(const std::exception& e)
 	{
-		std::string line = buffer.substr(0, buffer.find("\r\n"));
-		line.erase(0, line.find(" ") + 1);
-		this->usersMap[clientFd]->setUserPass(line);
-		this->commandsMap["PASS"]->execute(this->usersMap, clientFd);
-		buffer.erase(0, buffer.find("\n") + 1);
+		std::cerr << e.what() << std::endl;
+		return ;
 	}
-	if (buffer.find("NICK")!= std::string::npos)
-	{
-		std::string line = buffer.substr(0, buffer.find("\r\n"));
-		line.erase(0, line.find(" ") + 1);
-		this->usersMap[clientFd]->setNickHelper(line);
-		this->commandsMap["NICK"]->execute(this->usersMap, clientFd);
-		this->usersMap[clientFd]->setNickname(line);
-		buffer.erase(0, buffer.find("\n") + 1);
-	}
-	if (buffer.find("USER")!= std::string::npos)
-	{
-		buffer.erase(0, buffer.find(" ") + 1);
-		std::string line = buffer.substr(0, buffer.find(" "));
-		this->usersMap[clientFd]->setUsername(line);
-		buffer.erase(0, buffer.find(" ") + 1);
-		buffer.erase(0, buffer.find(" ") + 1);
-		line = buffer.substr(0, buffer.find(" :"));
-		this->usersMap[clientFd]->setHost(line);
-		buffer.erase(0, buffer.find(":") + 1);
-		line = buffer.substr(0, buffer.find("\r\n"));
-		this->usersMap[clientFd]->setRealname(line);
-	}
-	this->commandsMap["PASS"]->execute(this->usersMap, clientFd);
-	
+	if (flag == 1)
+		send(clientFd, RPL_WELCOME(this->usersMap[clientFd]->getNickname(), \
+			this->usersMap[clientFd]->getUsername(), this->usersMap[clientFd]->getHost()).c_str(), \
+			RPL_WELCOME(this->usersMap[clientFd]->getNickname(), \
+			this->usersMap[clientFd]->getUsername(), this->usersMap[clientFd]->getHost()).length(), 0);
+	flag = 0;
 }
 
 void Server::initServer()
@@ -209,6 +228,8 @@ void Server::initServer()
 					{
 						case -1:
 							perror("Error while reading from the client");
+							this->closeFds();
+							freeaddrinfo(this->serverAddr);
 							throw(errorException());
 						case 0:
 							std::cout << "connection closed by the client " << this->fds[i].fd << std::endl;
@@ -233,7 +254,6 @@ void Server::initServer()
 	}
 	this->closeFds();
 	freeaddrinfo(this->serverAddr);
-	// close(this->serverFd);
 }
 
 bool	Server::isRegistered(int fd)

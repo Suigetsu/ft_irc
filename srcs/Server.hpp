@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 12:24:41 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 15:29:48 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 # include <map>
 # include <iterator>
 # include <vector>
+# include "RPL.hpp"
+# include "ERR.hpp"
 # include "Command.hpp"
 # include "Client.hpp"
 # include "Pass.hpp"
