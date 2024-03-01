@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 12:18:23 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 12:25:06 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,20 +31,8 @@ Server::Server()
 
 Server::~Server()
 {
-	std::map<std::string, Command *>::iterator it = this->commandsMap.begin();
-	while (it != this->commandsMap.end())
-	{
-		if (it->second)
-			delete it->second;
-		it++;
-	}
-	std::map<int, User *>::iterator uIt = this->usersMap.begin();
-	while (uIt != this->usersMap.end())
-	{
-		if (uIt->second)
-			delete uIt->second;
-		uIt++;
-	}
+	this->deleteMaps(this->usersMap);
+	this->deleteMaps(this->commandsMap);
 }
 
 const char	*Server::errorException::what() const throw()

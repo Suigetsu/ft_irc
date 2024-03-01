@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 11:08:14 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 12:24:41 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,17 @@ class	Server
 		void	registerCommand(std::string commandName)
 		{
 			this->commandsMap[commandName] = new T;
+		}
+		template <typename T>
+		void	deleteMaps(T &map)
+		{
+			typename T::iterator it = map.begin();
+			while (it != map.end())
+			{
+				if (it->second)
+					delete it->second;
+				it++;
+			}
 		}
 		long	getPort() const;
 		std::string	getPassword() const;
