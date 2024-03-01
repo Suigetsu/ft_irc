@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Pass.hpp                                           :+:      :+:    :+:   */
+/*   Nick.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/22 12:24:40 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 15:31:23 by mlagrini         ###   ########.fr       */
+/*   Created: 2024/02/28 16:47:53 by mlagrini          #+#    #+#             */
+/*   Updated: 2024/03/01 15:31:08 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 #include "User.hpp"
 #include "Command.hpp"
 
-class Command;
-
-class	Pass : public Command
+class Nick : public Command
 {
 	public:
-		Pass();
-		~Pass();
+		Nick();
+		~Nick();
 		void	execute(std::map<int, User *> userMap, int clientFd) const;
-		Pass	*clone() const;
+		Nick	*clone() const;
+		bool	doesNameExist(std::map<int, User *> userMap, std::string name) const;
+		bool	containsRestrictedChar(std::string name) const;
 };

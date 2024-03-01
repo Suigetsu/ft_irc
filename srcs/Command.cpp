@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 12:22:39 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/22 12:23:25 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 15:37:03 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,4 +22,7 @@ Command::~Command()
 
 }
 
-
+const char  *Command::registrationException::what() const throw()
+{
+    return ("Registration failed");
+}

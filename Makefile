@@ -6,12 +6,12 @@
 #    By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/03 10:37:04 by mlagrini          #+#    #+#              #
-#    Updated: 2024/02/22 19:05:39 by mlagrini         ###   ########.fr        #
+#    Updated: 2024/02/29 14:22:19 by mlagrini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRC		=	srcs/main.cpp srcs/Server.cpp srcs/Client.cpp srcs/Command.cpp \
-			srcs/User.cpp srcs/Pass.cpp
+			srcs/User.cpp srcs/Pass.cpp srcs/Nick.cpp
 OBJ		=	${SRC:.cpp=.o}
 CC		=	c++
 FLAGS	=	-Wall -Wextra -Werror -std=c++98

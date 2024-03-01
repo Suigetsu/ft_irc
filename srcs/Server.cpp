@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 11:45:17 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/01 16:36:24 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,17 @@ void	Server::signalHandler(int signum)
 	Server::status = true;
 }
 
-Server::Server() {}
+Server::Server()
+{
+	this->registerCommand<Pass>("PASS");
+	this->registerCommand<Nick>("NICK");
+}
 
-Server::~Server() {}
+Server::~Server()
+{
+	this->deleteMaps(this->usersMap);
+	this->deleteMaps(this->commandsMap);
+}
 
 const char	*Server::errorException::what() const throw()
 {
@@ -132,27 +140,66 @@ void	Server::acceptConnection()
 	this->fds.push_back(poll);
 }
 
-void	Server::parseCommands(std::string buffer, int clientFd)
+void	Server::registerUser(std::string buffer, int clientFd)
 {
-	if (!buffer.find("CAP"))
+	static int flag = 0;
+	try
 	{
-		User obj;
-		this->usersMap[clientFd] = obj.clone(this->getPassword());
-		return;
-		// if (buffer.find("PASS"))
-		// 	send(clientFd, "<client> :Password incorrect\r\n", 31, 0);
+		if (buffer.find("CAP") != std::string::npos)
+		{
+			this->addUser(clientFd);
+			buffer.erase(0, buffer.find("\n") + 1);
+		}
+		if (!this->usersMap[clientFd])
+			this->addUser(clientFd);
+		if (buffer.find("PASS") != std::string::npos)
+		{
+			std::string line = buffer.substr(0, buffer.find("\r\n"));
+			line.erase(0, line.find(" ") + 1);
+			this->usersMap[clientFd]->setUserPass(line);
+			this->commandsMap["PASS"]->execute(this->usersMap, clientFd);
+			buffer.erase(0, buffer.find("\n") + 1);
+		}
+		if (buffer.find("NICK")!= std::string::npos)
+		{
+			std::string line = buffer.substr(0, buffer.find("\r\n"));
+			line.erase(0, line.find(" ") + 1);
+			this->usersMap[clientFd]->setNickHelper(line);
+			this->commandsMap["NICK"]->execute(this->usersMap, clientFd);
+			this->usersMap[clientFd]->setNickname(line);
+			buffer.erase(0, buffer.find("\n") + 1);
+		}
+		if (buffer.find("USER")!= std::string::npos)
+		{
+			buffer.erase(0, buffer.find(" ") + 1);
+			std::string line = buffer.substr(0, buffer.find(" "));
+			this->usersMap[clientFd]->setUsername(line);
+			if (this->usersMap[clientFd]->getUsername().length() < 1)
+			{
+				send(clientFd, ERR_NEEDMOREPARAMS, sizeof(ERR_NEEDMOREPARAMS), 0);
+				throw(Command::registrationException());
+			}
+			buffer.erase(0, buffer.find(" ") + 1);
+			buffer.erase(0, buffer.find(" ") + 1);
+			line = buffer.substr(0, buffer.find(" :"));
+			this->usersMap[clientFd]->setHost(line);
+			buffer.erase(0, buffer.find(":") + 1);
+			line = buffer.substr(0, buffer.find("\r\n"));
+			this->usersMap[clientFd]->setRealname(line);
+			flag = 1;
+		}
 	}
-	if (this->usersMap[clientFd]->isAuth() == false)
+	catch(const std::exception& e)
 	{
-		std::string line = buffer.substr(0, buffer.find("\r"));
-		std::cout << "this is before erase:" << line << std::endl;
-		line.erase(0, line.find(" ") + 1);
-		this->usersMap[clientFd]->setUserPass(line);
-		std::cout << "this is pass:" << line << std::endl;
+		std::cerr << e.what() << std::endl;
+		return ;
 	}
-	Pass ptr;
-	this->commandsMap["PASS"] = ptr.clone();
-	this->commandsMap["PASS"]->execute(this->usersMap, clientFd);
+	if (flag == 1)
+		send(clientFd, RPL_WELCOME(this->usersMap[clientFd]->getNickname(), \
+			this->usersMap[clientFd]->getUsername(), this->usersMap[clientFd]->getHost()).c_str(), \
+			RPL_WELCOME(this->usersMap[clientFd]->getNickname(), \
+			this->usersMap[clientFd]->getUsername(), this->usersMap[clientFd]->getHost()).length(), 0);
+	flag = 0;
 }
 
 void Server::initServer()
@@ -161,7 +208,6 @@ void Server::initServer()
 	char buffer[1024];
 	this->createServerSocket();
 	this->bindSocket();
-	// this->acceptConnection();
 	while (!Server::status)
 	{
 		if (poll(&this->fds[0], this->fds.size(), -1) == -1 && !Server::status)
@@ -178,85 +224,61 @@ void Server::initServer()
 				else
 				{
 					bread = recv(this->fds[i].fd, buffer, 1000, 0);
-					if (bread < 0)
+					switch (bread)
 					{
-						perror("Error while reading from the client");
-						throw(errorException());
-					} else if (bread == 0)
-					{
-						std::cout << "connection closed by the client" << std::endl;
-						close(this->fds[i].fd);
-						break;
-					} else
-					{
-						buffer[bread] = '\0';
-						std::cout << buffer << std::endl;
-						// this->parseCommands(buffer, this->fds[i].fd);
-						std::cout << "-------" << std::endl;
+						case -1:
+							perror("Error while reading from the client");
+							this->closeFds();
+							freeaddrinfo(this->serverAddr);
+							throw(errorException());
+						case 0:
+							std::cout << "connection closed by the client " << this->fds[i].fd << std::endl;
+							close(this->fds[i].fd);
+							break ;
+						default:
+							if (this->isRegistered(this->fds[i].fd))
+								std::cout << "client " << this->fds[i].fd << " is registered!" << std::endl;
+							else
+							{
+								buffer[bread] = '\0';
+								std::cout << "client " << this->fds[i].fd << ": " << buffer << std::endl;
+								// this->registeredFds.push_back(this->fds[i].fd);
+								this->registerUser(buffer, this->fds[i].fd);
+							}
 					}
+					std::cout << "-------" << std::endl;
 					sleep(2);
 				}
 			}
 		}
 	}
-	// while (1)
-	// {
-	// 	bread = recv(this->clientObj.getClientFd(), buffer, 1000, 0);
-	// 	if (bread < 0)
-	// 	{
-	// 		perror("Error while reading from the client");
-	// 		throw(errorException());
-	// 	} else if (bread == 0)
-	// 	{
-	// 		std::cout << "connection closed by the client" << std::endl;
-	// 		break;
-	// 	} else
-	// 	{
-	// 		buffer[bread] = '\0';
-	// 		std::cout << buffer << std::endl;
-	// 		this->parseCommands(buffer, this->clientObj.getClientFd());
-	// 		std::cout << "-------" << std::endl;
-	// 	}
-	// }
-	close(this->serverFd);
+	this->closeFds();
+	freeaddrinfo(this->serverAddr);
 }
 
-void	Server::createChannel(const std::string &name)
+bool	Server::isRegistered(int fd)
 {
-	if (!name.empty() && name.find_first_of("&#+!") == 0)
-	{
-		if (name.length() <= 50)
-		{
-			if (this->channels.find(name) == this->channels.end())
-			{
-				// channels[name] = std::vector<int>();
-				std::cout << "Channel " << name << " has been created." << std::endl;
-			}
-			else
-				std::cout << "Channel " << name << "already exists." << std::endl;
-		}
-		else
-			std::cout << "Channel name should not exceed 50 chars." << std::endl;
-	}
-	else
-		std::cout << "Invalid channel name." << std::endl;
+	std::vector<int>::iterator it = std::find(this->registeredFds.begin(), this->registeredFds.end(), fd);
+	if (it == this->registeredFds.end())
+		return (false);
+	return (true);
 }
 
-void	Server::joinChannel(int id, const std::string &name)
+void	Server::addUser(int fd)
 {
-	if (channels.find(name) == channels.end())
+	if (!this->usersMap[fd])
 	{
-		std::cout << "Channel " << name << " does not exist." << std::endl;
-		return ;
-	}
-	if (std::find(channels[name].begin(), channels[name].end(), id) == channels[name].end())
-	{
-		
+		User obj;
+		this->usersMap[fd] = obj.clone(this->getPassword());
 	}
 }
 
-void	Server::leaveChannel(int id, const std::string &name)
+void	Server::closeFds()
 {
-	
+	std::vector<struct pollfd>::iterator it = this->fds.begin();
+	while (it != this->fds.end())
+	{
+		close ((*it).fd);
+		it++;
+	}
 }
-

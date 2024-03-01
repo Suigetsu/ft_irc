@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 11:49:33 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/01 16:37:06 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,13 @@
 # include <map>
 # include <iterator>
 # include <vector>
+# include "RPL.hpp"
+# include "ERR.hpp"
 # include "Command.hpp"
 # include "Client.hpp"
 # include "Pass.hpp"
 # include "User.hpp"
+# include "Nick.hpp"
 # include "Channel.hpp"
 # include "poll.h"
 # define BACKLOG 10
@@ -50,6 +53,7 @@ class	Server
 		std::map<std::string, std::vector<int> > channels;
 		std::map<std::string, Command *> commandsMap;
 		std::vector<struct pollfd> fds;
+		std::vector<int> registeredFds;
 	public:
 		static bool status;
 		static void signalHandler(int signum);
@@ -64,13 +68,32 @@ class	Server
 			public:
 				const char *what() const throw();
 		};
+		template <typename T>
+		void	registerCommand(std::string commandName)
+		{
+			this->commandsMap[commandName] = new T;
+		}
+		template <typename T>
+		void	deleteMaps(T &map)
+		{
+			typename T::iterator it = map.begin();
+			while (it != map.end())
+			{
+				if (it->second)
+					delete it->second;
+				it++;
+			}
+		}
 		long	getPort() const;
 		std::string	getPassword() const;
 		void	initServer();
 		void	createServerSocket();
 		void	bindSocket();
 		void	acceptConnection();
-		void	parseCommands(std::string buffer, int clientFd);
+		void	registerUser(std::string buffer, int clientFd);
+		bool	isRegistered(int fd);
+		void	addUser(int fd);
+		void	closeFds();
 		void	createChannel(const std::string &name);
 		void	joinChannel(int id, const std::string &name);
 		void	leaveChannel(int id, const std::string &name);
