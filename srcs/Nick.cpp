@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:47:46 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/29 18:36:06 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 11:11:17 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ Nick::Nick() : Command::Command()
 
 Nick::~Nick()
 {
-
+	
 }
 
 void	Nick::execute(std::map<int, User *> userMap, int clientFd) const

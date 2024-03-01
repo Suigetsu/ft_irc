@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/29 13:14:15 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 11:08:14 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ class	Server
 		void	registerUser(std::string buffer, int clientFd);
 		bool	isRegistered(int fd);
 		void	addUser(int fd);
+		void	closeFds();
 };
 
 

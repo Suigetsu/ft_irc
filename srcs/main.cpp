@@ -6,13 +6,13 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:35 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/21 17:14:47 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 12:15:54 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Server.hpp"
 
-int	main(int ac, char **av)
+int	maine(int ac, char **av)
 {
 	Server	ParameterParser;
 	if (ac != 3)
@@ -35,4 +35,11 @@ int	main(int ac, char **av)
 	}
 	// ParameterParser.init(ParameterParser.getPort());
 	return (0);
+}
+
+int	main(int ac, char **av)
+{
+	int i = maine(ac, av);
+	system("leaks -q ircserv");
+	return (i);
 }

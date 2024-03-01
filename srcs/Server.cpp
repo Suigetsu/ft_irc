@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/29 18:31:26 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 12:18:23 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,23 @@ Server::Server()
 	this->registerCommand<Nick>("NICK");
 }
 
-Server::~Server() {}
+Server::~Server()
+{
+	std::map<std::string, Command *>::iterator it = this->commandsMap.begin();
+	while (it != this->commandsMap.end())
+	{
+		if (it->second)
+			delete it->second;
+		it++;
+	}
+	std::map<int, User *>::iterator uIt = this->usersMap.begin();
+	while (uIt != this->usersMap.end())
+	{
+		if (uIt->second)
+			delete uIt->second;
+		uIt++;
+	}
+}
 
 const char	*Server::errorException::what() const throw()
 {
@@ -227,7 +243,9 @@ void Server::initServer()
 			}
 		}
 	}
-	close(this->serverFd);
+	this->closeFds();
+	freeaddrinfo(this->serverAddr);
+	// close(this->serverFd);
 }
 
 bool	Server::isRegistered(int fd)
@@ -244,5 +262,15 @@ void	Server::addUser(int fd)
 	{
 		User obj;
 		this->usersMap[fd] = obj.clone(this->getPassword());
+	}
+}
+
+void	Server::closeFds()
+{
+	std::vector<struct pollfd>::iterator it = this->fds.begin();
+	while (it != this->fds.end())
+	{
+		close ((*it).fd);
+		it++;
 	}
 }
