@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/22 19:35:10 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 11:49:33 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 # include "Client.hpp"
 # include "Pass.hpp"
 # include "User.hpp"
+# include "Channel.hpp"
 # include "poll.h"
 # define BACKLOG 10
 
@@ -46,6 +47,7 @@ class	Server
 		Client clientObj;
 		std::vector<std::string> parser;
 		std::map<int, User *> usersMap;
+		std::map<std::string, std::vector<int> > channels;
 		std::map<std::string, Command *> commandsMap;
 		std::vector<struct pollfd> fds;
 	public:
@@ -69,6 +71,9 @@ class	Server
 		void	bindSocket();
 		void	acceptConnection();
 		void	parseCommands(std::string buffer, int clientFd);
+		void	createChannel(const std::string &name);
+		void	joinChannel(int id, const std::string &name);
+		void	leaveChannel(int id, const std::string &name);
 };
 
 

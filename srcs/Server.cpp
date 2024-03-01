@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/27 12:00:09 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 11:45:17 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,5 +219,44 @@ void Server::initServer()
 	// 	}
 	// }
 	close(this->serverFd);
+}
+
+void	Server::createChannel(const std::string &name)
+{
+	if (!name.empty() && name.find_first_of("&#+!") == 0)
+	{
+		if (name.length() <= 50)
+		{
+			if (this->channels.find(name) == this->channels.end())
+			{
+				// channels[name] = std::vector<int>();
+				std::cout << "Channel " << name << " has been created." << std::endl;
+			}
+			else
+				std::cout << "Channel " << name << "already exists." << std::endl;
+		}
+		else
+			std::cout << "Channel name should not exceed 50 chars." << std::endl;
+	}
+	else
+		std::cout << "Invalid channel name." << std::endl;
+}
+
+void	Server::joinChannel(int id, const std::string &name)
+{
+	if (channels.find(name) == channels.end())
+	{
+		std::cout << "Channel " << name << " does not exist." << std::endl;
+		return ;
+	}
+	if (std::find(channels[name].begin(), channels[name].end(), id) == channels[name].end())
+	{
+		
+	}
+}
+
+void	Server::leaveChannel(int id, const std::string &name)
+{
+	
 }
 
