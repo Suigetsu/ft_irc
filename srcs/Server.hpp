@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 15:29:48 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 16:50:37 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@
 # include "Client.hpp"
 # include "Pass.hpp"
 # include "User.hpp"
+# include "Channel.hpp"
 # include "Nick.hpp"
 # include "poll.h"
 # define BACKLOG 10
@@ -49,6 +50,7 @@ class	Server
 		Client clientObj;
 		std::vector<std::string> parser;
 		std::map<int, User *> usersMap;
+		std::map<std::string, std::vector<int> > channels;
 		std::map<std::string, Command *> commandsMap;
 		std::vector<struct pollfd> fds;
 		std::vector<int> registeredFds;
@@ -89,6 +91,9 @@ class	Server
 		void	bindSocket();
 		void	acceptConnection();
 		void	registerUser(std::string buffer, int clientFd);
+		void	createChannel(const std::string &name);
+		void	joinChannel(int id, const std::string &name);
+		void	leaveChannel(int id, const std::string &name);
 		bool	isRegistered(int fd);
 		void	addUser(int fd);
 		void	closeFds();

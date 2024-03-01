@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 16:28:53 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 16:50:08 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -282,3 +282,42 @@ void	Server::closeFds()
 		it++;
 	}
 }
+void	Server::createChannel(const std::string &name)
+{
+	if (!name.empty() && name.find_first_of("&#+!") == 0)
+	{
+		if (name.length() <= 50)
+		{
+			if (this->channels.find(name) == this->channels.end())
+			{
+				// channels[name] = std::vector<int>();
+				std::cout << "Channel " << name << " has been created." << std::endl;
+			}
+			else
+				std::cout << "Channel " << name << "already exists." << std::endl;
+		}
+		else
+			std::cout << "Channel name should not exceed 50 chars." << std::endl;
+	}
+	else
+		std::cout << "Invalid channel name." << std::endl;
+}
+
+void	Server::joinChannel(int id, const std::string &name)
+{
+	if (channels.find(name) == channels.end())
+	{
+		std::cout << "Channel " << name << " does not exist." << std::endl;
+		return ;
+	}
+	if (std::find(channels[name].begin(), channels[name].end(), id) == channels[name].end())
+	{
+		
+	}
+}
+
+void	Server::leaveChannel(int id, const std::string &name)
+{
+	
+}
+
