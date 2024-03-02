@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 17:56:10 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/02 10:17:25 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -288,7 +288,7 @@ void	Server::closeFds()
 		it++;
 	}
 }
-void	Server::createChannel(const std::string &name)
+void	Server::joinChannel(int id, const std::string &name)
 {
 	if (!name.empty() && name.find_first_of("&#+!") == 0)
 	{
@@ -296,11 +296,22 @@ void	Server::createChannel(const std::string &name)
 		{
 			if (this->channels.find(name) == this->channels.end())
 			{
-				// channels[name] = std::vector<int>();
+				this->channels[name] = std::vector<int>();
+				// this->channels[name].push_back(id);
 				std::cout << "Channel " << name << " has been created." << std::endl;
 			}
 			else
 				std::cout << "Channel " << name << "already exists." << std::endl;
+			if (this->channels[name].empty())
+			{
+				this->channels[name].push_back(id);
+				std::cout << "User " << id << " is the operator of channel " << name << std::endl;
+			}
+			if (std::find(this->channels[name].begin(), this->channels[name].end(), id) == this->channels[name].end())
+			{
+				this->channels[name].push_back(id);
+				std::cout << "User " << id << " has joined the channel " << name << std::endl;
+			}
 		}
 		else
 			std::cout << "Channel name should not exceed 50 chars." << std::endl;
@@ -309,18 +320,15 @@ void	Server::createChannel(const std::string &name)
 		std::cout << "Invalid channel name." << std::endl;
 }
 
-void	Server::joinChannel(int id, const std::string &name)
-{
-	if (channels.find(name) == channels.end())
-	{
-		std::cout << "Channel " << name << " does not exist." << std::endl;
-		return ;
-	}
-	if (std::find(channels[name].begin(), channels[name].end(), id) == channels[name].end())
-	{
+// void	Server::joinChannel(int id, const std::string &name)
+// {
+// 	if (channels.find(name) == channels.end())
+// 		createChannel(name);
+// 	if (std::find(channels[name].begin(), channels[name].end(), id) == channels[name].end())
+// 	{
 		
-	}
-}
+// 	}
+// }
 
 void	Server::leaveChannel(int id, const std::string &name)
 {

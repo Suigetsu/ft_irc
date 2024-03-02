@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 17:55:38 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/02 10:18:16 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ class	Server
 		bool	isRegistered(int fd);
 		void	addUser(int fd);
 		void	closeFds();
-		void	createChannel(const std::string &name);
+		void	createChannel(int id, const std::string &name);
 		void	joinChannel(int id, const std::string &name);
 		void	leaveChannel(int id, const std::string &name);
 		void	parseCommand(std::string command, int fd);
