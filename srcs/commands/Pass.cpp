@@ -6,11 +6,11 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 18:18:31 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 15:37:33 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/02 10:31:20 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Pass.hpp"
+#include "../includes/Pass.hpp"
 
 Pass::Pass() : Command::Command()
 {

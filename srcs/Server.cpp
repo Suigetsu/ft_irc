@@ -6,11 +6,11 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/02 10:17:25 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/02 10:33:19 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
+#include "./includes/Server.hpp"
 
 bool Server::status = false;
 
@@ -208,7 +208,7 @@ void	Server::registerUser(std::string buffer, int clientFd)
 
 void	Server::parseCommand(std::string command, int fd)
 {
-	
+	(void) command, (void) fd;
 }
 
 void Server::initServer()

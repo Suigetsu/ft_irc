@@ -6,11 +6,11 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:47:46 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 15:38:10 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/02 10:31:17 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Nick.hpp"
+#include "../includes/Nick.hpp"
 
 Nick::Nick() : Command::Command()
 {

@@ -6,11 +6,11 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 16:00:01 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/29 18:32:30 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/02 10:27:44 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "User.hpp"
+#include "./includes/User.hpp"
 
 User::User() {}
 

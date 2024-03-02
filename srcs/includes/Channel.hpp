@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:19:56 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/02 10:12:35 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/02 10:29:04 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include "User.hpp"
 
 class Channel
 {
@@ -32,9 +33,9 @@ class Channel
         const std::string getName() const;
         const std::string getPassword() const;
         const std::string getTopic() const;
-        const std::vector<int> &getUsers() const;
-        void  addUser(int id);
-        void  removeUser(int id);
+        const std::vector<User *> &getUsers() const;
+        // void  addUser(int id);
+        // void  removeUser(int id);
         bool  isOperator(int id);
 };
 
