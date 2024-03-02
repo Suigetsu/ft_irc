@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 16:59:40 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/02 08:44:07 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ class	Server
 		bool	isRegistered(int fd);
 		void	addUser(int fd);
 		void	closeFds();
-		void	createChannel(const std::string &name);
+		void	createChannel(int id, const std::string &name);
 		void	joinChannel(int id, const std::string &name);
 		void	leaveChannel(int id, const std::string &name);
 };
