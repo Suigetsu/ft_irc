@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 16:59:37 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/01 17:56:10 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,11 +195,20 @@ void	Server::registerUser(std::string buffer, int clientFd)
 		return ;
 	}
 	if (flag == 1)
+	{
 		send(clientFd, RPL_WELCOME(this->usersMap[clientFd]->getNickname(), \
 			this->usersMap[clientFd]->getUsername(), this->usersMap[clientFd]->getHost()).c_str(), \
 			RPL_WELCOME(this->usersMap[clientFd]->getNickname(), \
 			this->usersMap[clientFd]->getUsername(), this->usersMap[clientFd]->getHost()).length(), 0);
+		this->registeredFds.push_back(clientFd);
+		this->usersMap[clientFd]->setAuth(true);
+	}
 	flag = 0;
+}
+
+void	Server::parseCommand(std::string command, int fd)
+{
+	
 }
 
 void Server::initServer()
@@ -234,20 +243,17 @@ void Server::initServer()
 						case 0:
 							std::cout << "connection closed by the client " << this->fds[i].fd << std::endl;
 							close(this->fds[i].fd);
+							delete this->usersMap[this->fds[i].fd];
+							this->usersMap.erase(this->fds[i].fd);
+							this->registeredFds.erase(std::find(this->registeredFds.begin(), this->registeredFds.end(), this->fds[i].fd));
 							break ;
 						default:
+							buffer[bread] = '\0';
 							if (this->isRegistered(this->fds[i].fd))
-								std::cout << "client " << this->fds[i].fd << " is registered!" << std::endl;
+								this->parseCommand(buffer, this->fds[i].fd);
 							else
-							{
-								buffer[bread] = '\0';
-								std::cout << "client " << this->fds[i].fd << ": " << buffer << std::endl;
-								// this->registeredFds.push_back(this->fds[i].fd);
 								this->registerUser(buffer, this->fds[i].fd);
-							}
 					}
-					std::cout << "-------" << std::endl;
-					sleep(2);
 				}
 			}
 		}
@@ -318,6 +324,6 @@ void	Server::joinChannel(int id, const std::string &name)
 
 void	Server::leaveChannel(int id, const std::string &name)
 {
-	
+	(void) id, (void) name;
 }
 
