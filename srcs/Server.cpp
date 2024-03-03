@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/02 10:33:19 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/03 11:48:14 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,9 +206,35 @@ void	Server::registerUser(std::string buffer, int clientFd)
 	flag = 0;
 }
 
+bool	Server::doesCommandExist(std::string name)
+{
+	std::map<std::string, Command *>::iterator it = this->commandsMap.find(name);
+	if (it != this->commandsMap.end())
+		return (true);
+	return (false);
+}
+
+void	Server::launchCommand(std::string cmd, std::string args, int fd)
+{
+	(void) cmd, (void) args, (void) fd;
+}
+
 void	Server::parseCommand(std::string command, int fd)
 {
-	(void) command, (void) fd;
+	try
+	{
+		(void) fd;
+		std::cout << "the whole command: " << command << std::endl;
+		std::string key = command.substr(0, command.find(" "));
+		if (key.empty() || !this->doesCommandExist(key))
+			throw(Command::unknownCommandException());
+		command.erase(0, command.find(" ") + 1);
+		this->launchCommand(key, command, fd);
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+	}
 }
 
 void Server::initServer()
