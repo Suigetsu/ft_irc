@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:54:50 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/02 10:28:58 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/02 17:30:34 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ Channel::Channel()
     
 }
 
-Channel::Channel(const std::string &name, std::string &password) : name(name), password(password)
+Channel::Channel(const std::string &name, const std::string &password) : name(name), password(password)
 {
 
 }
@@ -26,26 +26,68 @@ const std::string Channel::getName() const
 {
     return this->name;
 }
-const std::vector<User *> &Channel::getUsers() const
+const std::vector<User> &Channel::getUsers() const
 {
     return this->users;
 }
 
-// void  Channel::addUser(int id)
-// {
-//     if (std::find(users.begin(), users.end(), id) == users.end())
-//         this->users.push_back(id);
-//     std::cout << "User is already in the channel." << std::endl;
-// }
+ const std::string Channel::getPassword() const
+ {
+    return this->password;
+ }
+ 
+void  Channel::addUser(User user)
+{
+    if (std::find(users.begin(), users.end(), user) == users.end())
+        this->users.push_back(user);
+    std::cout << "User is already in the channel." << std::endl;
+}
 
-// void  Channel::removeUser(int id)
-// {
-//     std::vector<int>::iterator it = std::find(users.begin(), users.end(), id);
-//     if (it != users.end())
-//     {
-//         users.erase(it);
-//         std::cout << "User with ID: " << id << " has been removed from the channel." << std::endl;
-//     }
-//     else
-//         std::cout << "User with ID: " << id << " is not in the channel." << std::endl;
-// }
+void  Channel::removeUser(User user)
+{
+    std::vector<User>::iterator it = std::find(users.begin(), users.end(), user);
+    if (it != users.end())
+    {
+        std::cout << "User : " << user.getNickname() << " has been removed from the channel." << std::endl;
+        users.erase(it);
+    }
+    else
+        std::cout << "User : " << user.getNickname() << " is not in the channel." << std::endl;
+}
+
+bool    Channel::isOperator(User user) const
+{
+    return std::find(chanops.begin(), chanops.end(), user) != chanops.end();
+}
+
+void  Channel::setMode(User op, const std::string &mode)
+{
+    if (isOperator(op))
+    {
+        for (int i = 0; i < this->mode.length(); i++)
+        {
+            char c = this->mode[i];
+            switch (c)
+            {
+            case 'i':
+                Channel::setInviteOnlyMode();
+                break;
+            case 't':
+                Channel::setTopicRestriction();
+                break;
+            case 'k':
+                Channel::setChannelKey();
+                break;
+            case 'o':
+                Channel::grantOperatorPriv();
+                break;
+            case 'l':
+                Channel::setUserLimit();
+                break;
+            default:
+                std::cout << "Invalid mode: " << mode << std::endl;
+                break;
+            }
+        }
+    }
+}
