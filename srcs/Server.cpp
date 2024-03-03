@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/03 11:53:56 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/03 14:14:55 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -332,7 +332,11 @@ void	Server::joinChannel(User user, const std::string &name)
 				this->channels[name]->addUser(user);
 				std::cout << "User " << user.getNickname() << " is the operator of channel " << name << std::endl;
 			}
-			//
+			if (this->channels[name]->setInviteOnlyMode() && !this->channels[name]->isOperator(user))
+			{
+				std::cout << "User " << user.getNickname() << " needs an invitaion." << std::endl;
+				return ;
+			}
 			if (std::find(this->channels[name]->getUsers().begin(), this->channels[name]->getUsers().end(), user) == this->channels[name]->getUsers().end())
 			{
 				this->channels[name]->addUser(user);
