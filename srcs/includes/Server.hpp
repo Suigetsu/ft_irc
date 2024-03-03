@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/02 17:20:41 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/03 11:54:16 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class	Server
 		Client clientObj;
 		std::vector<std::string> parser;
 		std::map<int, User *> usersMap;
-		std::map<std::string, std::vector<int> > channels;
+		std::map<std::string, Channel *> channels;
 		std::map<std::string, Command *> commandsMap;
 		std::vector<struct pollfd> fds;
 		std::vector<int> registeredFds;
@@ -94,8 +94,7 @@ class	Server
 		bool	isRegistered(int fd);
 		void	addUser(int fd);
 		void	closeFds();
-		void	createChannel(int id, const std::string &name);
-		void	joinChannel(int id, const std::string &name);
+		void	joinChannel(User user, const std::string &name);
 		void	leaveChannel(int id, const std::string &name);
 		void	parseCommand(std::string command, int fd);
 		bool	doesCommandExist(std::string cmdName);
