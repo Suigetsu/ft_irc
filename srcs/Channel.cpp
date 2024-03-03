@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:54:50 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/02 17:30:34 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/03 13:03:25 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,27 @@ void  Channel::removeUser(User user)
 bool    Channel::isOperator(User user) const
 {
     return std::find(chanops.begin(), chanops.end(), user) != chanops.end();
+}
+
+bool  setInviteOnlyMode()
+{
+    
+}
+bool  setTopicRestriction()
+{
+    
+}
+bool  setChannelKey()
+{
+    
+}
+bool  grantOperatorPriv()
+{
+    
+}
+bool  setUserLimit()
+{
+    
 }
 
 void  Channel::setMode(User op, const std::string &mode)

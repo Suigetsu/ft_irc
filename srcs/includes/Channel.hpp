@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:19:56 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/02 17:18:18 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/03 13:02:47 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,11 +41,11 @@ class Channel
         void  inviteUser(User op, User user);
         void  setTopic(User op, const std::string &topic);
         void  setMode(User op, const std::string &mode);
-        void  setInviteOnlyMode();
-        void  setTopicRestriction();
-        void  setChannelKey();
-        void  grantOperatorPriv();
-        void  setUserLimit();
+        bool  setInviteOnlyMode();
+        bool  setTopicRestriction();
+        bool  setChannelKey();
+        bool  grantOperatorPriv();
+        bool  setUserLimit();
         
 };
 
