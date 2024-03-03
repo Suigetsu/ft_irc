@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/03 15:39:05 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/03 17:14:51 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ void	Server::registerUser(std::string buffer, int clientFd)
 			this->addUser(clientFd);
 		if (buffer.find("PASS") != std::string::npos)
 		{
-			std::string line = buffer.substr(0, buffer.find("\r\n"));
+			std::string line = buffer.substr(0, buffer.find("\n"));
 			line.erase(0, line.find(" ") + 1);
 			this->usersMap[clientFd]->setUserPass(line);
 			this->commandsMap["PASS"]->execute(this->usersMap, clientFd);
@@ -162,7 +162,7 @@ void	Server::registerUser(std::string buffer, int clientFd)
 		}
 		if (buffer.find("NICK")!= std::string::npos)
 		{
-			std::string line = buffer.substr(0, buffer.find("\r\n"));
+			std::string line = buffer.substr(0, buffer.find("\n"));
 			line.erase(0, line.find(" ") + 1);
 			this->usersMap[clientFd]->setNickHelper(line);
 			this->commandsMap["NICK"]->execute(this->usersMap, clientFd);
@@ -184,7 +184,7 @@ void	Server::registerUser(std::string buffer, int clientFd)
 			line = buffer.substr(0, buffer.find(" :"));
 			this->usersMap[clientFd]->setHost(line);
 			buffer.erase(0, buffer.find(":") + 1);
-			line = buffer.substr(0, buffer.find("\r\n"));
+			line = buffer.substr(0, buffer.find("\n"));
 			this->usersMap[clientFd]->setRealname(line);
 			flag = 1;
 		}
@@ -216,7 +216,7 @@ bool	Server::doesCommandExist(std::string name)
 
 void	Server::launchCommand(std::map<int, std::string>cmd, int fd)
 {
-	;
+	(void) cmd, (void) fd;
 }
 
 void	Server::parseCommand(std::string command, int fd)
