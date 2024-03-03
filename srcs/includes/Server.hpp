@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/02 11:53:43 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/03 11:56:20 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,8 @@ class	Server
 		void	joinChannel(User user, const std::string &name);
 		void	leaveChannel(int id, const std::string &name);
 		void	parseCommand(std::string command, int fd);
+		bool	doesCommandExist(std::string cmdName);
+		void	launchCommand(std::string cmd, std::string args, int fd);
 };
 
 

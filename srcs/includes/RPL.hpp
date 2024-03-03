@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   RPL.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 15:27:02 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 16:40:09 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/02 11:49:27 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,3 +16,4 @@
 #include <iostream>
 
 #define RPL_WELCOME(nick, user, host) (":localhost 001 HexChat :Welcome to the ircserv Network, " + nick + "[!" + user + "@" + host + "]\r\n")
+#define RPL_YOURHOST ":localhost 002 HexChat :Your host is ircserv, running version 1\r\n"
