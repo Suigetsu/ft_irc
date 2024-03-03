@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/03 14:14:55 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/03 15:39:05 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,22 +214,30 @@ bool	Server::doesCommandExist(std::string name)
 	return (false);
 }
 
-void	Server::launchCommand(std::string cmd, std::string args, int fd)
+void	Server::launchCommand(std::map<int, std::string>cmd, int fd)
 {
-	(void) cmd, (void) args, (void) fd;
+	;
 }
 
 void	Server::parseCommand(std::string command, int fd)
 {
 	try
 	{
-		(void) fd;
-		std::cout << "the whole command: " << command << std::endl;
-		std::string key = command.substr(0, command.find(" "));
-		if (key.empty() || !this->doesCommandExist(key))
+		int i = 0;
+		std::map<int, std::string> cmd;
+		std::istringstream iss(command);
+    	std::string token;
+    	while (std::getline(iss, token, ' '))
+		{
+        	cmd[i] = token;
+			i++;
+		}
+		if (cmd[COMMAND].empty() || !this->doesCommandExist(cmd[COMMAND]))
+		{
+			send(fd, ERR_UNKNOWNCOMMAND(cmd[COMMAND]).c_str(), ERR_UNKNOWNCOMMAND(cmd[COMMAND]).length(), 0);
 			throw(Command::unknownCommandException());
-		command.erase(0, command.find(" ") + 1);
-		this->launchCommand(key, command, fd);
+		}
+		this->launchCommand(cmd, fd);
 	}
 	catch(const std::exception& e)
 	{
@@ -316,38 +324,39 @@ void	Server::closeFds()
 }
 void	Server::joinChannel(User user, const std::string &name)
 {
-	if (!name.empty() && name.find_first_of("&#+!") == 0)
-	{
-		if (name.length() <= 50)
-		{
-			if (this->channels.find(name) == this->channels.end())
-			{
-				this->channels[name] = new Channel(name, "");
-				std::cout << "Channel " << name << " has been created." << std::endl;
-			}
-			else
-				std::cout << "Channel " << name << "already exists." << std::endl;
-			if (this->channels[name]->getUsers().empty())
-			{
-				this->channels[name]->addUser(user);
-				std::cout << "User " << user.getNickname() << " is the operator of channel " << name << std::endl;
-			}
-			if (this->channels[name]->setInviteOnlyMode() && !this->channels[name]->isOperator(user))
-			{
-				std::cout << "User " << user.getNickname() << " needs an invitaion." << std::endl;
-				return ;
-			}
-			if (std::find(this->channels[name]->getUsers().begin(), this->channels[name]->getUsers().end(), user) == this->channels[name]->getUsers().end())
-			{
-				this->channels[name]->addUser(user);
-				std::cout << "User " << user.getNickname() << " has joined the channel " << name << std::endl;
-			}
-		}
-		else
-			std::cout << "Channel name should not exceed 50 chars." << std::endl;
-	}
-	else
-		std::cout << "Invalid channel name." << std::endl;
+	(void) user, (void) name;
+	// if (!name.empty() && name.find_first_of("&#+!") == 0)
+	// {
+	// 	if (name.length() <= 50)
+	// 	{
+	// 		if (this->channels.find(name) == this->channels.end())
+	// 		{
+	// 			this->channels[name] = new Channel(name, "");
+	// 			std::cout << "Channel " << name << " has been created." << std::endl;
+	// 		}
+	// 		else
+	// 			std::cout << "Channel " << name << "already exists." << std::endl;
+	// 		if (this->channels[name]->getUsers().empty())
+	// 		{
+	// 			this->channels[name]->addUser(user);
+	// 			std::cout << "User " << user.getNickname() << " is the operator of channel " << name << std::endl;
+	// 		}
+	// 		if (this->channels[name]->setInviteOnlyMode() && !this->channels[name]->isOperator(user))
+	// 		{
+	// 			std::cout << "User " << user.getNickname() << " needs an invitaion." << std::endl;
+	// 			return ;
+	// 		}
+	// 		if (std::find(this->channels[name]->getUsers().begin(), this->channels[name]->getUsers().end(), user) == this->channels[name]->getUsers().end())
+	// 		{
+	// 			this->channels[name]->addUser(user);
+	// 			std::cout << "User " << user.getNickname() << " has joined the channel " << name << std::endl;
+	// 		}
+	// 	}
+	// 	else
+	// 		std::cout << "Channel name should not exceed 50 chars." << std::endl;
+	// }
+	// else
+	// 	std::cout << "Invalid channel name." << std::endl;
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/03 14:15:30 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/03 15:32:52 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define SERVER_HPP
 
 # include <iostream>
+# include <sstream>
 # include <sys/socket.h>
 # include <unistd.h>
 # include <netdb.h>
@@ -35,7 +36,12 @@
 # include "Nick.hpp"
 # include "Channel.hpp"
 # include "poll.h"
+
 # define BACKLOG 10
+# define COMMAND 0
+# define FIRST_PARAM 1
+# define SECOND_PARAM 2
+# define THIRD_PARAM 3
 
 class	Server
 {
@@ -98,7 +104,7 @@ class	Server
 		void	leaveChannel(int id, const std::string &name);
 		void	parseCommand(std::string command, int fd);
 		bool	doesCommandExist(std::string cmdName);
-		void	launchCommand(std::string cmd, std::string args, int fd);
+		void	launchCommand(std::map<int, std::string>cmd, int fd);
 };
 
 

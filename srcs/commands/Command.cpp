@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 12:22:39 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/02 16:50:32 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/03 14:37:13 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Command::Command()
 {
-	
+
 }
 
 Command::~Command()
@@ -32,12 +32,3 @@ const char  *Command::unknownCommandException::what() const throw()
     return ("Unknown command");
 }
 
-void    Command::setName(std::string name)
-{
-    this->name = name;
-}
-
-const std::string   Command::getName() const
-{
-    return (this->name);
-}
