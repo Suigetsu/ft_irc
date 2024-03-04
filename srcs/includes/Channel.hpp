@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:19:56 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/03 13:02:47 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/04 15:45:30 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,8 @@ class Channel
         bool  setChannelKey();
         bool  grantOperatorPriv();
         bool  setUserLimit();
-        
+        void  leaveChannel(User user, const std::string &name);
+        void  joinChannel(User user, const std::string &name);
 };
 
 #endif

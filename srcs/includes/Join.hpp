@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Nick.hpp                                           :+:      :+:    :+:   */
+/*   Join.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/28 16:47:53 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 16:33:15 by hrahmane         ###   ########.fr       */
+/*   Created: 2024/03/04 16:01:24 by hrahmane          #+#    #+#             */
+/*   Updated: 2024/03/04 16:32:32 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,13 @@
 #include "User.hpp"
 #include "Command.hpp"
 
-class Nick : public Command
+class Command;
+
+class	Join : public Command
 {
 	public:
-		Nick();
-		~Nick();
+		Join();
+		~Join();
 		void	execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const;
-		Nick	*clone() const;
-		bool	doesNameExist(std::map<int, User *> userMap, std::string name) const;
-		bool	containsRestrictedChar(std::string name) const;
+		Join	*clone() const;
 };

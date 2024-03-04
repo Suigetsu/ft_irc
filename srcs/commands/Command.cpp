@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 12:22:39 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/03 14:37:13 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/04 16:35:39 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,4 +31,3 @@ const char  *Command::unknownCommandException::what() const throw()
 {
     return ("Unknown command");
 }
-

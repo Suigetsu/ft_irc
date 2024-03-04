@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 14:43:06 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/04 17:10:01 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ void	Server::registerUser(std::string buffer, int clientFd)
 			line.erase(0, line.find(" ") + 1);
 			line = line.substr(0, line.find("\r"));
 			this->usersMap[clientFd]->setUserPass(line);
-			this->commandsMap["PASS"]->execute(this->usersMap, clientFd);
+			this->commandsMap["PASS"]->execute(this->usersMap, this->channels, clientFd);
 			buffer.erase(0, buffer.find("\n") + 1);
 		}
 		if (buffer.find("NICK")!= std::string::npos)
@@ -166,7 +166,7 @@ void	Server::registerUser(std::string buffer, int clientFd)
 			std::string line = buffer.substr(0, buffer.find("\n"));
 			line.erase(0, line.find(" ") + 1);
 			this->usersMap[clientFd]->setNickHelper(line);
-			this->commandsMap["NICK"]->execute(this->usersMap, clientFd);
+			this->commandsMap["NICK"]->execute(this->usersMap, this->channels, clientFd);
 			this->usersMap[clientFd]->setNickname(line);
 			buffer.erase(0, buffer.find("\n") + 1);
 		}
@@ -217,7 +217,8 @@ bool	Server::doesCommandExist(std::string name)
 
 void	Server::launchCommand(std::map<int, std::string>cmd, int fd)
 {
-	this->commandsMap[cmd[COMMAND]]->execute(this->usersMap, fd);
+	(void) cmd, (void) fd;
+	this->commandsMap[cmd[COMMAND]]->execute(this->usersMap, this->channels, fd);
 }
 
 void	Server::handleRegisteredCommand(std::string command, int fd)
@@ -316,46 +317,6 @@ void	Server::closeFds()
 		it++;
 	}
 }
-void	Server::joinChannel(User user, const std::string &name)
-{
-	(void) user, (void) name;
-	// if (!name.empty() && name.find_first_of("&#+!") == 0)
-	// {
-	// 	if (name.length() <= 50)
-	// 	{
-	// 		if (this->channels.find(name) == this->channels.end())
-	// 		{
-	// 			this->channels[name] = new Channel(name, "");
-	// 			std::cout << "Channel " << name << " has been created." << std::endl;
-	// 		}
-	// 		else
-	// 			std::cout << "Channel " << name << "already exists." << std::endl;
-	// 		if (this->channels[name]->getUsers().empty())
-	// 		{
-	// 			this->channels[name]->addUser(user);
-	// 			std::cout << "User " << user.getNickname() << " is the operator of channel " << name << std::endl;
-	// 		}
-	// 		if (this->channels[name]->setInviteOnlyMode() && !this->channels[name]->isOperator(user))
-	// 		{
-	// 			std::cout << "User " << user.getNickname() << " needs an invitaion." << std::endl;
-	// 			return ;
-	// 		}
-	// 		if (std::find(this->channels[name]->getUsers().begin(), this->channels[name]->getUsers().end(), user) == this->channels[name]->getUsers().end())
-	// 		{
-	// 			this->channels[name]->addUser(user);
-	// 			std::cout << "User " << user.getNickname() << " has joined the channel " << name << std::endl;
-	// 		}
-	// 	}
-	// 	else
-	// 		std::cout << "Channel name should not exceed 50 chars." << std::endl;
-	// }
-	// else
-	// 	std::cout << "Invalid channel name." << std::endl;
-}
 
 
-void	Server::leaveChannel(int id, const std::string &name)
-{
-	(void) id, (void) name;
-}
 

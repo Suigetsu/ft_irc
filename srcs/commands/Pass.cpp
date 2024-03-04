@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Pass.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 18:18:31 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/02 10:31:20 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/04 16:35:54 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,9 @@ Pass::~Pass()
 
 }
 
-void	Pass::execute(std::map<int, User *> userMap, int clientFd) const
+void	Pass::execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const
 {
+	(void) chan;
 	if (userMap[clientFd]->getUserPass() != userMap[clientFd]->getServerPass())
 	{
 		send(clientFd, ERR_PASSWDMISMATCH, sizeof(ERR_PASSWDMISMATCH), 0);

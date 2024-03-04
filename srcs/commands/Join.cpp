@@ -1,27 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Nick.hpp                                           :+:      :+:    :+:   */
+/*   Join.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/28 16:47:53 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 16:33:15 by hrahmane         ###   ########.fr       */
+/*   Created: 2024/03/04 16:01:56 by hrahmane          #+#    #+#             */
+/*   Updated: 2024/03/04 16:42:37 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#include "../includes/Join.hpp"
 
-#include "User.hpp"
-#include "Command.hpp"
-
-class Nick : public Command
+Join::Join() : Command::Command()
 {
-	public:
-		Nick();
-		~Nick();
-		void	execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const;
-		Nick	*clone() const;
-		bool	doesNameExist(std::map<int, User *> userMap, std::string name) const;
-		bool	containsRestrictedChar(std::string name) const;
-};
+	
+}
+
+Join::~Join()
+{
+
+}
+
+void	Join::execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const
+{
+	
+}
+
+Join	*Join::clone() const
+{
+	return (new Join);
+}

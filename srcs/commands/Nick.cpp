@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:47:46 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/03 14:36:50 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/04 16:36:04 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,8 +22,9 @@ Nick::~Nick()
 	
 }
 
-void	Nick::execute(std::map<int, User *> userMap, int clientFd) const
+void	Nick::execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const
 {
+	(void) chan;
 	if (this->doesNameExist(userMap, userMap[clientFd]->getNickHelper()))
 	{
 		send(clientFd, ERR_NICKNAMEINUSE(userMap[clientFd]->getNickHelper()).c_str(), \
