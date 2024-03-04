@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Pass.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 12:24:40 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/01 15:31:23 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/04 16:33:20 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,6 @@ class	Pass : public Command
 	public:
 		Pass();
 		~Pass();
-		void	execute(std::map<int, User *> userMap, int clientFd) const;
+		void	execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const;
 		Pass	*clone() const;
 };

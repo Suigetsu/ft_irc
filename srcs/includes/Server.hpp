@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 11:18:42 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/04 15:59:34 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,8 +100,8 @@ class	Server
 		bool	isRegistered(int fd);
 		void	addUser(int fd);
 		void	closeFds();
+		bool    doesChannelExist();
 		void	joinChannel(User user, const std::string &name);
-		void	leaveChannel(int id, const std::string &name);
 		void	handleRegisteredCommand(std::string command, int fd);
 		bool	doesCommandExist(std::string cmdName);
 		void	launchCommand(std::map<int, std::string>cmd, int fd);
