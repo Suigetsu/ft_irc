@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 11:22:13 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/04 14:43:06 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,7 @@ bool	Server::doesCommandExist(std::string name)
 
 void	Server::launchCommand(std::map<int, std::string>cmd, int fd)
 {
-	(void) cmd, (void) fd;
+	this->commandsMap[cmd[COMMAND]]->execute(this->usersMap, fd);
 }
 
 void	Server::handleRegisteredCommand(std::string command, int fd)
