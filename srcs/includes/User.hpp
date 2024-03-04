@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:36:18 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/02/29 18:31:57 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/04 11:15:08 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,12 @@
 
 #include "Client.hpp"
 #include <string>
+#include <sstream>
+
+# define COMMAND 0
+# define FIRST_PARAM 1
+# define SECOND_PARAM 2
+# define THIRD_PARAM 3
 
 class User {
 private:
@@ -25,6 +31,7 @@ private:
 	std::string host;
 	std::string realname;
 	std::string nicknameHelper;
+	std::map<int, std::string> cmd;
 	bool auth;
 
 public:
@@ -47,6 +54,8 @@ public:
 	std::string getRealname();
 	std::string	getNickHelper();
 	bool isAuth();
+	void	parseCommand(std::string command);
+	std::map<int, std::string> getCommand();
 };
 
 #endif

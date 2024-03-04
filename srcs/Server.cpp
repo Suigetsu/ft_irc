@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/03 17:14:51 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/04 11:22:13 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,7 @@ void	Server::registerUser(std::string buffer, int clientFd)
 		{
 			std::string line = buffer.substr(0, buffer.find("\n"));
 			line.erase(0, line.find(" ") + 1);
+			line = line.substr(0, line.find("\r"));
 			this->usersMap[clientFd]->setUserPass(line);
 			this->commandsMap["PASS"]->execute(this->usersMap, clientFd);
 			buffer.erase(0, buffer.find("\n") + 1);
@@ -219,25 +220,18 @@ void	Server::launchCommand(std::map<int, std::string>cmd, int fd)
 	(void) cmd, (void) fd;
 }
 
-void	Server::parseCommand(std::string command, int fd)
+void	Server::handleRegisteredCommand(std::string command, int fd)
 {
 	try
 	{
-		int i = 0;
-		std::map<int, std::string> cmd;
-		std::istringstream iss(command);
-    	std::string token;
-    	while (std::getline(iss, token, ' '))
+		this->usersMap[fd]->parseCommand(command);
+		if(!this->doesCommandExist(this->usersMap[fd]->getCommand()[COMMAND]))
 		{
-        	cmd[i] = token;
-			i++;
-		}
-		if (cmd[COMMAND].empty() || !this->doesCommandExist(cmd[COMMAND]))
-		{
-			send(fd, ERR_UNKNOWNCOMMAND(cmd[COMMAND]).c_str(), ERR_UNKNOWNCOMMAND(cmd[COMMAND]).length(), 0);
+			send(fd, ERR_UNKNOWNCOMMAND(this->usersMap[fd]->getCommand()[COMMAND]).c_str(), \
+				ERR_UNKNOWNCOMMAND(this->usersMap[fd]->getCommand()[COMMAND]).length(), 0);
 			throw(Command::unknownCommandException());
 		}
-		this->launchCommand(cmd, fd);
+		this->launchCommand(this->usersMap[fd]->getCommand(), fd);
 	}
 	catch(const std::exception& e)
 	{
@@ -284,7 +278,7 @@ void Server::initServer()
 						default:
 							buffer[bread] = '\0';
 							if (this->isRegistered(this->fds[i].fd))
-								this->parseCommand(buffer, this->fds[i].fd);
+								this->handleRegisteredCommand(buffer, this->fds[i].fd);
 							else
 								this->registerUser(buffer, this->fds[i].fd);
 					}

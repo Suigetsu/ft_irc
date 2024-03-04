@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 16:00:01 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/02 10:27:44 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/04 11:19:58 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,4 +103,21 @@ std::string	User::getRealname()
 std::string	User::getNickHelper()
 {
 	return (this->nicknameHelper);
+}
+
+void	User::parseCommand(std::string command)
+{
+	int i = 0;
+	std::istringstream iss(command);
+	std::string token;
+	while (std::getline(iss, token, ' '))
+	{
+		this->cmd[i] = token;
+		i++;
+	}
+}
+
+std::map<int, std::string>	User::getCommand()
+{
+	return (this->cmd);
 }
