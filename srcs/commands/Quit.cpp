@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:48:03 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 15:48:22 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/04 18:24:41 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,16 @@ Quit::~Quit()
 
 }
 
-void	Quit::execute(std::map<int, User *> userMap, int clientFd) const
+void	Quit::execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const
 {
-	if (userMap[clientFd]->getCommand().size() < 3)
-	{
-		if (userMap[clientFd]->getCommand().size() == 2)
-		{
-			send(clientFd, ERR_NOTEXTTOSEND, sizeof(ERR_NOTEXTTOSEND), 0);
-			return ;
-		}
-		send(clientFd, ERR_NORECIPIENT(userMap[clientFd]->getCommand()[COMMAND]).c_str(), \
-			ERR_NORECIPIENT(userMap[clientFd]->getCommand()[COMMAND]).length(), 0);
-		return ;
-	}
-	
+	(void)chan;
+	std::string reason;
+	if (userMap[clientFd]->getCommand().size() == 1)
+		reason = "Leaving";
+	else
+		reason = userMap[clientFd]->getCommand()[FIRST_PARAM];
+	send(clientFd, QUIT_MSG(userMap[clientFd]->getNickname(),userMap[clientFd]->getUsername(),userMap[clientFd]->getHost(), reason).c_str(), \
+		QUIT_MSG(userMap[clientFd]->getNickname(),userMap[clientFd]->getUsername(),userMap[clientFd]->getHost(), reason).length(), 0);
 }
 
 Quit	*Quit::clone() const

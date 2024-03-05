@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Pass.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 18:18:31 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 16:35:54 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/05 13:19:04 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,15 +22,27 @@ Pass::~Pass()
 
 }
 
-void	Pass::execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const
+void	Pass::execute(std::map<int, User *> users, std::map<std::string, Channel *> chan, int fd) const
 {
 	(void) chan;
-	if (userMap[clientFd]->getUserPass() != userMap[clientFd]->getServerPass())
+	if (users[fd]->isAuth() == true)
 	{
-		send(clientFd, ERR_PASSWDMISMATCH, sizeof(ERR_PASSWDMISMATCH), 0);
-		userMap[clientFd]->setAuth(false);
+		send(fd, ERR_ALREADYREGISTERED, sizeof(ERR_ALREADYREGISTERED), 0);
+		return ;
+	}
+	if (users[fd]->getCommand().size() < 2)
+	{
+		send(fd, ERR_NEEDMOREPARAMS(users[fd]->getCommand()[COMMAND]).c_str(), \
+			ERR_NEEDMOREPARAMS(users[fd]->getCommand()[COMMAND]).length(), 0);
 		throw (Pass::registrationException());
 	}
+	std::cout << "this is our pw: " << users[fd]->getCommand()[FIRST_PARAM] << " and this is the servers pw: " << users[fd]->getServerPass() << std::endl;
+	if (users[fd]->getCommand()[FIRST_PARAM] != users[fd]->getServerPass())
+	{
+		send(fd, ERR_PASSWDMISMATCH, sizeof(ERR_PASSWDMISMATCH), 0);
+		throw (Pass::registrationException());
+	}
+	users[fd]->setUserPass(users[fd]->getCommand()[FIRST_PARAM]);
 }
 
 Pass	*Pass::clone() const
