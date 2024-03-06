@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 12:30:19 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/05 15:31:16 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/06 16:07:09 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	UserCmd::execute(std::map<int, User *> users, std::map<std::string, Channel
 		throw (UserCmd::registrationException());
 	}
 	params = this->parseParams(users[fd]->getCommand(), fd);
-	users[fd]->setUsername("~" + params[0]);
+	users[fd]->setUsername(params[0]);
 	users[fd]->setHost(params[2]);
 	users[fd]->setRealname(params[3]);
 	users[fd]->setAuth(true);
