@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/05 17:33:28 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/06 15:31:00 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,14 @@ void	Server::createServerSocket()
 	std::memset(&this->hints, 0, sizeof(this->hints));
 	this->hints.ai_family = AF_INET;
 	this->hints.ai_socktype = SOCK_STREAM;
+	this->hints.ai_flags = AI_PASSIVE;
 	status = getaddrinfo(NULL, std::to_string(this->port).c_str(), &this->hints, &this->serverAddr);
 	if (status != 0)
 	{
 		std::cout << "Error getting address info" << std::endl;
 		throw(Server::errorException());
 	}
-	this->serverFd = socket(this->serverAddr->ai_family, this->serverAddr->ai_socktype, 0);
+	this->serverFd = socket(this->serverAddr->ai_family, this->serverAddr->ai_socktype, this->serverAddr->ai_protocol);
 	fcntl(this->serverFd, F_SETFL, O_NONBLOCK);
 	if (this->serverFd == -1)
 	{
@@ -87,9 +88,18 @@ void	Server::createServerSocket()
 	}
 	int flag = 1;
 	std::cout << "Socket has been created!" << std::endl;
-	if (setsockopt(this->serverFd, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(int)) == -1)
+	if (setsockopt(this->serverFd, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag)) == -1)
 	{
 		perror("Setsocketopt");
+		close(this->serverFd);
+		freeaddrinfo(this->serverAddr);
+		throw(Server::errorException());
+	}
+	int statuss = bind(this->serverFd, this->serverAddr->ai_addr, this->serverAddr->ai_addrlen);
+	if (statuss != 0)
+	{
+		perror("Error binding socket");
+		std::cout << "Binding error details; " << strerror(errno) << std::endl;
 		close(this->serverFd);
 		freeaddrinfo(this->serverAddr);
 		throw(Server::errorException());
@@ -102,16 +112,6 @@ void	Server::createServerSocket()
 
 void	Server::bindSocket()
 {
-	errno = 0;
-	int status = bind(this->serverFd, this->serverAddr->ai_addr, this->serverAddr->ai_addrlen);
-	if (status != 0)
-	{
-		perror("Error binding socket");
-		std::cout << "Binding error details; " << strerror(errno) << std::endl;
-		close(this->serverFd);
-		freeaddrinfo(this->serverAddr);
-		throw(Server::errorException());
-	}
 	status = listen(this->serverFd, BACKLOG);
 	if (status != 0)
 	{
@@ -121,6 +121,7 @@ void	Server::bindSocket()
 		throw(Server::errorException());
 	}
 	std::cout << "Server is listening on port " << port << "..." << std::endl;
+	freeaddrinfo(this->serverAddr);
 }
 
 void	Server::acceptConnection()
@@ -334,14 +335,15 @@ void Server::initServer()
 						case -1:
 							perror("Error while reading from the client");
 							this->closeFds();
-							freeaddrinfo(this->serverAddr);
+							// freeaddrinfo(this->serverAddr);
 							throw(errorException());
 						case 0:
 							std::cout << "connection closed by the client " << this->fds[i].fd << std::endl;
 							close(this->fds[i].fd);
 							delete this->usersMap[this->fds[i].fd];
 							this->usersMap.erase(this->fds[i].fd);
-							this->registeredFds.erase(std::find(this->registeredFds.begin(), this->registeredFds.end(), this->fds[i].fd));
+							if (this->isRegistered(this->fds[i].fd))
+								this->registeredFds.erase(std::find(this->registeredFds.begin(), this->registeredFds.end(), this->fds[i].fd));
 							break ;
 						default:
 							buffer[bread] = '\0';
@@ -355,7 +357,7 @@ void Server::initServer()
 		}
 	}
 	this->closeFds();
-	freeaddrinfo(this->serverAddr);
+	// freeaddrinfo(this->serverAddr);
 }
 
 bool	Server::isRegistered(int fd)
