@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:19:56 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/04 15:45:30 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/04 17:37:58 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class Channel
         void  addUser(User user);
         void  removeUser(User user);
         bool  isOperator(User user) const;
+        bool  isNameValid(const std::string &name);
         void  kickUser(User op, User user);
         void  inviteUser(User op, User user);
         void  setTopic(User op, const std::string &topic);

@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:54:50 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/04 15:49:19 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/05 16:41:50 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,41 +113,54 @@ void  Channel::setMode(User op, const std::string &mode)
     }
 }
 
+bool    Channel::isNameValid(const std::string &name)
+{
+    if (name.empty() && name.find_first_of("&#+!") == 0)
+        return true;
+    return false;
+}
+
+
 void	Channel::joinChannel(User user, const std::string &name)
 {
+    if (!isNameValid(name))
+        return ;
+    if (name.length() > 50)
+        return ;
+    // if ()
 	// (void) user, (void) name;
-	if (!name.empty() && name.find_first_of("&#+!") == 0)
-	{
-		if (name.length() <= 50)
-		{
-			if (this->channels.find(name) == this->channels.end())
-			{
-				this->channels[name] = new Channel(name, "");
-				std::cout << "Channel " << name << " has been created." << std::endl;
-			}
-			else
-				std::cout << "Channel " << name << "already exists." << std::endl;
-			if (this->channels[name]->getUsers().empty())
-			{
-				this->channels[name]->addUser(user);
-				std::cout << "User " << user.getNickname() << " is the operator of channel " << name << std::endl;
-			}
-			if (this->channels[name]->setInviteOnlyMode() && !this->channels[name]->isOperator(user))
-			{
-				std::cout << "User " << user.getNickname() << ":Cannot join channel (+i)" << std::endl;
-				return ;
-			}
-			if (std::find(this->channels[name]->getUsers().begin(), this->channels[name]->getUsers().end(), user) == this->channels[name]->getUsers().end())
-			{
-				this->channels[name]->addUser(user);
-				std::cout << "User " << user.getNickname() << " has joined the channel " << name << std::endl;
-			}
-		}
-		else
-			std::cout << "Channel name should not exceed 50 chars." << std::endl;
-	}
-	else
-		std::cout << "Invalid channel name." << std::endl;
+	// if (!name.empty() && name.find_first_of("&#+!") == 0)
+	// {
+	// 	if (name.length() <= 50)
+	// 	{
+	// 		if (this->channels.find(name) == this->channels.end())
+	// 		{
+	// 			this->channels[name] = new Channel(name, "");
+	// 			std::cout << "Channel " << name << " has been created." << std::endl;
+	// 		}
+	// 		else
+	// 			std::cout << "Channel " << name << "already exists." << std::endl;
+	// 		if (this->channels[name]->getUsers().empty())
+	// 		{
+	// 			this->channels[name]->addUser(user);
+	// 			std::cout << "User " << user.getNickname() << " is the operator of channel " << name << std::endl;
+	// 		}
+	// 		if (this->channels[name]->setInviteOnlyMode() && !this->channels[name]->isOperator(user))
+	// 		{
+	// 			std::cout << "User " << user.getNickname() << ":Cannot join channel (+i)" << std::endl;
+	// 			return ;
+	// 		}
+	// 		if (std::find(this->channels[name]->getUsers().begin(), this->channels[name]->getUsers().end(), user) == this->channels[name]->getUsers().end())
+	// 		{
+	// 			this->channels[name]->addUser(user);
+	// 			std::cout << "User " << user.getNickname() << " has joined the channel " << name << std::endl;
+	// 		}
+	// 	}
+	// 	else
+	// 		std::cout << "Channel name should not exceed 50 chars." << std::endl;
+	// }
+	// else
+	// 	std::cout << "Invalid channel name." << std::endl;
 }
 
 void	Channel::leaveChannel(User user, const std::string &name)

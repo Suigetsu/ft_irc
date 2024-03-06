@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 16:01:24 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/04 16:32:32 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/04 18:37:15 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,4 +24,5 @@ class	Join : public Command
 		~Join();
 		void	execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const;
 		Join	*clone() const;
+		bool	isNameValid(const std::string &name) const;
 };

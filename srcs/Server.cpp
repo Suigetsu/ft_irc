@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 16:35:24 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/04 17:58:27 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -316,6 +316,13 @@ void	Server::closeFds()
 		close ((*it).fd);
 		it++;
 	}
+}
+
+bool    Server::doesChannelExist(const std::string &name)
+{
+	if (this->channels.find(name) == this->channels.end())
+		return false;
+	return true;
 }
 
 
