@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:36:18 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 11:15:08 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/05 14:12:24 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ public:
 	std::string	getNickHelper();
 	bool isAuth();
 	void	parseCommand(std::string command);
-	std::map<int, std::string> getCommand();
+	std::map<int, std::string> &getCommand();
 };
 
 #endif

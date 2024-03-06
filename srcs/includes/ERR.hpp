@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 15:29:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/02 14:25:02 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/05 16:13:05 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,5 +19,9 @@
 #define ERR_NONICKNAMEGIVEN ":localhost 431 HexChat :No nickname given\r\n"
 #define ERR_ERRONEUSNICKNAME(nick) (":localhost 432 HexChat " + nick + " :Erroneus nickname\r\n")
 #define ERR_NICKNAMEINUSE(nick) (":localhost 433 HexChat " + nick + " :Nickname is already in use\r\n")
-#define ERR_NEEDMOREPARAMS ":localhost 461 HexChat USER :Not enough parameters\r\n"
+#define ERR_NEEDMOREPARAMS(cmd) (":localhost 461 HexChat " + cmd + " :Not enough parameters\r\n")
 #define ERR_UNKNOWNCOMMAND(command) (":localhost 421 HexChat " + command + " :Unknown command\r\n")
+#define ERR_NOTEXTTOSEND ":localhost 412 HexChat :No text to send\r\n"
+#define ERR_NORECIPIENT(command) (":localhost 411 HexChat :No recipient given (" + command + ")\r\n")
+#define ERR_ALREADYREGISTERED ":localhost 462 HexChat :You may not reregister\r\n"
+#define ERR_NOMOTD ":localhost 422 HexChat :MOTD File is mising\r\n"

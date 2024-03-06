@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 16:00:01 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 11:19:58 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/05 14:41:03 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,17 +107,24 @@ std::string	User::getNickHelper()
 
 void	User::parseCommand(std::string command)
 {
-	int i = 0;
-	std::istringstream iss(command);
-	std::string token;
-	while (std::getline(iss, token, ' '))
+	if (command.find(" ") != std::string::npos)
 	{
-		this->cmd[i] = token;
-		i++;
+		cmd[COMMAND] = command.substr(0, command.find(" "));
+		command.erase(0, command.find(" ") + 1);
+		cmd[FIRST_PARAM] = command.substr(0, command.find("\r"));
+		return ;
 	}
+	cmd[COMMAND] = command.substr(0, command.find("\n"));
+	// std::istringstream iss(command);
+	// std::string token;
+	// while (std::getline(iss, token, ' ') && i < 2)
+	// {
+	// 	this->cmd[i] = token;
+	// 	i++;
+	// }
 }
 
-std::map<int, std::string>	User::getCommand()
+std::map<int, std::string>	&User::getCommand()
 {
 	return (this->cmd);
 }

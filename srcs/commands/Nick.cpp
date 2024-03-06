@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:47:46 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 16:36:04 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/05 12:13:02 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,26 +22,28 @@ Nick::~Nick()
 	
 }
 
-void	Nick::execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const
+void	Nick::execute(std::map<int, User *> users, std::map<std::string, Channel *> chan, int fd) const
 {
 	(void) chan;
-	if (this->doesNameExist(userMap, userMap[clientFd]->getNickHelper()))
+	if (users[fd]->getCommand().size() < 2)
 	{
-		send(clientFd, ERR_NICKNAMEINUSE(userMap[clientFd]->getNickHelper()).c_str(), \
-			ERR_NICKNAMEINUSE(userMap[clientFd]->getNickHelper()).length(), 0);
+		send(fd, ERR_NONICKNAMEGIVEN, sizeof(ERR_NONICKNAMEGIVEN), 0);
 		throw (Nick::registrationException());
 	}
-	else if (userMap[clientFd]->getNickHelper().empty())
+	else if (this->doesNameExist(users, users[fd]->getCommand()[FIRST_PARAM]))
 	{
-		send(clientFd, ERR_NONICKNAMEGIVEN, sizeof(ERR_NONICKNAMEGIVEN), 0);
+		send(fd, ERR_NICKNAMEINUSE(users[fd]->getCommand()[FIRST_PARAM]).c_str(), \
+			ERR_NICKNAMEINUSE(users[fd]->getCommand()[FIRST_PARAM]).length(), 0);
 		throw (Nick::registrationException());
 	}
-	else if (this->containsRestrictedChar(userMap[clientFd]->getNickHelper()))
+	else if (this->containsRestrictedChar(users[fd]->getCommand()[FIRST_PARAM]) || \
+		users[fd]->getCommand()[FIRST_PARAM].length() > 9)
 	{
-		send(clientFd, ERR_ERRONEUSNICKNAME(userMap[clientFd]->getNickHelper()).c_str(), \
-			ERR_ERRONEUSNICKNAME(userMap[clientFd]->getNickHelper()).length(), 0);
+		send(fd, ERR_ERRONEUSNICKNAME(users[fd]->getCommand()[FIRST_PARAM]).c_str(), \
+			ERR_ERRONEUSNICKNAME(users[fd]->getCommand()[FIRST_PARAM]).length(), 0);
 		throw (Nick::registrationException());
 	}
+	users[fd]->setNickname(users[fd]->getCommand()[FIRST_PARAM]);
 }
 
 Nick	*Nick::clone() const
@@ -49,10 +51,10 @@ Nick	*Nick::clone() const
 	return (new Nick);
 }
 
-bool	Nick::doesNameExist(std::map<int, User *> userMap, std::string name) const
+bool	Nick::doesNameExist(std::map<int, User *> users, std::string name) const
 {
-	std::map<int, User *>::iterator it = userMap.begin();
-	while (it != userMap.end())
+	std::map<int, User *>::iterator it = users.begin();
+	while (it != users.end())
 	{
 		if (it->second->getNickname() == name)
 			return (true);
