@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/07 09:58:03 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/07 11:59:42 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ Server::Server()
 	this->registerCommand<Nick>("NICK");
 	this->registerCommand<UserCmd>("USER");
 	this->registerCommand<Quit>("QUIT");
+	this->registerCommand<Ping>("PING");
 }
 
 Server::~Server()

@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/06 16:12:23 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/07 11:31:05 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@
 # include "Nick.hpp"
 # include "UserCmd.hpp"
 # include "Quit.hpp"
+# include "Ping.hpp"
 # include "Channel.hpp"
 # include "poll.h"
 
