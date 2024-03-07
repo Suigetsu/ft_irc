@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Pass.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/22 18:18:31 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/05 13:19:04 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/06 17:17:47 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void	Pass::execute(std::map<int, User *> users, std::map<std::string, Channel *>
 			ERR_NEEDMOREPARAMS(users[fd]->getCommand()[COMMAND]).length(), 0);
 		throw (Pass::registrationException());
 	}
-	std::cout << "this is our pw: " << users[fd]->getCommand()[FIRST_PARAM] << " and this is the servers pw: " << users[fd]->getServerPass() << std::endl;
 	if (users[fd]->getCommand()[FIRST_PARAM] != users[fd]->getServerPass())
 	{
 		send(fd, ERR_PASSWDMISMATCH, sizeof(ERR_PASSWDMISMATCH), 0);

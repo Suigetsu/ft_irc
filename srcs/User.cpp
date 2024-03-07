@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 16:00:01 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/05 14:41:03 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/07 09:18:40 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,17 @@ User	*User::clone(std::string pass) const
 	return (new User(pass));
 }
 
-void	User::setNickname(std::string name)
+void	User::setNickname(const std::string &name)
 {
 	this->nickname = name;
 }
 
-void	User::setUsername(std::string name)
+void	User::setUsername(const std::string &name)
 {
 	this->username = name;
 }
 
-void	User::setUserPass(std::string pass)
+void	User::setUserPass(const std::string &pass)
 {
 	this->userPass = pass;
 }
@@ -50,37 +50,37 @@ void	User::setAuth(bool auth)
 	this->auth = auth;
 }
 
-void	User::setHost(std::string host)
+void	User::setHost(const std::string &host)
 {
 	this->host = host;
 }
 
-void	User::setRealname(std::string name)
+void	User::setRealname(const std::string &name)
 {
 	this->realname = name;
 }
 
-void	User::setNickHelper(std::string name)
+void	User::setNickHelper(const std::string &name)
 {
 	this->nicknameHelper = name;
 }
 
-std::string	User::getNickname()
+const std::string	&User::getNickname() const
 {
 	return (this->nickname);
 }
 
-std::string	User::getUsername()
+const std::string	&User::getUsername() const
 {
 	return (this->username);
 }
 
-std::string	User::getUserPass()
+const std::string	&User::getUserPass() const
 {
 	return (this->userPass);
 }
 
-std::string	User::getServerPass()
+const std::string	&User::getServerPass() const
 {
 	return (this->serverPass);
 }
@@ -90,17 +90,17 @@ bool	User::isAuth()
 	return (this->auth);
 }
 
-std::string	User::getHost()
+const std::string	&User::getHost() const
 {
 	return (this->host);
 }
 
-std::string	User::getRealname()
+const std::string	&User::getRealname() const
 {
 	return (this->realname);
 }
 
-std::string	User::getNickHelper()
+const std::string	&User::getNickHelper() const
 {
 	return (this->nicknameHelper);
 }

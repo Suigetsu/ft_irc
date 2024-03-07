@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/06 16:11:53 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/07 09:58:03 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,9 @@ void	Server::registerUser(std::string buffer, int fd)
 	if (this->usersMap[fd] && this->usersMap[fd]->isAuth())
 	{
 		std::string buffer = RPL_WELCOME(this->usersMap[fd]->getNickname(), \
-			this->usersMap[fd]->getUsername(), this->usersMap[fd]->getHost()) + RPL_YOURHOST + RPL_CREATED + RPL_MYINFO + RPL_ISUPPORT + ERR_NOMOTD;
+			this->usersMap[fd]->getUsername(), this->usersMap[fd]->getHost()) + RPL_YOURHOST(this->usersMap[fd]->getNickname()) \
+			+ RPL_CREATED(this->usersMap[fd]->getNickname()) + RPL_MYINFO(this->usersMap[fd]->getNickname()) \
+			+ RPL_ISUPPORT(this->usersMap[fd]->getNickname()) + ERR_NOMOTD;
 		send(fd, buffer.c_str(), buffer.length(), 0);
 		this->registeredFds.push_back(fd);
 	}
