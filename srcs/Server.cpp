@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/07 11:59:42 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/07 17:07:52 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ Server::Server()
 	this->registerCommand<UserCmd>("USER");
 	this->registerCommand<Quit>("QUIT");
 	this->registerCommand<Ping>("PING");
+	this->registerCommand<Join>("JOIN");
 }
 
 Server::~Server()
@@ -290,12 +291,25 @@ void	Server::launchCommand(std::map<int, std::string>cmd, int fd)
 {
 	(void) cmd, (void) fd;
 	this->commandsMap[cmd[COMMAND]]->execute(this->usersMap, this->channels, fd);
+	// if (cmd[COMMAND] == "QUIT")
+	// {
+	// 	for (size_t i = 0; i < this->fds.size(); i++)
+	// 	{
+	// 		if (this->fds[i].fd == fd)
+	// 		{
+	// 			close (fd);
+	// 			this->fds.erase(this->fds.begin() + i);
+	// 			break ;
+	// 		}
+	// 	}
+	// }
 }
 
 void	Server::handleRegisteredCommand(std::string command, int fd)
 {
 	try
 	{
+		this->usersMap[fd]->getCommand().erase(this->usersMap[fd]->getCommand().begin(), this->usersMap[fd]->getCommand().end());
 		this->usersMap[fd]->parseCommand(command);
 		if(!this->doesCommandExist(this->usersMap[fd]->getCommand()[COMMAND]))
 		{
@@ -333,27 +347,24 @@ void Server::initServer()
 				else
 				{
 					bread = recv(this->fds[i].fd, buffer, 1000, 0);
-					switch (bread)
+					if (bread <= 0)
 					{
-						case -1:
-							perror("Error while reading from the client");
-							this->closeFds();
-							// freeaddrinfo(this->serverAddr);
-							throw(errorException());
-						case 0:
-							std::cout << "connection closed by the client " << this->fds[i].fd << std::endl;
-							close(this->fds[i].fd);
-							delete this->usersMap[this->fds[i].fd];
-							this->usersMap.erase(this->fds[i].fd);
-							if (this->isRegistered(this->fds[i].fd))
-								this->registeredFds.erase(std::find(this->registeredFds.begin(), this->registeredFds.end(), this->fds[i].fd));
-							break ;
-						default:
-							buffer[bread] = '\0';
-							if (this->isRegistered(this->fds[i].fd))
-								this->handleRegisteredCommand(buffer, this->fds[i].fd);
-							else
-								this->registerUser(buffer, this->fds[i].fd);
+						std::cout << "connection closed by the client " << this->fds[i].fd << std::endl;
+						close(this->fds[i].fd);
+						delete this->usersMap[this->fds[i].fd];
+						this->usersMap.erase(this->fds[i].fd);
+						if (this->isRegistered(this->fds[i].fd))
+							this->registeredFds.erase(std::find(this->registeredFds.begin(), this->registeredFds.end(), this->fds[i].fd));
+					}
+					else
+					{
+						buffer[bread] = '\0';
+						std::cout << buffer << std::endl;
+						if (this->isRegistered(this->fds[i].fd))
+							this->handleRegisteredCommand(buffer, this->fds[i].fd);
+						else
+							this->registerUser(buffer, this->fds[i].fd);
+						
 					}
 				}
 			}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ERR.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 15:29:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/05 16:13:05 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/07 12:46:09 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,4 +24,4 @@
 #define ERR_NOTEXTTOSEND ":localhost 412 HexChat :No text to send\r\n"
 #define ERR_NORECIPIENT(command) (":localhost 411 HexChat :No recipient given (" + command + ")\r\n")
 #define ERR_ALREADYREGISTERED ":localhost 462 HexChat :You may not reregister\r\n"
-#define ERR_NOMOTD ":localhost 422 HexChat :MOTD File is mising\r\n"
+#define ERR_NOMOTD ":localhost 422 HexChat :MOTD File is missing\r\n"

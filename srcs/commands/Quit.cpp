@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Quit.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:48:03 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 18:24:41 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/07 12:48:48 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	Quit::execute(std::map<int, User *> userMap, std::map<std::string, Channel 
 		reason = userMap[clientFd]->getCommand()[FIRST_PARAM];
 	send(clientFd, QUIT_MSG(userMap[clientFd]->getNickname(),userMap[clientFd]->getUsername(),userMap[clientFd]->getHost(), reason).c_str(), \
 		QUIT_MSG(userMap[clientFd]->getNickname(),userMap[clientFd]->getUsername(),userMap[clientFd]->getHost(), reason).length(), 0);
+	userMap.erase(clientFd);
 }
 
 Quit	*Quit::clone() const
