@@ -3,17 +3,17 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+         #
+#    By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/03 10:37:04 by mlagrini          #+#    #+#              #
-#    Updated: 2024/03/07 15:27:47 by hrahmane         ###   ########.fr        #
+#    Updated: 2024/03/08 12:19:55 by mlagrini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SRC		=	srcs/main.cpp srcs/Server.cpp srcs/Client.cpp srcs/commands/Command.cpp \
 			srcs/User.cpp srcs/commands/Pass.cpp srcs/commands/Nick.cpp \
 			srcs/commands/Quit.cpp srcs/commands/UserCmd.cpp srcs/commands/Ping.cpp \
-			srcs/commands/Pong.cpp srcs/commands/Join.cpp
+			srcs/commands/Pong.cpp srcs/commands/Join.cpp srcs/Channel.cpp
 OBJ		=	${SRC:.cpp=.o}
 CC		=	c++
 FLAGS	=	-Wall -Wextra -Werror -std=c++98

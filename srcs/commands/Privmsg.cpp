@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 11:52:40 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 18:13:57 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/09 10:07:26 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Privmsg::~Privmsg()
 
 }
 
-void	Privmsg::execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const
+void	Privmsg::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
 {
 	if (userMap[clientFd]->getCommand().size() < 3)
 	{

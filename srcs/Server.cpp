@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/07 17:07:52 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/09 10:06:02 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ Server::~Server()
 {
 	this->deleteMaps(this->usersMap);
 	this->deleteMaps(this->commandsMap);
+	this->deleteMaps(this->channels);
 }
 
 const char	*Server::errorException::what() const throw()
@@ -147,7 +148,6 @@ void	Server::acceptConnection()
 
 void	Server::registerUser(std::string buffer, int fd)
 {
-	// static int flag;
 	try
 	{
 		std::istringstream iss(buffer);
@@ -157,31 +157,23 @@ void	Server::registerUser(std::string buffer, int fd)
 			this->parser.push_back(line);
 		}
 		std::vector<std::string>::iterator it = parser.begin();
-		if (!this->usersMap[fd])
-			this->addUser(fd);
+		this->addUser(fd);
 		while (it != parser.end())
 		{
-			// std::cout << *it << std::endl;
-			// std::cout << "*******" << std::endl;
 			if (it->find("CAP") != std::string::npos)
 			{
 				it++;
 				continue ;
 			}
-			else if (it->find("PASS") != std::string::npos)
+			else if (it->find("PASS") != std::string::npos || \
+				it->find("NICK") != std::string::npos || it->find("USER") != std::string::npos)
 			{
+				std::string cmd;
 				this->usersMap[fd]->parseCommand(*it);
-				this->commandsMap["PASS"]->execute(this->usersMap, this->channels, fd);
-			}
-			else if (it->find("NICK") != std::string::npos)
-			{
-				this->usersMap[fd]->parseCommand(*it);
-				this->commandsMap["NICK"]->execute(this->usersMap, this->channels, fd);
-			}
-			else if (it->find("USER") != std::string::npos)
-			{
-				this->usersMap[fd]->parseCommand(*it);
-				this->commandsMap["USER"]->execute(this->usersMap, this->channels, fd);
+				cmd = this->usersMap[fd]->getCommand()[COMMAND];
+				if (!this->commandsMap[cmd])
+					throw(Server::errorException());
+				this->commandsMap[cmd]->execute(this->usersMap, this->channels, fd);
 			}
 			it++;
 		}
@@ -204,80 +196,12 @@ void	Server::registerUser(std::string buffer, int fd)
 		std::string buffer = RPL_WELCOME(this->usersMap[fd]->getNickname(), \
 			this->usersMap[fd]->getUsername(), this->usersMap[fd]->getHost()) + RPL_YOURHOST(this->usersMap[fd]->getNickname()) \
 			+ RPL_CREATED(this->usersMap[fd]->getNickname()) + RPL_MYINFO(this->usersMap[fd]->getNickname()) \
-			+ RPL_ISUPPORT(this->usersMap[fd]->getNickname()) + ERR_NOMOTD;
+			+ RPL_ISUPPORT(this->usersMap[fd]->getNickname()) + ERR_NOMOTD(this->usersMap[fd]->getNickname());
 		send(fd, buffer.c_str(), buffer.length(), 0);
 		this->registeredFds.push_back(fd);
 	}
 	this->parser.erase(this->parser.begin(), this->parser.end());
 }
-
-// void	Server::registerUser(std::string buffer, int clientFd)
-// {
-// 	static int flag = 0;
-// 	try
-// 	{
-// 		if (buffer.find("CAP") != std::string::npos)
-// 		{
-// 			this->addUser(clientFd);
-// 			buffer.erase(0, buffer.find("\n") + 1);
-// 		}
-// 		if (!this->usersMap[clientFd])
-// 			this->addUser(clientFd);
-// 		if (buffer.find("PASS") != std::string::npos)
-// 		{
-// 			std::string line = buffer.substr(0, buffer.find("\n"));
-// 			line.erase(0, line.find(" ") + 1);
-// 			line = line.substr(0, line.find("\r"));
-// 			this->usersMap[clientFd]->setUserPass(line);
-// 			this->commandsMap["PASS"]->execute(this->usersMap, this->channels, clientFd);
-// 			buffer.erase(0, buffer.find("\n") + 1);
-// 		}
-// 		if (buffer.find("NICK")!= std::string::npos)
-// 		{
-// 			std::string line = buffer.substr(0, buffer.find("\n"));
-// 			line.erase(0, line.find(" ") + 1);
-// 			this->usersMap[clientFd]->setNickHelper(line);
-// 			this->commandsMap["NICK"]->execute(this->usersMap, this->channels, clientFd);
-// 			this->usersMap[clientFd]->setNickname(line);
-// 			buffer.erase(0, buffer.find("\n") + 1);
-// 		}
-// 		if (buffer.find("USER")!= std::string::npos)
-// 		{
-// 			buffer.erase(0, buffer.find(" ") + 1);
-// 			std::string line = buffer.substr(0, buffer.find(" "));
-// 			this->usersMap[clientFd]->setUsername(line);
-// 			if (this->usersMap[clientFd]->getUsername().length() < 1)
-// 			{
-// 				send(clientFd, ERR_NEEDMOREPARAMS, sizeof(ERR_NEEDMOREPARAMS), 0);
-// 				throw(Command::registrationException());
-// 			}
-// 			buffer.erase(0, buffer.find(" ") + 1);
-// 			buffer.erase(0, buffer.find(" ") + 1);
-// 			line = buffer.substr(0, buffer.find(" :"));
-// 			this->usersMap[clientFd]->setHost(line);
-// 			buffer.erase(0, buffer.find(":") + 1);
-// 			line = buffer.substr(0, buffer.find("\n"));
-// 			this->usersMap[clientFd]->setRealname(line);
-// 			flag = 1;
-// 		}
-// 	}
-// 	catch(const std::exception& e)
-// 	{
-// 		std::cerr << e.what() << std::endl;
-// 		send(clientFd, "HexChat :Registration failed\r\n", 31, 0);
-// 		return ;
-// 	}
-// 	if (flag == 1)
-// 	{
-// 		send(clientFd, RPL_WELCOME(this->usersMap[clientFd]->getNickname(), \
-// 			this->usersMap[clientFd]->getUsername(), this->usersMap[clientFd]->getHost()).c_str(), \
-// 			RPL_WELCOME(this->usersMap[clientFd]->getNickname(), \
-// 			this->usersMap[clientFd]->getUsername(), this->usersMap[clientFd]->getHost()).length(), 0);
-// 		this->registeredFds.push_back(clientFd);
-// 		this->usersMap[clientFd]->setAuth(true);
-// 	}
-// 	flag = 0;
-// }
 
 bool	Server::doesCommandExist(std::string name)
 {
@@ -289,32 +213,19 @@ bool	Server::doesCommandExist(std::string name)
 
 void	Server::launchCommand(std::map<int, std::string>cmd, int fd)
 {
-	(void) cmd, (void) fd;
 	this->commandsMap[cmd[COMMAND]]->execute(this->usersMap, this->channels, fd);
-	// if (cmd[COMMAND] == "QUIT")
-	// {
-	// 	for (size_t i = 0; i < this->fds.size(); i++)
-	// 	{
-	// 		if (this->fds[i].fd == fd)
-	// 		{
-	// 			close (fd);
-	// 			this->fds.erase(this->fds.begin() + i);
-	// 			break ;
-	// 		}
-	// 	}
-	// }
 }
 
 void	Server::handleRegisteredCommand(std::string command, int fd)
 {
 	try
 	{
-		this->usersMap[fd]->getCommand().erase(this->usersMap[fd]->getCommand().begin(), this->usersMap[fd]->getCommand().end());
+		this->usersMap[fd]->clearCmdMap();
 		this->usersMap[fd]->parseCommand(command);
 		if(!this->doesCommandExist(this->usersMap[fd]->getCommand()[COMMAND]))
 		{
-			send(fd, ERR_UNKNOWNCOMMAND(this->usersMap[fd]->getCommand()[COMMAND]).c_str(), \
-				ERR_UNKNOWNCOMMAND(this->usersMap[fd]->getCommand()[COMMAND]).length(), 0);
+			std::string buffer = ERR_UNKNOWNCOMMAND(this->usersMap[fd]->getNickname(), this->usersMap[fd]->getCommand()[COMMAND]);
+			send(fd, buffer.c_str(), buffer.length(), 0);
 			throw(Command::unknownCommandException());
 		}
 		this->launchCommand(this->usersMap[fd]->getCommand(), fd);
@@ -329,6 +240,7 @@ void Server::initServer()
 {
 	int bread = 1;
 	char buffer[1024];
+	std::memset(&buffer, 0, sizeof(buffer));
 	this->createServerSocket();
 	this->bindSocket();
 	while (!Server::status)
@@ -358,20 +270,18 @@ void Server::initServer()
 					}
 					else
 					{
-						buffer[bread] = '\0';
-						std::cout << buffer << std::endl;
 						if (this->isRegistered(this->fds[i].fd))
 							this->handleRegisteredCommand(buffer, this->fds[i].fd);
 						else
 							this->registerUser(buffer, this->fds[i].fd);
 						
 					}
+					std::memset(&buffer, 0, sizeof(buffer));
 				}
 			}
 		}
 	}
 	this->closeFds();
-	// freeaddrinfo(this->serverAddr);
 }
 
 bool	Server::isRegistered(int fd)

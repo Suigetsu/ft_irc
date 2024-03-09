@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:36:18 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/07 09:17:10 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/09 16:08:07 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ private:
 	std::string userPass;
 	std::string host;
 	std::string realname;
-	std::string nicknameHelper;
+	std::string prefix;
+	int fd;
 	std::map<int, std::string> cmd;
 	bool auth;
 
@@ -39,22 +40,25 @@ public:
 	User(std::string pass);
 	~User();
 	User *clone(std::string pass) const;
+	void setFd(int fd);
 	void setNickname(const std::string &name);
 	void setUsername(const std::string &name);
 	void setUserPass(const std::string &pass);
 	void setHost(const std::string &host);
 	void setRealname(const std::string &name);
-	void setNickHelper(const std::string &name);
+	void setPrefix(const std::string &prefix);
 	void setAuth(bool auth);
+	int getFd();
 	const std::string &getNickname() const;
 	const std::string &getUsername() const;
 	const std::string &getUserPass() const;
 	const std::string &getServerPass() const;
 	const std::string &getHost() const;
 	const std::string &getRealname() const;
-	const std::string &getNickHelper() const;
+	const std::string &getPrefix() const;
 	bool isAuth();
 	void	parseCommand(std::string command);
+	void	clearCmdMap();
 	std::map<int, std::string> &getCommand();
 };
 

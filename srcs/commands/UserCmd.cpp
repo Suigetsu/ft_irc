@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   UserCmd.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 12:30:19 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/06 17:31:15 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/09 16:09:29 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ UserCmd::~UserCmd()
 	
 }
 
-std::vector<std::string>	UserCmd::parseParams(std::map<int, std::string> cmd, int fd) const
+std::vector<std::string>	UserCmd::parseParams(std::map<int, std::string> cmd, int fd, std::string nickname) const
 {
 	std::vector<std::string> params;
 	std::stringstream ss(cmd[FIRST_PARAM]);
@@ -39,8 +39,8 @@ std::vector<std::string>	UserCmd::parseParams(std::map<int, std::string> cmd, in
 	}
 	if (params.size() < 4)
 	{
-		send(fd, ERR_NEEDMOREPARAMS(cmd[COMMAND]).c_str(), \
-			ERR_NEEDMOREPARAMS(cmd[COMMAND]).length(), 0);
+		send(fd, ERR_NEEDMOREPARAMS(nickname, cmd[COMMAND]).c_str(), \
+			ERR_NEEDMOREPARAMS(nickname, cmd[COMMAND]).length(), 0);
 		throw (UserCmd::registrationException());
 	}
 	else if (this->containsRestrictedChar(params[0]) || params[0].length() > 9)
@@ -52,43 +52,35 @@ std::vector<std::string>	UserCmd::parseParams(std::map<int, std::string> cmd, in
 	return (params);
 }
 
-void	UserCmd::execute(std::map<int, User *> users, std::map<std::string, Channel *> chan, int fd) const
+void	UserCmd::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
 {
 	(void) chan;
+	std::vector<std::string> params;
 	if (users[fd]->isAuth() == true)
 	{
-		send(fd, ERR_ALREADYREGISTERED, sizeof(ERR_ALREADYREGISTERED), 0);
+		send(fd, ERR_ALREADYREGISTERED(users[fd]->getNickname()).c_str(), \
+			ERR_ALREADYREGISTERED(users[fd]->getNickname()).length(), 0);
 		return ;
 	}
-	std::vector<std::string> params;
+	if (users[fd]->getUserPass().empty() || users[fd]->getNickname().empty())
+		throw(UserCmd::registrationException());
 	if (users[fd]->getCommand().size() < 2)
 	{
-		send(fd, ERR_NEEDMOREPARAMS(users[fd]->getCommand()[COMMAND]).c_str(), \
-			ERR_NEEDMOREPARAMS(users[fd]->getCommand()[COMMAND]).length(), 0);
+		send(fd, ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).c_str(), \
+			ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).length(), 0);
 		throw (UserCmd::registrationException());
 	}
-	params = this->parseParams(users[fd]->getCommand(), fd);
+	params = this->parseParams(users[fd]->getCommand(), fd, users[fd]->getNickname());
 	users[fd]->setUsername(params[0]);
 	users[fd]->setHost(params[2]);
 	users[fd]->setRealname(params[3]);
 	users[fd]->setAuth(true);
+	users[fd]->setFd(fd);
 }
 
 UserCmd	*UserCmd::clone() const
 {
 	return (new UserCmd);
-}
-
-bool	UserCmd::doesNameExist(std::map<int, User *> users, std::string name) const
-{
-	std::map<int, User *>::iterator it = users.begin();
-	while (it != users.end())
-	{
-		if (it->second->getNickname() == name)
-			return (true);
-		it++;
-	}
-	return (false);
 }
 
 bool	UserCmd::containsRestrictedChar(std::string name) const

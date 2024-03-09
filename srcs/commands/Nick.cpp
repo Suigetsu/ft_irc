@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:47:46 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/06 17:16:06 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/09 10:07:26 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,17 @@ Nick::~Nick()
 	
 }
 
-void	Nick::execute(std::map<int, User *> users, std::map<std::string, Channel *> chan, int fd) const
+void	Nick::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
 {
 	(void) chan;
 	if (users[fd]->isAuth())
 	{
-		send(fd, ERR_ALREADYREGISTERED, sizeof(ERR_ALREADYREGISTERED), 0);
+		send(fd, ERR_ALREADYREGISTERED(users[fd]->getNickname()).c_str(), \
+			ERR_ALREADYREGISTERED(users[fd]->getNickname()).length(), 0);
 		return;
 	}
+	if (users[fd]->getUserPass().empty())
+		throw(Nick::registrationException());
 	if (users[fd]->getCommand().size() < 2)
 	{
 		send(fd, ERR_NONICKNAMEGIVEN, sizeof(ERR_NONICKNAMEGIVEN), 0);

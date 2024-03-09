@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Pong.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 11:19:59 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/07 11:33:00 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/09 10:07:26 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ Pong::~Pong()
 
 }
 
-void	Pong::execute(std::map<int, User *> users, std::map<std::string, Channel *> chan, int fd) const
+void	Pong::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
 {
 	(void)chan;
     std::string buffer = "PONG ircserv " + users[fd]->getCommand()[FIRST_PARAM];

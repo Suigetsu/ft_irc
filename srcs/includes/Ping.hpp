@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Ping.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 11:09:34 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/07 11:22:09 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/09 10:07:26 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,6 @@ class	Ping : public Command
 	public:
 		Ping();
 		~Ping();
-		void	execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const;
+		void	execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const;
 		Ping	*clone() const;
 };

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Command.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/20 18:21:08 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 16:30:33 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/09 10:07:26 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class	Command
 	public:
 		Command();
 		virtual ~Command();
-		virtual void	execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const = 0;
+		virtual void	execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const = 0;
 		virtual Command	*clone() const = 0;
 		class	registrationException : public std::exception
 		{

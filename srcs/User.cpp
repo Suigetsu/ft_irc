@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/21 16:00:01 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/07 09:18:40 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/09 16:09:03 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ User::User(std::string pass)
 {
 	this->auth = false;
 	this->serverPass = pass;
+	this->prefix = "";
 }
 
 User::~User()
@@ -28,6 +29,11 @@ User::~User()
 User	*User::clone(std::string pass) const
 {
 	return (new User(pass));
+}
+
+void	User::setFd(int fd)
+{
+	this->fd = fd;
 }
 
 void	User::setNickname(const std::string &name)
@@ -60,9 +66,9 @@ void	User::setRealname(const std::string &name)
 	this->realname = name;
 }
 
-void	User::setNickHelper(const std::string &name)
+void	User::setPrefix(const std::string &prefix)
 {
-	this->nicknameHelper = name;
+	this->prefix = prefix;
 }
 
 const std::string	&User::getNickname() const
@@ -85,6 +91,11 @@ const std::string	&User::getServerPass() const
 	return (this->serverPass);
 }
 
+int	User::getFd()
+{
+	return (this->fd);
+}
+
 bool	User::isAuth()
 {
 	return (this->auth);
@@ -100,9 +111,9 @@ const std::string	&User::getRealname() const
 	return (this->realname);
 }
 
-const std::string	&User::getNickHelper() const
+const std::string	&User::getPrefix() const
 {
-	return (this->nicknameHelper);
+	return (this->prefix);
 }
 
 void	User::parseCommand(std::string command)
@@ -115,16 +126,14 @@ void	User::parseCommand(std::string command)
 		return ;
 	}
 	cmd[COMMAND] = command.substr(0, command.find("\n"));
-	// std::istringstream iss(command);
-	// std::string token;
-	// while (std::getline(iss, token, ' ') && i < 2)
-	// {
-	// 	this->cmd[i] = token;
-	// 	i++;
-	// }
 }
 
 std::map<int, std::string>	&User::getCommand()
 {
 	return (this->cmd);
+}
+
+void	User::clearCmdMap()
+{
+	this->cmd.erase(this->cmd.begin(), this->cmd.end());
 }

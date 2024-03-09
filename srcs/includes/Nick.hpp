@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Nick.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:47:53 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/04 16:33:15 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/09 10:07:26 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class Nick : public Command
 	public:
 		Nick();
 		~Nick();
-		void	execute(std::map<int, User *> userMap, std::map<std::string, Channel *> chan, int clientFd) const;
+		void	execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const;
 		Nick	*clone() const;
 		bool	doesNameExist(std::map<int, User *> userMap, std::string name) const;
 		bool	containsRestrictedChar(std::string name) const;
