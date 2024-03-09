@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:19:56 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/09 16:07:23 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/09 19:30:14 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ class Channel
         Channel();
         Channel(const std::string &name);
         Channel(const std::string &name, const std::string &password);
+        ~Channel();
         const std::string getName() const;
         const std::string getPassword() const;
         const std::string getTopic() const;
@@ -67,11 +68,12 @@ class Channel
         size_t   getUserLimit();
         Channel *clone(const std::string &name) const;
         void    createChannel(std::map<int, User*> users, int fd);
-        bool    getLimitStatus();
-        bool    getKeyStatus();
-        bool    getTopicStatus();
-        bool    getInviteStatus();
-        const std::string    bufferizeNames() const;
+        bool    getLimitStatus() const;
+        bool    getKeyStatus() const;
+        bool    getTopicStatus() const;
+        bool    getInviteStatus() const;
+        const std::string bufferizeNames() const;
+        const std::string bufferizeModes() const;
 };
 
 #endif

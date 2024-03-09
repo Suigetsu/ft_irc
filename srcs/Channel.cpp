@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:54:50 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/09 16:16:07 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/09 19:36:15 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ Channel::Channel()
     
 }
 
-Channel::Channel(const std::string &name) : name(name), userLimit(BACKLOG),  inviteStatus(false), topicStatus(false), limitStatus(false),  keyStatus(false)
+Channel::Channel(const std::string &name) : name(name), userLimit(BACKLOG),  inviteStatus(false), topicStatus(true), limitStatus(false),  keyStatus(false)
 {
 
 }
@@ -25,6 +25,19 @@ Channel::Channel(const std::string &name) : name(name), userLimit(BACKLOG),  inv
 Channel::Channel(const std::string &name, const std::string &password) : name(name), password(password)
 {
 
+}
+
+Channel::~Channel()
+{
+    // std::vector<User *> tmp = this->getUsers();
+    // std::vector<User *>::iterator it = tmp.begin();
+    // while (it != tmp.end())
+    // {
+    //     if (*it)
+    //         delete *it;
+    //     it++;
+    //     std::cout << "debug" << std::endl;
+    // }
 }
 
 const std::string Channel::getName() const
@@ -136,14 +149,24 @@ size_t Channel::getUserLimit()
     return (this->userLimit);
 }
 
-bool    Channel::getInviteStatus()
+bool    Channel::getInviteStatus() const
 {
     return (this->inviteStatus);
 }
 
-bool    Channel::getKeyStatus()
+bool    Channel::getKeyStatus() const
 {
     return (this->keyStatus);
+}
+
+bool    Channel::getLimitStatus() const
+{
+    return (this->limitStatus);
+}
+
+bool    Channel::getTopicStatus() const
+{
+    return (this->topicStatus);
 }
 
 void	Channel::joinChannel(std::map<int, User*> users, int fd)
@@ -185,6 +208,19 @@ void	Channel::joinChannel(std::map<int, User*> users, int fd)
     std::cout << buffer << std::endl;
 }
 
+const std::string   Channel::bufferizeModes() const
+{
+    std::string buffer = "+";
+    if (this->getKeyStatus())
+        buffer += "k";
+    if (this->getInviteStatus())
+        buffer += "i";
+    if (this->getLimitStatus())
+        buffer += "l";
+    if (this->getTopicStatus())
+        buffer += "t";
+    return (buffer);
+}
 
 const std::string    Channel::bufferizeNames() const
 {
@@ -230,49 +266,11 @@ void	Channel::joinChannel(std::map<int, User*> users, int fd, std::string key)
 			+ buff;
 	send(fd, buffer.c_str(), buffer.length(), 0);
     std::cout << buffer << std::endl;
-    // if ()
-	// (void) user, (void) name;
-	// if (!name.empty() && name.find_first_of("&#+!") == 0)
-	// {
-	// 	if (name.length() <= 50)
-	// 	{
-	// 		if (this->channels.find(name) == this->channels.end())
-	// 		{
-	// 			this->channels[name] = new Channel(name, "");
-	// 			std::cout << "Channel " << name << " has been created." << std::endl;
-	// 		}
-	// 		else
-	// 			std::cout << "Channel " << name << "already exists." << std::endl;
-	// 		if (this->channels[name]->getUsers().empty())
-	// 		{
-	// 			this->channels[name]->addUser(user);
-	// 			std::cout << "User " << user.getNickname() << " is the operator of channel " << name << std::endl;
-	// 		}
-	// 		if (this->channels[name]->setInviteOnlyMode() && !this->channels[name]->isOperator(user))
-	// 		{
-	// 			std::cout << "User " << user.getNickname() << ":Cannot join channel (+i)" << std::endl;
-	// 			return ;
-	// 		}
-	// 		if (std::find(this->channels[name]->getUsers().begin(), this->channels[name]->getUsers().end(), user) == this->channels[name]->getUsers().end())
-	// 		{
-	// 			this->channels[name]->addUser(user);
-	// 			std::cout << "User " << user.getNickname() << " has joined the channel " << name << std::endl;
-	// 		}
-	// 	}
-	// 	else
-	// 		std::cout << "Channel name should not exceed 50 chars." << std::endl;
-	// }
-	// else
-	// 	std::cout << "Invalid channel name." << std::endl;
 }
 
 void	Channel::leaveChannel(User *user, const std::string &name)
 {
     (void)user, (void)name;
-	// (void) id, (void) name;
-	// std::vector<User*>::iterator userIt = std::find(this->users.begin(), this->users.end(), user);
-    // if (userIt != this->users.end())
-    //     this->users.erase(userIt);
 }
 
 Channel *Channel::clone(const std::string &name) const

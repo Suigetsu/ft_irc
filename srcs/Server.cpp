@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/09 10:06:02 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/09 18:06:03 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,9 @@ Server::Server()
 
 Server::~Server()
 {
-	this->deleteMaps(this->usersMap);
 	this->deleteMaps(this->commandsMap);
 	this->deleteMaps(this->channels);
+	this->deleteMaps(this->usersMap);
 }
 
 const char	*Server::errorException::what() const throw()
@@ -276,6 +276,7 @@ void Server::initServer()
 							this->registerUser(buffer, this->fds[i].fd);
 						
 					}
+					std::cout << buffer << std::endl;
 					std::memset(&buffer, 0, sizeof(buffer));
 				}
 			}

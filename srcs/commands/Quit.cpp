@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Quit.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:48:03 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/09 10:08:18 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/09 17:54:55 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	Quit::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 		reason = users[fd]->getCommand()[FIRST_PARAM];
 	send(fd, QUIT_MSG(users[fd]->getNickname(),users[fd]->getUsername(),users[fd]->getHost(), reason).c_str(), \
 		QUIT_MSG(users[fd]->getNickname(),users[fd]->getUsername(),users[fd]->getHost(), reason).length(), 0);
+	delete users[fd];
 	users.erase(fd);
 }
 
