@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:54:50 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/09 19:36:15 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/12 14:10:12 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,19 +89,27 @@ bool  setTopicRestriction()
 {
     return (true);
 }
-bool  setChannelKey()
+bool  Channel::setChannelKey(std::string key, int fd, std::map<int, User *> &user)
 {
-    return (true);
+    if (!this->getPassword().empty() && key != this->getPassword())
+    {
+        send (fd, ERR_KEYSET(user[fd]->getNickname(), this->getName()).c_str(), \
+        ERR_KEYSET(user[fd]->getNickname(), this->getName()).length(), 0);
+        return false;
+    }
+    this->password = key;
+    return true;
 }
 bool  grantOperatorPriv()
 {
     return (true);
 }
-void  Channel::setUserLimit(int limit)
+int  Channel::setUserLimit(int limit)
 {
     if (limit <= 0 || limit > this->userLimit)
-        return ;
+        return 1;
     this->userLimit = limit;
+    return 0;
 }
 
 void  Channel::setMode(User *op, const std::string &mode)
@@ -167,6 +175,26 @@ bool    Channel::getLimitStatus() const
 bool    Channel::getTopicStatus() const
 {
     return (this->topicStatus);
+}
+
+void    Channel::setLimitStatus(bool status)
+{
+    this->limitStatus = status;
+}
+
+void    Channel::setKeyStatus(bool status)
+{
+    this->keyStatus = status;
+}
+
+void    Channel::setInviteStatus(bool status)
+{
+    this->inviteStatus = status;
+}
+
+void    Channel::setTopicStatus(bool status)
+{
+    this->topicStatus = status;
 }
 
 void	Channel::joinChannel(std::map<int, User*> users, int fd)
@@ -278,12 +306,62 @@ Channel *Channel::clone(const std::string &name) const
     return (new Channel(name));
 }
 
-void    Channel::setOperator(User *user)
+void    Channel::unsetOperator(User *user) const
 {
-    std::vector<std::string>::iterator it = std::find(this->chanops.begin(), this->chanops.end(), user->getNickname());
+    std::vector<std::string> tmp = this->chanops;
+    std::vector<std::string>::iterator it = std::find(tmp.begin(), tmp.end(), user->getNickname());
     if (it != this->chanops.end())
-        this->chanops.push_back(user->getNickname());
+        const_cast<std::vector<std::string> &>(this->chanops).erase(it);
+    user->setPrefix("");
+}
+
+void    Channel::setOperator(User *user) const
+{
+    std::vector<std::string> tmp = this->chanops;
+    std::vector<std::string>::iterator it = std::find(tmp.begin(), tmp.end(), user->getNickname());
+    if (it != this->chanops.end())
+        const_cast<std::vector<std::string> &>(this->chanops).push_back(user->getNickname());
     user->setPrefix("@");
+}
+
+User *Channel::getUser(std::string nickname) const
+{
+    std::vector<User *>::iterator it = const_cast<std::vector<User *> &>(this->getUsers()).begin();
+    while (it != const_cast<std::vector<User *> &>(this->getUsers()).end())
+    {
+        if ((*it)->getNickname() == nickname)
+            return (*it);
+        it++;
+    }
+    return NULL;
+}
+
+bool    Channel::isWithinChannel(std::string nickname, std::map<int, User *> &user, int fd) const
+{
+    if (this->getUser(nickname) == NULL)
+    {
+        send (fd, ERR_NOSUCHNICK(user[fd]->getNickname(), nickname).c_str(), \
+            ERR_NOSUCHNICK(user[fd]->getNickname(), nickname).length(), 0);
+        return false;
+    }
+    return true;
+}
+
+void    Channel::unsetChannelKey()
+{
+    this->password.clear();
+}
+
+void    Channel::removePassword(std::string arg, std::map<int, User *> &user, int fd)
+{
+    if (arg != this->getPassword())
+    {
+        send (fd, ERR_KEYSET(user[fd]->getNickname(), this->getName()).c_str(), \
+        ERR_KEYSET(user[fd]->getNickname(), this->getName()).length(), 0);
+        return ;
+    }
+    this->unsetChannelKey();
+    this->setKeyStatus(false);
 }
 
 void    Channel::createChannel(std::map<int, User*> users, int fd)

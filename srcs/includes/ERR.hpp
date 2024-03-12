@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ERR.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 15:29:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/09 19:18:24 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/12 13:09:12 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,3 +30,6 @@
 #define ERR_INVITEONLYCHAN(nick, chan) (":localhost 473 " + nick + " " + chan + " :Cannot join channel (+i)\r\n")
 #define ERR_BADCHANNELKEY(nick, chan) (":localhost 475 " + nick + " " + chan + " :Cannot join channel (+k)\r\n")
 #define ERR_NOSUCHCHANNEL(nick, chan) (":localhost 403 " + nick + " " + chan + " :No such channel\r\n")
+#define ERR_UNKNOWNMODE(nick, mode) (":localhost 472 " + nick + " " + mode + " :Is unknown mode char to me\r\n")
+#define ERR_NOSUCHNICK(nick, arg) (":localhost 401 " + nick + " " + arg + " :No such nick\r\n")
+#define ERR_KEYSET(nick, chan) (":localhost 467 " + nick + " " + chan + " :Channel key already set\r\n")

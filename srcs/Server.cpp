@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/09 18:06:03 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/11 13:25:20 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ Server::Server()
 	this->registerCommand<Quit>("QUIT");
 	this->registerCommand<Ping>("PING");
 	this->registerCommand<Join>("JOIN");
+	this->registerCommand<Mode>("MODE");
 }
 
 Server::~Server()
@@ -232,7 +233,7 @@ void	Server::handleRegisteredCommand(std::string command, int fd)
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << std::endl;
+		// std::cerr << e.what() << std::endl;
 	}
 }
 
@@ -276,7 +277,7 @@ void Server::initServer()
 							this->registerUser(buffer, this->fds[i].fd);
 						
 					}
-					std::cout << buffer << std::endl;
+					// std::cout << buffer << std::endl;
 					std::memset(&buffer, 0, sizeof(buffer));
 				}
 			}

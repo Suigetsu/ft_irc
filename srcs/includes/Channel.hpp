@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:19:56 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/09 19:30:14 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/12 14:10:18 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,32 +48,38 @@ class Channel
         const std::string getPassword() const;
         const std::string getTopic() const;
         const std::vector<User*> &getUsers() const;
-        void  setOperator(User *user);
+        User *getUser(std::string nickname) const;
+        void  unsetOperator(User *user) const;
+        void  unsetChannelKey();
+        void  setOperator(User *user) const;
         void  addUser(User *user);
         void  removeUser(User *user);
         bool  isOperator(User *user) const;
         bool  isNameValid(const std::string &name);
-        void  kickUser(User *op, User *user);
-        void  inviteUser(User *op, User *user);
-        void  setTopic(User *op, const std::string &topic);
         void  setMode(User *op, const std::string &mode);
         bool  setInviteOnlyMode();
         bool  setTopicRestriction();
-        bool  setChannelKey();
+        bool  setChannelKey(std::string key, int fd, std::map<int, User *> &user);
         bool  grantOperatorPriv();
-        void  setUserLimit(int limit);
+        int  setUserLimit(int limit);
         void  leaveChannel(User *user, const std::string &name);
         void    joinChannel(std::map<int, User*> users, int fd);
         void  joinChannel(std::map<int, User*> users, int fd, std::string key);
         size_t   getUserLimit();
         Channel *clone(const std::string &name) const;
         void    createChannel(std::map<int, User*> users, int fd);
+        void    setLimitStatus(bool status);
+        void    setKeyStatus(bool status);
+        void    setTopicStatus(bool status);
+        void    setInviteStatus(bool status);
+        bool    isWithinChannel(std::string nickname, std::map<int, User *> &user, int fd) const;
         bool    getLimitStatus() const;
         bool    getKeyStatus() const;
         bool    getTopicStatus() const;
         bool    getInviteStatus() const;
         const std::string bufferizeNames() const;
         const std::string bufferizeModes() const;
+        void    removePassword(std::string arg, std::map<int, User *> &user, int fd);
 };
 
 #endif
