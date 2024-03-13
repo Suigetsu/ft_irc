@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 18:03:01 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/12 15:52:10 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/13 08:02:21 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void	Mode::unsetMode(char mode, std::string arg, std::map<int, User *> &user, Ch
             if ((*chan)->isWithinChannel(arg, user, fd) == false)
                 return ;
             (*chan)->unsetOperator((*chan)->getUser(arg));
+            break;
         }
         default:
             send (fd, ERR_UNKNOWNMODE(user[fd]->getNickname(), mode).c_str(), \
@@ -157,6 +158,7 @@ void    Mode::setMode(char mode, std::string arg, std::map<int, User *> &user, C
             if ((*chan)->isWithinChannel(arg, user, fd) == false)
                 return ;
             (*chan)->setOperator((*chan)->getUser(arg));
+            break;
         }
         default:
         {
