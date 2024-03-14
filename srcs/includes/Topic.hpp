@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Quit.hpp                                           :+:      :+:    :+:   */
+/*   Topic.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/04 15:47:29 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/14 12:14:10 by mlagrini         ###   ########.fr       */
+/*   Created: 2024/03/13 12:25:20 by mlagrini          #+#    #+#             */
+/*   Updated: 2024/03/13 15:42:34 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,17 @@
 
 #include "User.hpp"
 #include "Command.hpp"
-#include <unistd.h>
 
 class Command;
 
-class	Quit : public Command
+class	Topic : public Command
 {
 	public:
-		Quit();
-		~Quit();
+		Topic();
+		~Topic();
 		void	execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const;
-		Quit	*clone() const;
+		std::vector<std::string> parseTopic(std::string command) const;
+		void	sendTopic(Channel *chan, User *user, int fd) const;
+		void	setTopic(User *user, Channel **chan, std::string topic, int fd) const;
+		Topic	*clone() const;
 };

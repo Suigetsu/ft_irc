@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:19:56 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/12 14:10:18 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/13 15:27:06 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class Channel
         std::string password;
         std::string topic;
         std::string mode;
+        std::string prefix;
         std::vector<User*> users;
         std::vector<std::string> chanops;
         int userLimit;
@@ -49,12 +50,12 @@ class Channel
         const std::string getTopic() const;
         const std::vector<User*> &getUsers() const;
         User *getUser(std::string nickname) const;
-        void  unsetOperator(User *user) const;
+        void  unsetOperator(User *user);
         void  unsetChannelKey();
-        void  setOperator(User *user) const;
+        void  setOperator(User *user);
         void  addUser(User *user);
         void  removeUser(User *user);
-        bool  isOperator(User *user) const;
+        bool  isOperator(std::string nick) const;
         bool  isNameValid(const std::string &name);
         void  setMode(User *op, const std::string &mode);
         bool  setInviteOnlyMode();
@@ -72,7 +73,7 @@ class Channel
         void    setKeyStatus(bool status);
         void    setTopicStatus(bool status);
         void    setInviteStatus(bool status);
-        bool    isWithinChannel(std::string nickname, std::map<int, User *> &user, int fd) const;
+        bool    isWithinChannel(std::string nickname) const;
         bool    getLimitStatus() const;
         bool    getKeyStatus() const;
         bool    getTopicStatus() const;
@@ -80,6 +81,9 @@ class Channel
         const std::string bufferizeNames() const;
         const std::string bufferizeModes() const;
         void    removePassword(std::string arg, std::map<int, User *> &user, int fd);
+        std::string getPrefix(std::string nick) const;
+        void    setTopic(std::string topic);
+        void    broadcastToMembers(std::string message);
 };
 
 #endif

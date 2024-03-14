@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/11 12:43:02 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/13 13:29:53 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@
 # include "Channel.hpp"
 # include "Join.hpp"
 # include "Mode.hpp"
+# include "Topic.hpp"
 # include "poll.h"
 
 # define BACKLOG 10

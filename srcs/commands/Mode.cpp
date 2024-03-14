@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Mode.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/09 18:03:01 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/13 08:02:21 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/14 12:07:39 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,12 @@ void	Mode::unsetMode(char mode, std::string arg, std::map<int, User *> &user, Ch
             break;
         case 'o':
         {
-            if ((*chan)->isWithinChannel(arg, user, fd) == false)
+            if ((*chan)->isWithinChannel(arg) == false)
+            {
+                send (fd, ERR_NOSUCHNICK(user[fd]->getNickname(), arg).c_str(), \
+                    ERR_NOSUCHNICK(user[fd]->getNickname(), arg).length(), 0);
                 return ;
+            }
             (*chan)->unsetOperator((*chan)->getUser(arg));
             break;
         }
@@ -42,7 +46,7 @@ void	Mode::unsetMode(char mode, std::string arg, std::map<int, User *> &user, Ch
                 ERR_UNKNOWNMODE(user[fd]->getNickname(), mode).length(), 0);
             break;
     }
-    this->bufferizeModes(mode, '-');
+    this->bufferizeModes(mode, '-', arg);
 }
 
 void	Mode::unsetMode(char mode, std::map<int, User *> &user, Channel **chan, int fd) const
@@ -90,7 +94,11 @@ void Mode::bufferizeModes(char mode, char sign, std::string args) const
         if (this->unsetBuffer.empty())
             const_cast<std::string&>(this->unsetBuffer) = '-';
         if (this->unsetBuffer.find(mode) == std::string::npos)
+        {
             const_cast<std::string&>(this->unsetBuffer) += mode;
+            const_cast<std::string&>(this->setArgs) += args;
+            const_cast<std::string&>(this->setArgs) += " ";
+        }
     }
 }
 
@@ -155,8 +163,12 @@ void    Mode::setMode(char mode, std::string arg, std::map<int, User *> &user, C
         }
         case 'o':
         {
-            if ((*chan)->isWithinChannel(arg, user, fd) == false)
+            if ((*chan)->isWithinChannel(arg) == false)
+            {
+                send (fd, ERR_NOSUCHNICK(user[fd]->getNickname(), arg).c_str(), \
+                    ERR_NOSUCHNICK(user[fd]->getNickname(), arg).length(), 0);
                 return ;
+            }
             (*chan)->setOperator((*chan)->getUser(arg));
             break;
         }
@@ -191,6 +203,12 @@ void    Mode::parseModes(std::map<int, User *> &user, std::string params, std::m
     {
         send(fd, RPL_CHANNELMODEIS(user[fd]->getNickname(), modeargs[0], chan[modeargs[0]]->bufferizeModes()).c_str(), \
             RPL_CHANNELMODEIS(user[fd]->getNickname(), modeargs[0], chan[modeargs[0]]->bufferizeModes()).length(), 0);
+        throw (Mode::unknownCommandException());
+    }
+    if (chan[modeargs[0]]->isOperator(user[fd]->getNickname()) == false)
+    {
+        send(fd, ERR_CHANOPRIVSNEEDED(user[fd]->getNickname(), modeargs[0]).c_str(), \
+            ERR_CHANOPRIVSNEEDED(user[fd]->getNickname(), modeargs[0]).length(), 0);
         throw (Mode::unknownCommandException());
     }
     size_t i = 1;
@@ -261,6 +279,12 @@ void    Mode::clearBuffers() const
 
 void	Mode::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
 {
+    if (users[fd]->getCommand().size() < 2)
+    {
+        send(fd, ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).c_str(), \
+            ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).length(), 0);
+        throw (Mode::unknownCommandException());
+    }
 	this->parseModes(users, users[fd]->getCommand()[FIRST_PARAM], chan, fd);
 }
 

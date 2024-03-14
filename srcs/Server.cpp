@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/11 13:25:20 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/14 11:52:22 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ Server::Server()
 	this->registerCommand<Ping>("PING");
 	this->registerCommand<Join>("JOIN");
 	this->registerCommand<Mode>("MODE");
+	this->registerCommand<Topic>("TOPIC");
 }
 
 Server::~Server()
@@ -176,6 +177,9 @@ void	Server::registerUser(std::string buffer, int fd)
 					throw(Server::errorException());
 				this->commandsMap[cmd]->execute(this->usersMap, this->channels, fd);
 			}
+			else
+				throw(Server::errorException());
+			this->usersMap[fd]->clearCmdMap();
 			it++;
 		}
 	}
