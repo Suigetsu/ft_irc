@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 15:27:02 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/13 15:32:04 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/15 12:38:07 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,3 +29,4 @@
 #define RPL_NOTOPIC(nick, chan) (":localhost 331 " + nick + " " + chan + " :No topic is set\r\n")
 #define RPL_TOPIC(nick, chan, topic) (":localhost 332 " + nick + " " + chan + " " + topic + "\r\n")
 #define TOPIC(nick, user, host, chan, topic) (":" + nick + "!" + user + "@" + host + " TOPIC " + chan + " :" + topic + "\r\n")
+#define PONG(arg) (":localhost PONG ircserv :" + arg + "\r\n")
