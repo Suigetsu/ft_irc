@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/15 13:05:55 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/15 13:16:51 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/15 14:38:31 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,16 @@ Who::~Who()
 void	Who::sendWho(User *usr, Channel *chan, int fd) const
 {
 	std::vector<User *> tmp = chan->getUsers();
+	std::string buffer;
 	std::vector<User *>::iterator it = tmp.begin();
 	while (it != tmp.end())
 	{
-		send (fd, RPL_WHOREPLY(usr->getNickname(), chan->getName(), (*it)->getUsername(), \
-			(*it)->getHost(), (*it)->getNickname(), (*it)->getRealname()).c_str(), \
-			RPL_WHOREPLY(usr->getNickname(), chan->getName(), (*it)->getUsername(), \
-			(*it)->getHost(), (*it)->getNickname(), (*it)->getRealname()).length(), 0);
+		buffer += RPL_WHOREPLY(usr->getNickname(), chan->getName(), (*it)->getUsername(), \
+			(*it)->getHost(), (*it)->getNickname(), (*it)->getRealname());
 		it++;
 	}
-	send (fd, RPL_ENDOFWHO(usr->getNickname(), chan->getName()).c_str(), \
-			RPL_ENDOFWHO(usr->getNickname(), chan->getName()).length(), 0);
+	buffer += RPL_ENDOFWHO(usr->getNickname(), chan->getName());
+	send (fd, buffer.c_str(), buffer.length(), 0);
 }
 
 void	Who::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const

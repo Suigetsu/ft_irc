@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 15:27:02 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/15 13:01:51 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/15 15:48:31 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,3 +32,7 @@
 #define PONG(arg) (":localhost PONG ircserv :" + arg + "\r\n")
 #define RPL_WHOREPLY(client, chan, user, host, nick, real) (":localhost 352 " + client + " " + chan + " " + user + " " + host + " ircserv " + nick + " :1 " + real + "\r\n")
 #define RPL_ENDOFWHO(client, mask) (":localhost 315 " + client + " " + mask + " :End of WHO list\r\n")
+#define RPL_WHOISUSER(client, nick, user, host, real) (":localhost 311 " + client + " " + nick + " " + user + " " + host + " * :" + real + "\r\n")
+#define RPL_WHOISCHANNELS(client, nick, chan) (":localhost 319 " + client + " " + nick + " :" + chan + "\r\n")
+#define RPL_WHOISSERVER(client, nick) (":localhost 312 " + client + " " + nick + " ircserv :ding dong your opinion on our server is wrong (unless you think it's awesome possum!)\r\n")
+#define RPL_ENDOFWHOIS(client, nick) (":localhost 318 " + client + " " + nick + " :End of WHOIS list\r\n")

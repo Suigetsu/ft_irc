@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/15 13:18:12 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/15 15:54:24 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@
 # include "Mode.hpp"
 # include "Topic.hpp"
 # include "Who.hpp"
+# include "WhoIs.hpp"
 # include "poll.h"
 
 # define BACKLOG 10
@@ -108,6 +109,7 @@ class	Server
 		void	addUser(int fd);
 		void	closeFds();
 		bool    doesChannelExist(const std::string &name);
+		bool	doesUserExist(const std::string &name);
 		void	joinChannel(User user, const std::string &name);
 		void	handleRegisteredCommand(std::string command, int fd);
 		bool	doesCommandExist(std::string cmdName);
