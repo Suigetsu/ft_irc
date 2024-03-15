@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 12:30:19 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/09 16:09:29 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/15 13:29:01 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ void	UserCmd::execute(std::map<int, User *> &users, std::map<std::string, Channe
 	params = this->parseParams(users[fd]->getCommand(), fd, users[fd]->getNickname());
 	users[fd]->setUsername(params[0]);
 	users[fd]->setHost(params[2]);
+	params[3].erase(0, params[3].find(":") + 1);
 	users[fd]->setRealname(params[3]);
 	users[fd]->setAuth(true);
 	users[fd]->setFd(fd);

@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 15:27:02 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/15 12:38:07 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/15 13:01:51 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,3 +30,5 @@
 #define RPL_TOPIC(nick, chan, topic) (":localhost 332 " + nick + " " + chan + " " + topic + "\r\n")
 #define TOPIC(nick, user, host, chan, topic) (":" + nick + "!" + user + "@" + host + " TOPIC " + chan + " :" + topic + "\r\n")
 #define PONG(arg) (":localhost PONG ircserv :" + arg + "\r\n")
+#define RPL_WHOREPLY(client, chan, user, host, nick, real) (":localhost 352 " + client + " " + chan + " " + user + " " + host + " ircserv " + nick + " :1 " + real + "\r\n")
+#define RPL_ENDOFWHO(client, mask) (":localhost 315 " + client + " " + mask + " :End of WHO list\r\n")
