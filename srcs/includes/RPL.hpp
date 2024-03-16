@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 15:27:02 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/16 11:24:24 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/16 12:02:39 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,16 @@
 #define QUIT_MSG(nick, user, host, reason) (":" + nick + "!" + user + "@" + host + " QUIT :Quit: " + reason + "\r\n")
 #define RPL_NAMREPLY(nick, user, chan, host, list, prefix) (":localhost 353 " + nick + " = " + chan + " :" + prefix + nick + "!" + user + "@" + host + " " + list + "\r\n")
 #define JOIN(nick, user, host, chan) (":" + nick + "!" + user + "@" + host + " JOIN " + chan + "\r\n")
-#define MODE(nick, user, host, chan, mode) (":" + nick + "!" + "@" + host + " MODE " + chan + " " + mode + "\r\n")
+#define MODE(nick, user, host, chan, mode) (":" + nick + "!" + user + "@" + host + " MODE " + chan + " " + mode + "\r\n")
 #define RPL_ENDOFNAMES(nick, chan) (":localhost 366 " + nick + " " + chan + " :End of /NAMES list\r\n")
 #define RPL_CHANNELMODEIS(nick, chan, modes) (":localhost 324 " + nick + " " + chan + " " + modes + "\r\n")
+#define RPL_NOTOPIC(nick, chan) (":localhost 331 " + nick + " " + chan + " :No topic is set\r\n")
+#define RPL_TOPIC(nick, chan, topic) (":localhost 332 " + nick + " " + chan + " " + topic + "\r\n")
+#define TOPIC(nick, user, host, chan, topic) (":" + nick + "!" + user + "@" + host + " TOPIC " + chan + " :" + topic + "\r\n")
+#define PONG(arg) (":localhost PONG ircserv :" + arg + "\r\n")
+#define RPL_WHOREPLY(client, chan, user, host, nick, real) (":localhost 352 " + client + " " + chan + " " + user + " " + host + " ircserv " + nick + " :1 " + real + "\r\n")
+#define RPL_ENDOFWHO(client, mask) (":localhost 315 " + client + " " + mask + " :End of WHO list\r\n")
+#define RPL_WHOISUSER(client, nick, user, host, real) (":localhost 311 " + client + " " + nick + " " + user + " " + host + " * :" + real + "\r\n")
+#define RPL_WHOISCHANNELS(client, nick, chan) (":localhost 319 " + client + " " + nick + " :" + chan + "\r\n")
+#define RPL_WHOISSERVER(client, nick) (":localhost 312 " + client + " " + nick + " ircserv :ding dong your opinion on our server is wrong (unless you think it's awesome possum!)\r\n")
+#define RPL_ENDOFWHOIS(client, nick) (":localhost 318 " + client + " " + nick + " :End of WHOIS list\r\n")

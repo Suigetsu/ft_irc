@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Quit.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
+/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:48:03 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/09 17:54:55 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/14 12:13:47 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	Quit::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 		QUIT_MSG(users[fd]->getNickname(),users[fd]->getUsername(),users[fd]->getHost(), reason).length(), 0);
 	delete users[fd];
 	users.erase(fd);
+	close (fd);
 }
 
 Quit	*Quit::clone() const

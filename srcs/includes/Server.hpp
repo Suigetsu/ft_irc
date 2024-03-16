@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/16 09:27:00 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/16 12:02:31 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,9 @@
 # include "Channel.hpp"
 # include "Join.hpp"
 # include "Mode.hpp"
+# include "Topic.hpp"
+# include "Who.hpp"
+# include "WhoIs.hpp"
 # include "poll.h"
 # include "fstream"
 
@@ -107,6 +110,7 @@ class	Server
 		void	addUser(int fd);
 		void	closeFds();
 		bool    doesChannelExist(const std::string &name);
+		bool	doesUserExist(const std::string &name);
 		void	joinChannel(User user, const std::string &name);
 		void	handleRegisteredCommand(std::string command, int fd);
 		bool	doesCommandExist(std::string cmdName);

@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 16:47:46 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/09 10:07:26 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/14 11:51:10 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@ void	Nick::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 	}
 	if (users[fd]->getUserPass().empty())
 		throw(Nick::registrationException());
+	std::cout << users[fd]->getCommand()[0] << " " << users[fd]->getCommand()[1] << std::endl;
 	if (users[fd]->getCommand().size() < 2)
 	{
 		send(fd, ERR_NONICKNAMEGIVEN, sizeof(ERR_NONICKNAMEGIVEN), 0);

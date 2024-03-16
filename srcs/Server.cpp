@@ -6,7 +6,7 @@
 /*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/16 11:33:53 by hrahmane         ###   ########.fr       */
+/*   Updated: 2024/03/16 12:02:14 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,9 @@ Server::Server()
 	this->registerCommand<Ping>("PING");
 	this->registerCommand<Join>("JOIN");
 	this->registerCommand<Mode>("MODE");
+	this->registerCommand<Topic>("TOPIC");
+	this->registerCommand<Who>("WHO");
+	this->registerCommand<WhoIs>("WHOIS");
 }
 
 Server::~Server()
@@ -176,6 +179,9 @@ void	Server::registerUser(std::string buffer, int fd)
 					throw(Server::errorException());
 				this->commandsMap[cmd]->execute(this->usersMap, this->channels, fd);
 			}
+			else
+				throw(Server::errorException());
+			this->usersMap[fd]->clearCmdMap();
 			it++;
 		}
 	}
@@ -351,5 +357,15 @@ bool    Server::doesChannelExist(const std::string &name)
 	return true;
 }
 
-
+bool	Server::doesUserExist(const std::string &name)
+{
+	std::map<int, User *>::iterator it = this->usersMap.begin();
+	while (it != this->usersMap.end())
+	{
+		if ((*it).second->getNickname() == name)
+			return true;
+		it++;
+	}
+	return false;
+}
 

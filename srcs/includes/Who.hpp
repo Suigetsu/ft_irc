@@ -1,35 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Pong.cpp                                           :+:      :+:    :+:   */
+/*   Who.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/07 11:19:59 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/15 12:36:29 by mlagrini         ###   ########.fr       */
+/*   Created: 2024/03/15 13:05:13 by mlagrini          #+#    #+#             */
+/*   Updated: 2024/03/15 13:13:48 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/Pong.hpp"
+#pragma once
 
-Pong::Pong() : Command::Command()
+#include "User.hpp"
+#include "Command.hpp"
+
+class Command;
+
+class	Who : public Command
 {
-	
-}
-
-Pong::~Pong()
-{
-
-}
-
-void	Pong::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
-{
-    (void) chan;
-    send(fd, PONG(users[fd]->getCommand()[FIRST_PARAM]).c_str(), \
-        PONG(users[fd]->getCommand()[FIRST_PARAM]).length(), 0);
-}
-
-Pong	*Pong::clone() const
-{
-	return (new Pong);
-}
+	public:
+		Who();
+		~Who();
+		void	execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const;
+		void	sendWho(User *usr, Channel *chan, int fd) const;
+		Who	*clone() const;
+};

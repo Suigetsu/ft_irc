@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 15:29:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/12 13:09:12 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/13 12:58:50 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,3 +33,5 @@
 #define ERR_UNKNOWNMODE(nick, mode) (":localhost 472 " + nick + " " + mode + " :Is unknown mode char to me\r\n")
 #define ERR_NOSUCHNICK(nick, arg) (":localhost 401 " + nick + " " + arg + " :No such nick\r\n")
 #define ERR_KEYSET(nick, chan) (":localhost 467 " + nick + " " + chan + " :Channel key already set\r\n")
+#define ERR_CHANOPRIVSNEEDED(nick, chan) (":localhost 482 " + nick + " " + chan + " :You're not channel operator\r\n")
+#define ERR_NOTONCHANNEL(nick, chan) (":localhost 442 " + nick + " " + chan + ":You're not on that channel\r\n")

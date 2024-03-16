@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 16:01:56 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/09 15:46:21 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/13 11:26:45 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,12 +64,8 @@ void	Join::parseChannels(std::vector<std::string> &chanVec, std::vector<std::str
 
 void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
 {
-	(void)chan;
 	std::vector<std::string> chanVec;
 	std::vector<std::string> keyVec;
-	//check
-	// users[fd]->getCommand()[FIRST_PARAM].length()
-	// chan.find(users[fd]->getCommand()[COMMAND]);
 	if (users[fd]->getCommand().size() < 2)
 	{
 		send (fd, ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).c_str(), \
@@ -95,12 +91,13 @@ void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 		}
 		else
 		{
-			std::cout << "existing" << std::endl;
-			// if (i < keyVec.size())
+			if (i < keyVec.size())
+				chan[chanVec[i]]->joinChannel(users, fd, keyVec[i]);
+			else
 				chan[chanVec[i]]->joinChannel(users, fd);
-			// else
-			// 	chan[chanVec[i]]->joinChannel(users, fd, keyVec[i]);
 		}
+		if (i < keyVec.size())
+			keyVec.erase(keyVec.begin() + i);
 	}
 	
 }
