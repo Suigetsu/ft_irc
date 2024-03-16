@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/04 15:47:29 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/14 12:14:10 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/16 14:08:57 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "User.hpp"
 #include "Command.hpp"
 #include <unistd.h>
+#include "Server.hpp"
 
 class Command;
 

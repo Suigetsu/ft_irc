@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/16 12:49:13 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/16 15:48:14 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@
 # include "Who.hpp"
 # include "WhoIs.hpp"
 # include "Motd.hpp"
+# include "Privmsg.hpp"
 # include <poll.h>
 # include <fstream>
 
@@ -72,6 +73,7 @@ class	Server
 		std::vector<int> registeredFds;
 	public:
 		static bool status;
+		static bool QuitStatus;
 		static void signalHandler(int signum);
 		Server();
 		Server(const Server &obj);

@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 15:29:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/13 12:58:50 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/16 14:37:09 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@
 #define ERR_NICKNAMEINUSE(nick) (":localhost 433 " + nick + " " + nick + " :Nickname is already in use\r\n")
 #define ERR_NEEDMOREPARAMS(nick, cmd) (":localhost 461 " + nick + " " + cmd + " :Not enough parameters\r\n")
 #define ERR_UNKNOWNCOMMAND(nick, command) (":localhost 421 " + nick + " " + command + " :Unknown command\r\n")
-#define ERR_NOTEXTTOSEND(nick) (":localhost 412 " + nick + " :No text to send\r\n")
-#define ERR_NORECIPIENT(nick, command) (":localhost 411 " + nick + " :No recipient given (" + command + ")\r\n")
 #define ERR_ALREADYREGISTERED(nick) (":localhost 462 " + nick + " :You may not reregister\r\n")
 #define ERR_NOMOTD(nick) (":localhost 422 " + nick + " :MOTD File is missing\r\n")
 #define ERR_NOSUCHCHANNEL(nick, chan) (":localhost 403 " + nick + " " + chan + " :No such channel\r\n")
@@ -34,4 +32,7 @@
 #define ERR_NOSUCHNICK(nick, arg) (":localhost 401 " + nick + " " + arg + " :No such nick\r\n")
 #define ERR_KEYSET(nick, chan) (":localhost 467 " + nick + " " + chan + " :Channel key already set\r\n")
 #define ERR_CHANOPRIVSNEEDED(nick, chan) (":localhost 482 " + nick + " " + chan + " :You're not channel operator\r\n")
-#define ERR_NOTONCHANNEL(nick, chan) (":localhost 442 " + nick + " " + chan + ":You're not on that channel\r\n")
+#define ERR_NOTONCHANNEL(nick, chan) (":localhost 442 " + nick + " " + chan + " :You're not on that channel\r\n")
+#define ERR_CANNOTSENDTOCHAN(nick, chan) (":localhost 404 " + nick + " " + chan + " :Cannot send to channel\r\n")
+#define ERR_NORECIPIENT(nick) (":localhost 411 " + nick + " :No recipient given (PRIVMSG)\r\n")
+#define ERR_NOTEXTTOSEND(nick) (":localhost 412 " + nick + " :No text to send")

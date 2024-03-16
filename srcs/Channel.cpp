@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 09:54:50 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/14 12:36:52 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/16 13:29:49 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -224,9 +224,8 @@ void	Channel::joinChannel(std::map<int, User*> users, int fd)
         return ;
     }
     std::string buffer = JOIN(users[fd]->getNickname(), users[fd]->getUsername(), users[fd]->getHost(), this->name) \
-			+ RPL_NAMREPLY(users[fd]->getNickname(), users[fd]->getUsername(), this->getName(), users[fd]->getHost(), \
-            this->bufferizeNames(), this->getPrefix(users[fd]->getNickname())) \
-            + RPL_ENDOFNAMES(users[fd]->getNickname(), this->name);
+			+ RPL_NAMREPLY(users[fd]->getNickname(), this->getName(), this->bufferizeNames(), \
+            this->getPrefix(users[fd]->getNickname())) + RPL_ENDOFNAMES(users[fd]->getNickname(), this->name);
 	send(fd, buffer.c_str(), buffer.length(), 0);
     std::vector<User *> tmp = this->getUsers();
     std::vector<User *>::iterator it = tmp.begin();
@@ -260,7 +259,7 @@ const std::string    Channel::bufferizeNames() const
     std::vector<User *>::iterator it = tmp.begin();
     while (it != tmp.end())
     {
-        buffer += this->getPrefix((*it)->getNickname()) + (*it)->getNickname() + "!" + (*it)->getUsername() + "@" + (*it)->getHost();
+        buffer += this->getPrefix((*it)->getNickname()) + (*it)->getNickname();
         if (it + 1 != tmp.end())
             buffer += " ";
         it++;
@@ -289,7 +288,7 @@ void	Channel::joinChannel(std::map<int, User*> users, int fd, std::string key)
         return ;
     }
     std::string buffer = JOIN(users[fd]->getNickname(), users[fd]->getUsername(), users[fd]->getHost(), this->name) \
-			+ RPL_NAMREPLY(users[fd]->getNickname(), users[fd]->getUsername(), this->getName(), users[fd]->getHost(), \
+			+ RPL_NAMREPLY(users[fd]->getNickname(), this->getName(), \
             this->bufferizeNames(), this->getPrefix(users[fd]->getNickname())) \
             + RPL_ENDOFNAMES(users[fd]->getNickname(), this->name);
 	send(fd, buffer.c_str(), buffer.length(), 0);
@@ -384,7 +383,7 @@ void    Channel::createChannel(std::map<int, User*> users, int fd)
     this->addUser(users[fd]);
     this->setOperator(users[fd]);
     std::string buffer = JOIN(users[fd]->getNickname(), users[fd]->getUsername(), users[fd]->getHost(), this->getName()) \
-			+ RPL_NAMREPLY(users[fd]->getNickname(), users[fd]->getUsername(), this->getName(), users[fd]->getHost(), "", this->getPrefix(users[fd]->getNickname())) + \
+			+ RPL_NAMREPLY(users[fd]->getNickname(), this->getName(), "", this->getPrefix(users[fd]->getNickname())) + \
             RPL_ENDOFNAMES(users[fd]->getNickname(), this->name);
 	send(fd, buffer.c_str(), buffer.length(), 0);
 }

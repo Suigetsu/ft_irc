@@ -6,13 +6,14 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/16 12:58:30 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/16 15:48:02 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "./includes/Server.hpp"
 
 bool Server::status = false;
+bool Server::QuitStatus = false;
 
 void	Server::signalHandler(int signum)
 {
@@ -36,6 +37,7 @@ Server::Server()
 	this->registerCommand<Who>("WHO");
 	this->registerCommand<WhoIs>("WHOIS");
 	this->registerCommand<Motd>("MOTD");
+	this->registerCommand<Privmsg>("PRIVMSG");
 }
 
 Server::~Server()
@@ -285,7 +287,7 @@ void Server::initServer()
 				else
 				{
 					bread = recv(this->fds[i].fd, buffer, 1000, 0);
-					if (bread <= 0)
+					if (bread <= 0 || Server::QuitStatus == true)
 					{
 						std::cout << "connection closed by the client " << this->fds[i].fd << std::endl;
 						close(this->fds[i].fd);
@@ -293,6 +295,7 @@ void Server::initServer()
 						this->usersMap.erase(this->fds[i].fd);
 						if (this->isRegistered(this->fds[i].fd))
 							this->registeredFds.erase(std::find(this->registeredFds.begin(), this->registeredFds.end(), this->fds[i].fd));
+						Server::QuitStatus = false;
 					}
 					else
 					{
@@ -302,7 +305,6 @@ void Server::initServer()
 							this->registerUser(buffer, this->fds[i].fd);
 						
 					}
-					// std::cout << buffer << std::endl;
 					std::memset(&buffer, 0, sizeof(buffer));
 				}
 			}
