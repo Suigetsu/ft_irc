@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/16 11:48:00 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/16 12:58:30 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ Server::Server()
 	this->registerCommand<Topic>("TOPIC");
 	this->registerCommand<Who>("WHO");
 	this->registerCommand<WhoIs>("WHOIS");
+	this->registerCommand<Motd>("MOTD");
 }
 
 Server::~Server()
@@ -210,19 +211,6 @@ void	Server::registerUser(std::string buffer, int fd)
 	}
 	this->parser.erase(this->parser.begin(), this->parser.end());
 }
-
-// std::string Server::wrapText(const std::string &input)
-// {
-// 	std::string result;
-// 	size_t pos = 0;
-	
-// 	while (pos < input.length())
-// 	{
-// 		result += input.substr(pos, 80) + "\r\n";
-// 		pos += 80;
-// 	}
-// 	return result;
-// }
 
 const std::string	Server::readMotd(const std::string &fn, int fd)
 {

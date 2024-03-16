@@ -6,7 +6,7 @@
 /*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/16 11:48:19 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/16 12:49:13 by mlagrini         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,9 @@
 # include "Topic.hpp"
 # include "Who.hpp"
 # include "WhoIs.hpp"
-# include "poll.h"
-# include "fstream"
+# include "Motd.hpp"
+# include <poll.h>
+# include <fstream>
 
 # define BACKLOG 10
 # define COMMAND 0
