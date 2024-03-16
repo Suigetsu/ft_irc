@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/11 12:43:02 by mlagrini         ###   ########.fr       */
+/*   Updated: 2024/03/16 09:27:00 by hrahmane         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@
 # include "Join.hpp"
 # include "Mode.hpp"
 # include "poll.h"
+# include "fstream"
 
 # define BACKLOG 10
 # define COMMAND 0
@@ -110,6 +111,9 @@ class	Server
 		void	handleRegisteredCommand(std::string command, int fd);
 		bool	doesCommandExist(std::string cmdName);
 		void	launchCommand(std::map<int, std::string>cmd, int fd);
+		std::string wrapText(const std::string &input);
+		const std::string	readMotd(const std::string &file, int fd);
+		
 };
 
 #endif
