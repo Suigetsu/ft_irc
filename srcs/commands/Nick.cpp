@@ -21,7 +21,6 @@ void	Nick::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 	}
 	if (users[fd]->getUserPass().empty())
 		throw(Nick::registrationException());
-	std::cout << users[fd]->getCommand()[0] << " " << users[fd]->getCommand()[1] << std::endl;
 	if (users[fd]->getCommand().size() < 2)
 	{
 		send(fd, ERR_NONICKNAMEGIVEN, sizeof(ERR_NONICKNAMEGIVEN), 0);

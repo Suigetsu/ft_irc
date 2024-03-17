@@ -26,6 +26,7 @@ Server::Server()
 	this->registerCommand<WhoIs>("WHOIS");
 	this->registerCommand<Motd>("MOTD");
 	this->registerCommand<Privmsg>("PRIVMSG");
+	this->registerCommand<Invite>("INVITE");
 }
 
 Server::~Server()
@@ -232,12 +233,21 @@ void	Server::launchCommand(std::map<int, std::string>cmd, int fd)
 	this->commandsMap[cmd[COMMAND]]->execute(this->usersMap, this->channels, fd);
 }
 
+void	Server::toUpper(std::string &command)
+{
+	for (size_t i = 0; i < command.length(); i++)
+	{
+		command[i] = std::toupper(command[i]);
+	}
+}
+
 void	Server::handleRegisteredCommand(std::string command, int fd)
 {
 	try
 	{
 		this->usersMap[fd]->clearCmdMap();
 		this->usersMap[fd]->parseCommand(command);
+		this->toUpper(this->usersMap[fd]->getCommand()[COMMAND]);
 		if(!this->doesCommandExist(this->usersMap[fd]->getCommand()[COMMAND]))
 		{
 			std::string buffer = ERR_UNKNOWNCOMMAND(this->usersMap[fd]->getNickname(), this->usersMap[fd]->getCommand()[COMMAND]);

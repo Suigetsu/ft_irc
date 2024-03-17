@@ -6,7 +6,7 @@
 #    By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/02/03 10:37:04 by mlagrini          #+#    #+#              #
-#    Updated: 2024/03/16 15:45:50 by mlagrini         ###   ########.fr        #
+#    Updated: 2024/03/17 13:39:05 by mlagrini         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ SRC		=	srcs/main.cpp srcs/Server.cpp srcs/Client.cpp srcs/commands/Command.cpp \
 			srcs/commands/Quit.cpp srcs/commands/UserCmd.cpp srcs/commands/Ping.cpp \
 			srcs/commands/Pong.cpp srcs/commands/Join.cpp srcs/Channel.cpp srcs/commands/Mode.cpp \
 			srcs/commands/Topic.cpp srcs/commands/Who.cpp srcs/commands/WhoIs.cpp srcs/commands/Motd.cpp \
-			srcs/commands/Privmsg.cpp
+			srcs/commands/Privmsg.cpp srcs/commands/Invite.cpp
 OBJ		=	${SRC:.cpp=.o}
 CC		=	c++
 FLAGS	=	-Wall -Wextra -Werror -std=c++98

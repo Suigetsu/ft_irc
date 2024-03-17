@@ -30,4 +30,3 @@
 #define RPL_WHOISSERVER(client, nick) (":localhost 312 " + client + " " + nick + " ircserv :ding dong your opinion on our server is wrong (unless you think it's awesome possum!)\r\n")
 #define RPL_ENDOFWHOIS(client, nick) (":localhost 318 " + client + " " + nick + " :End of WHOIS list\r\n")
 #define RPL_INVITING(client, chan) (":localhost 341 " + client + " " + chan + "\r\n")
-#define ERR_USERONCHANNEL(client, nick, chan) (":localhost 443 " + client + " " + nick + " " + chan + " :is already on channel\r\n")

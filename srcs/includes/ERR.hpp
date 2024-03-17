@@ -24,3 +24,4 @@
 #define ERR_CANNOTSENDTOCHAN(nick, chan) (":localhost 404 " + nick + " " + chan + " :Cannot send to channel\r\n")
 #define ERR_NORECIPIENT(nick) (":localhost 411 " + nick + " :No recipient given (PRIVMSG)\r\n")
 #define ERR_NOTEXTTOSEND(nick) (":localhost 412 " + nick + " :No text to send")
+#define ERR_USERONCHANNEL(client, nick, chan) (":localhost 443 " + client + " " + nick + " " + chan + " :is already on channel\r\n")

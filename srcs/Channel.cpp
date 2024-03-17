@@ -24,7 +24,6 @@ Channel::~Channel()
     //     if (*it)
     //         delete *it;
     //     it++;
-    //     std::cout << "debug" << std::endl;
     // }
 }
 
@@ -191,8 +190,6 @@ void    Channel::setTopicStatus(bool status)
 
 void	Channel::joinChannel(std::map<int, User*> users, int fd)
 {
-    std::cout << this->users.size() + 1 << std::endl;
-    std::cout << this->getUserLimit() << std::endl;
     if (this->users.size() + 1 > this->getUserLimit())
     {
         send(fd, ERR_CHANNELISFULL(users[fd]->getNickname(), this->name).c_str(), \

@@ -33,6 +33,7 @@
 # include "WhoIs.hpp"
 # include "Motd.hpp"
 # include "Privmsg.hpp"
+# include "Invite.hpp"
 # include <poll.h>
 # include <fstream>
 
@@ -108,6 +109,7 @@ class	Server
 		void	launchCommand(std::map<int, std::string>cmd, int fd);
 		std::string wrapText(const std::string &input);
 		const std::string	readMotd(const std::string &file, int fd);
+		void	toUpper(std::string &command);
 		
 };
 
