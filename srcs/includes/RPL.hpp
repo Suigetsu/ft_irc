@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   RPL.hpp                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/01 15:27:02 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/16 15:53:49 by mlagrini         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include <string>
@@ -28,6 +16,7 @@
 #define JOIN(nick, user, host, chan) (":" + nick + "!" + user + "@" + host + " JOIN " + chan + "\r\n")
 #define MODE(nick, user, host, chan, mode) (":" + nick + "!" + user + "@" + host + " MODE " + chan + " " + mode + "\r\n")
 #define PRIVMSG(nick, user, host, recipient, text) (":" + nick + "!" + user + "@" + host + " PRIVMSG " + recipient + " " + text + "\r\n")
+#define INVITE(nick, user, host, inv, chan) (":" + nick + "!" + user + "@" + host + " INVITE " + chan + " " + inv + "\r\n")
 #define RPL_ENDOFNAMES(nick, chan) (":localhost 366 " + nick + " " + chan + " :End of /NAMES list\r\n")
 #define RPL_CHANNELMODEIS(nick, chan, modes) (":localhost 324 " + nick + " " + chan + " " + modes + "\r\n")
 #define RPL_NOTOPIC(nick, chan) (":localhost 331 " + nick + " " + chan + " :No topic is set\r\n")
@@ -40,3 +29,5 @@
 #define RPL_WHOISCHANNELS(client, nick, chan) (":localhost 319 " + client + " " + nick + " :" + chan + "\r\n")
 #define RPL_WHOISSERVER(client, nick) (":localhost 312 " + client + " " + nick + " ircserv :ding dong your opinion on our server is wrong (unless you think it's awesome possum!)\r\n")
 #define RPL_ENDOFWHOIS(client, nick) (":localhost 318 " + client + " " + nick + " :End of WHOIS list\r\n")
+#define RPL_INVITING(client, chan) (":localhost 341 " + client + " " + chan + "\r\n")
+#define ERR_USERONCHANNEL(client, nick, chan) (":localhost 443 " + client + " " + nick + " " + chan + " :is already on channel\r\n")
