@@ -27,6 +27,7 @@ Server::Server()
 	this->registerCommand<Motd>("MOTD");
 	this->registerCommand<Privmsg>("PRIVMSG");
 	this->registerCommand<Invite>("INVITE");
+	this->registerCommand<Part>("PART");
 }
 
 Server::~Server()

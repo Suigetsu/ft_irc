@@ -34,6 +34,7 @@
 # include "Motd.hpp"
 # include "Privmsg.hpp"
 # include "Invite.hpp"
+# include "Part.hpp"
 # include <poll.h>
 # include <fstream>
 

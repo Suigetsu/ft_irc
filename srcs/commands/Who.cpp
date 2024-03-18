@@ -57,7 +57,7 @@ void	Who::execute(std::map<int, User *> &users, std::map<std::string, Channel *>
 			ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).length(), 0);
 		throw (Who::unknownCommandException());
 	}
-	if (!chan[users[fd]->getCommand()[FIRST_PARAM]])
+	if (!this->doesChanExist(chan, users[fd]->getCommand()[FIRST_PARAM]))
 	{
 		send (fd, RPL_ENDOFWHO(users[fd]->getNickname(), users[fd]->getCommand()[FIRST_PARAM]).c_str(), \
 			RPL_ENDOFWHO(users[fd]->getNickname(), users[fd]->getCommand()[FIRST_PARAM]).length(), 0);

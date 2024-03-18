@@ -17,14 +17,7 @@ Channel::Channel(const std::string &name, const std::string &password) : name(na
 
 Channel::~Channel()
 {
-    // std::vector<User *> tmp = this->getUsers();
-    // std::vector<User *>::iterator it = tmp.begin();
-    // while (it != tmp.end())
-    // {
-    //     if (*it)
-    //         delete *it;
-    //     it++;
-    // }
+
 }
 
 const std::string Channel::getName() const
@@ -47,17 +40,27 @@ void  Channel::addUser(User *user)
         this->users.push_back(user);
 }
 
+bool    Channel::isChannelEmpty()
+{
+    if (this->getUsers().empty())
+        return true;
+    return false;
+}
+
 void  Channel::removeUser(User *user)
 {
-    (void)user;
-    // std::vector<User*>::iterator it = std::find(users.begin(), users.end(), user);
-    // if (it != users.end())
-    // {
-    //     std::cout << "User : " << user.getNickname() << " has been removed from the channel." << std::endl;
-    //     users.erase(it);
-    // }
-    // else
-    //     std::cout << "User : " << user.getNickname() << " is not in the channel." << std::endl;
+    std::vector<User *>::iterator it = this->users.begin();
+    while (it != this->users.end())
+    {
+        if ((*it)->getNickname() == user->getNickname())
+        {
+            this->unsetOperator(user);
+            this->users.erase(it);
+            return ;
+        }
+        it++;
+    }
+
 }
 
 bool    Channel::isOperator(std::string nick) const
@@ -67,14 +70,6 @@ bool    Channel::isOperator(std::string nick) const
     return (false);
 }
 
-bool  setInviteOnlyMode()
-{
-    return (true);
-}
-bool  setTopicRestriction()
-{
-    return (true);
-}
 bool  Channel::setChannelKey(std::string key, int fd, std::map<int, User *> &user)
 {
     if (!this->getPassword().empty() && key != this->getPassword())
@@ -86,49 +81,13 @@ bool  Channel::setChannelKey(std::string key, int fd, std::map<int, User *> &use
     this->password = key;
     return true;
 }
-bool  grantOperatorPriv()
-{
-    return (true);
-}
+
 int  Channel::setUserLimit(int limit)
 {
     if (limit <= 0 || limit > this->userLimit)
         return 1;
     this->userLimit = limit;
     return 0;
-}
-
-void  Channel::setMode(User *op, const std::string &mode)
-{
-    (void)op, (void)mode;
-    // if (isOperator(op))
-    // {
-    //     for (int i = 0; i < this->mode.length(); i++)
-    //     {
-    //         char c = this->mode[i];
-    //         switch (c)
-    //         {
-    //         case 'i':
-    //             Channel::setInviteOnlyMode();
-    //             break;
-    //         case 't':
-    //             Channel::setTopicRestriction();
-    //             break;
-    //         case 'k':
-    //             Channel::setChannelKey();
-    //             break;
-    //         case 'o':
-    //             Channel::grantOperatorPriv();
-    //             break;
-    //         case 'l':
-    //             Channel::setUserLimit();
-    //             break;
-    //         default:
-    //             std::cout << mode << ":is unknown mode char to me" << std::endl;
-    //             break;
-    //         }
-    //     }
-    // }
 }
 
 const std::string Channel::getTopic() const

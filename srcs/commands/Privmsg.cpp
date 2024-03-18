@@ -130,6 +130,12 @@ void	Privmsg::execute(std::map<int, User *> &users, std::map<std::string, Channe
 			ERR_NOTEXTTOSEND(users[fd]->getNickname()).length(), 0);
 		return ;
 	}
+	if (text.length() > 510)
+	{
+		send (fd, LONG_MESSAGE(users[fd]->getNickname()).c_str(), \
+			LONG_MESSAGE(users[fd]->getNickname()).length(), 0);
+		return ;
+	}
 	this->sendMsg(users, chan, fd, recip, text);
 }
 

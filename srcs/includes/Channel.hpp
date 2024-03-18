@@ -72,6 +72,7 @@ class Channel
         std::string getPrefix(std::string nick) const;
         void    setTopic(std::string topic);
         void    broadcastToMembers(std::string message);
+        bool    isChannelEmpty();
 };
 
 #endif

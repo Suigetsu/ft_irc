@@ -42,10 +42,10 @@ void	Join::parseChannels(std::vector<std::string> &chanVec, std::vector<std::str
 	{
 		chans = param.substr(0, param.find(" "));
 		param.erase(0, param.find(" ") + 1);
-		keys = param.substr(0, param.find("\n"));
+		keys = param.substr(0, param.find("\r"));
 	}
 	else
-		chans = param.substr(0, param.find("\n"));
+		chans = param.substr(0, param.find("\r"));
 	chanVec = setChans(chans);
 	keyVec = setKeys(keys);
 }
@@ -74,6 +74,38 @@ bool	Join::doesChanExist(std::map<std::string, Channel *> &chan, std::string nam
 	return false;
 }
 
+void	Join::removeEmptyChannel(std::map<std::string, Channel *> &chan, std::string name) const
+{
+	if (chan[name]->isChannelEmpty() == true)
+	{
+		delete chan[name];
+		// chan.erase(name);
+	}
+}
+
+void	Join::leaveAllChan(std::map<std::string, Channel *> &chan, User *user) const
+{
+	std::string buffer;
+	if (chan.size() < 1)
+		return ;
+	std::map<std::string, Channel *>::iterator it = chan.begin();
+	while (it != chan.end())
+	{
+		if (it->second->isWithinChannel(user->getNickname()))
+		{
+			std::cout << "debug" << std::endl;
+			buffer += PART(user->getNickname(), user->getUsername(), \
+				user->getHost(), it->second->getName(), PART_MSG);
+			it->second->removeUser(user);
+			this->removeEmptyChannel(chan, it->second->getName());
+			it->second->broadcastToMembers(PART(user->getNickname(), user->getUsername(), \
+				user->getHost(), it->second->getName(), PART_MSG));
+		}
+		it++;
+	}
+	send (user->getFd(), buffer.c_str(), buffer.length(), 0);
+}
+
 void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
 {
 	std::vector<std::string> chanVec;
@@ -96,7 +128,12 @@ void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 				keyVec.erase(keyVec.begin() + i);
 			continue ;
 		}
-		if (this->doesChanExist(chan, chanVec[i]) == false)
+		if (chanVec[i] == "0")
+		{
+			this->leaveAllChan(chan, users[fd]);
+			std::cout << "it is 0" << std::endl;
+		}
+		else if (this->doesChanExist(chan, chanVec[i]) == false)
 		{
 			chan[chanVec[i]] = new Channel(chanVec[i]);
 			chan[chanVec[i]]->createChannel(users, fd);
@@ -116,7 +153,7 @@ void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 
 bool    Join::isNameValid(const std::string &name) const
 {
-    if (!name.empty() && name.find_first_of("#") == 0)
+    if (name == "0" || (!name.empty() && name.find_first_of("#") == 0))
         return true;
     return false;
 }
