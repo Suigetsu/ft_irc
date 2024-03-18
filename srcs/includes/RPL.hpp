@@ -30,3 +30,5 @@
 #define RPL_WHOISSERVER(client, nick) (":localhost 312 " + client + " " + nick + " ircserv :ding dong your opinion on our server is wrong (unless you think it's awesome possum!)\r\n")
 #define RPL_ENDOFWHOIS(client, nick) (":localhost 318 " + client + " " + nick + " :End of WHOIS list\r\n")
 #define RPL_INVITING(client, chan) (":localhost 341 " + client + " " + chan + "\r\n")
+#define PART(nick, user, host, chan, msg) (":" + nick + "!" + user + "@" + host + " PART " + chan + " " + msg "\r\n")
+#define PART_MSG "Leaving"

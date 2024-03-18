@@ -30,6 +30,8 @@ class	Mode : public Command
 		void	unsetMode(char mode, std::string arg, std::map<int, User *> &user, Channel **chan, int fd) const;
 		void	unsetMode(char mode, std::map<int, User *> &user, Channel **chan, int fd) const;
 		void	bufferizeModes(char mode, char sign, std::string args) const;
+		bool	doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const;
+		int		doesUserExist(std::map<int, User *> &usrs, std::string nick) const;
 		void	clearBuffers() const;
 		const std::string getModeBuffer() const;
 

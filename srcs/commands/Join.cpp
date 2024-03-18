@@ -50,6 +50,30 @@ void	Join::parseChannels(std::vector<std::string> &chanVec, std::vector<std::str
 	keyVec = setKeys(keys);
 }
 
+int	Join::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+{
+	std::map<int, User *>::iterator it = usrs.begin();
+	while (it != usrs.end())
+	{
+		if (it->second->getNickname() == nick)
+			return it->second->getFd();
+		it++;
+	}
+	return -1;
+}
+
+bool	Join::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+{
+	std::map<std::string, Channel *>::iterator it = chan.begin();
+	while (it != chan.end())
+	{
+		if (it->second->getName() == name)
+			return true;
+		it++;
+	}
+	return false;
+}
+
 void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
 {
 	std::vector<std::string> chanVec;
@@ -72,7 +96,7 @@ void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 				keyVec.erase(keyVec.begin() + i);
 			continue ;
 		}
-		if (!chan[chanVec[i]])
+		if (this->doesChanExist(chan, chanVec[i]) == false)
 		{
 			chan[chanVec[i]] = new Channel(chanVec[i]);
 			chan[chanVec[i]]->createChannel(users, fd);

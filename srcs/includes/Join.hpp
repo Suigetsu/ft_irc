@@ -17,6 +17,8 @@ class	Join : public Command
 		Join	*clone() const;
 		bool	isNameValid(const std::string &name) const;
 		void	parseChannels(std::vector<std::string> &chanVec, std::vector<std::string> &keyVec, std::string param) const;
+		bool	doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const;
+		int		doesUserExist(std::map<int, User *> &usrs, std::string nick) const;
 		std::vector<std::string>	setChans(const std::string &list) const;
 		std::vector<std::string>	setKeys(const std::string &list) const;
 };

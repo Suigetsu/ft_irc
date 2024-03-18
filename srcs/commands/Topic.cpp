@@ -11,6 +11,30 @@ Topic::~Topic()
 
 }
 
+int	Topic::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+{
+	std::map<int, User *>::iterator it = usrs.begin();
+	while (it != usrs.end())
+	{
+		if (it->second->getNickname() == nick)
+			return it->second->getFd();
+		it++;
+	}
+	return -1;
+}
+
+bool	Topic::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+{
+	std::map<std::string, Channel *>::iterator it = chan.begin();
+	while (it != chan.end())
+	{
+		if (it->second->getName() == name)
+			return true;
+		it++;
+	}
+	return false;
+}
+
 std::vector<std::string> Topic::parseTopic(std::string command) const
 {
 	std::istringstream iss(command);
@@ -61,7 +85,7 @@ void	Topic::execute(std::map<int, User *> &users, std::map<std::string, Channel 
 		throw (Topic::unknownCommandException());
 	}
 	std::vector<std::string> args = this->parseTopic(users[fd]->getCommand()[FIRST_PARAM]);
-	if (!chan[args[0]])
+	if (this->doesChanExist(chan, args[0]) == false)
 	{
 		send(fd, ERR_NOSUCHCHANNEL(users[fd]->getNickname(), args[0]).c_str(), \
 			ERR_NOSUCHCHANNEL(users[fd]->getNickname(), args[0]).length(), 0);

@@ -14,5 +14,7 @@ class	Topic : public Command
 		std::vector<std::string> parseTopic(std::string command) const;
 		void	sendTopic(Channel *chan, User *user, int fd) const;
 		void	setTopic(User *user, Channel **chan, std::string topic, int fd) const;
+		bool	doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const;
+		int		doesUserExist(std::map<int, User *> &usrs, std::string nick) const;
 		Topic	*clone() const;
 };

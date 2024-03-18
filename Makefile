@@ -1,15 +1,3 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/02/03 10:37:04 by mlagrini          #+#    #+#              #
-#    Updated: 2024/03/17 13:39:05 by mlagrini         ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 SRC		=	srcs/main.cpp srcs/Server.cpp srcs/Client.cpp srcs/commands/Command.cpp \
 			srcs/User.cpp srcs/commands/Pass.cpp srcs/commands/Nick.cpp \
 			srcs/commands/Quit.cpp srcs/commands/UserCmd.cpp srcs/commands/Ping.cpp \
