@@ -21,6 +21,7 @@ class	Join : public Command
 		bool	doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const;
 		int		doesUserExist(std::map<int, User *> &usrs, std::string nick) const;
 		void	leaveAllChan(std::map<std::string, Channel *> &chan, User *user) const;
+		void	eraseChanMap(std::map<std::string, Channel *> &chan, std::vector<std::string> names) const;
 		std::vector<std::string>	setChans(const std::string &list) const;
 		std::vector<std::string>	setKeys(const std::string &list) const;
 };

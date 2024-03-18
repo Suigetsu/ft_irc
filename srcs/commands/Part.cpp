@@ -65,7 +65,7 @@ void	Part::removeEmptyChannel(std::map<std::string, Channel *> &chan, std::strin
 	if (chan[name]->isChannelEmpty() == true)
 	{
 		delete chan[name];
-		// chan.erase(name);
+		chan.erase(name);
 	}
 }
 

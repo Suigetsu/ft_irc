@@ -77,32 +77,41 @@ bool	Join::doesChanExist(std::map<std::string, Channel *> &chan, std::string nam
 void	Join::removeEmptyChannel(std::map<std::string, Channel *> &chan, std::string name) const
 {
 	if (chan[name]->isChannelEmpty() == true)
-	{
 		delete chan[name];
-		// chan.erase(name);
+}
+
+void	Join::eraseChanMap(std::map<std::string, Channel *> &chan, std::vector<std::string> names) const
+{
+	std::vector<std::string>::iterator it = names.begin();
+	while (it != names.end())
+	{
+		chan.erase(*it);
+		it++;
 	}
 }
 
 void	Join::leaveAllChan(std::map<std::string, Channel *> &chan, User *user) const
 {
-	std::string buffer;
 	if (chan.size() < 1)
 		return ;
+	std::string buffer;
+	std::vector<std::string> chanNames;
 	std::map<std::string, Channel *>::iterator it = chan.begin();
 	while (it != chan.end())
 	{
 		if (it->second->isWithinChannel(user->getNickname()))
 		{
-			std::cout << "debug" << std::endl;
 			buffer += PART(user->getNickname(), user->getUsername(), \
 				user->getHost(), it->second->getName(), PART_MSG);
-			it->second->removeUser(user);
-			this->removeEmptyChannel(chan, it->second->getName());
 			it->second->broadcastToMembers(PART(user->getNickname(), user->getUsername(), \
 				user->getHost(), it->second->getName(), PART_MSG));
+			chanNames.push_back(it->second->getName());
+			it->second->removeUser(user);
+			this->removeEmptyChannel(chan, it->second->getName());
 		}
 		it++;
 	}
+	this->eraseChanMap(chan, chanNames);
 	send (user->getFd(), buffer.c_str(), buffer.length(), 0);
 }
 
@@ -129,10 +138,7 @@ void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 			continue ;
 		}
 		if (chanVec[i] == "0")
-		{
 			this->leaveAllChan(chan, users[fd]);
-			std::cout << "it is 0" << std::endl;
-		}
 		else if (this->doesChanExist(chan, chanVec[i]) == false)
 		{
 			chan[chanVec[i]] = new Channel(chanVec[i]);
