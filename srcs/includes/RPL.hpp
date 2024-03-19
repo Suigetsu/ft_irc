@@ -31,4 +31,5 @@
 #define RPL_ENDOFWHOIS(client, nick) (":localhost 318 " + client + " " + nick + " :End of WHOIS list\r\n")
 #define RPL_INVITING(client, chan) (":localhost 341 " + client + " " + chan + "\r\n")
 #define PART(nick, user, host, chan, msg) (":" + nick + "!" + user + "@" + host + " PART " + chan + " " + msg + "\r\n")
+#define KICK(nick, user, host, chan, kicked, msg) (":" + nick + "!" + user + "@" + host + " KICK " + chan + " " + kicked + " " + msg + "\r\n")
 #define PART_MSG "Leaving"

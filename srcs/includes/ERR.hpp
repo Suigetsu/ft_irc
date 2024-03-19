@@ -26,3 +26,4 @@
 #define ERR_NOTEXTTOSEND(nick) (":localhost 412 " + nick + " :No text to send")
 #define ERR_USERONCHANNEL(client, nick, chan) (":localhost 443 " + client + " " + nick + " " + chan + " :is already on channel\r\n")
 #define LONG_MESSAGE(client) (":localhost " + client + " :Cannot send the message.\r\n")
+#define ERR_USERNOTINCHANNEL(client, nick, chan) (":localhost 441 " + client + " " + nick + " " + chan + " :They aren't on that channel\r\n")

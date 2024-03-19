@@ -44,10 +44,16 @@ void	Mode::unsetMode(char mode, std::string arg, std::map<int, User *> &user, Ch
             break;
         case 'o':
         {
-            if ((*chan)->isWithinChannel(arg) == false)
+            if (this->doesUserExist(user, arg) == -1)
             {
                 send (fd, ERR_NOSUCHNICK(user[fd]->getNickname(), arg).c_str(), \
                     ERR_NOSUCHNICK(user[fd]->getNickname(), arg).length(), 0);
+                return ;
+            }
+            if ((*chan)->isWithinChannel(arg) == false)
+            {
+                send (fd, ERR_USERNOTINCHANNEL(user[fd]->getNickname(), arg, (*chan)->getName()).c_str(), \
+                    ERR_USERNOTINCHANNEL(user[fd]->getNickname(), arg, (*chan)->getName()).length(), 0);
                 return ;
             }
             (*chan)->unsetOperator((*chan)->getUser(arg));
@@ -175,10 +181,16 @@ void    Mode::setMode(char mode, std::string arg, std::map<int, User *> &user, C
         }
         case 'o':
         {
-            if ((*chan)->isWithinChannel(arg) == false)
+            if (this->doesUserExist(user, arg) == -1)
             {
                 send (fd, ERR_NOSUCHNICK(user[fd]->getNickname(), arg).c_str(), \
                     ERR_NOSUCHNICK(user[fd]->getNickname(), arg).length(), 0);
+                return ;
+            }
+            if ((*chan)->isWithinChannel(arg) == false)
+            {
+                send (fd, ERR_USERNOTINCHANNEL(user[fd]->getNickname(), arg, (*chan)->getName()).c_str(), \
+                    ERR_USERNOTINCHANNEL(user[fd]->getNickname(), arg, (*chan)->getName()).length(), 0);
                 return ;
             }
             (*chan)->setOperator((*chan)->getUser(arg));
@@ -209,6 +221,12 @@ void    Mode::parseModes(std::map<int, User *> &user, std::string params, std::m
     {
         send(fd, ERR_NOSUCHCHANNEL(user[fd]->getNickname(), modeargs[0]).c_str(), \
             ERR_NOSUCHCHANNEL(user[fd]->getNickname(), modeargs[0]).length(), 0);
+        throw (Mode::unknownCommandException());
+    }
+    if (!chan[modeargs[0]]->isWithinChannel(user[fd]->getNickname()))
+    {
+        send (fd, ERR_NOTONCHANNEL(user[fd]->getNickname(), modeargs[0]).c_str(), \
+            ERR_NOTONCHANNEL(user[fd]->getNickname(), modeargs[0]).length(), 0);
         throw (Mode::unknownCommandException());
     }
     if (modeargs.size() < 2)

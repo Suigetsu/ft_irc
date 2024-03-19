@@ -35,6 +35,7 @@
 # include "Privmsg.hpp"
 # include "Invite.hpp"
 # include "Part.hpp"
+# include "Kick.hpp"
 # include <poll.h>
 # include <fstream>
 

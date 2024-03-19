@@ -28,6 +28,7 @@ Server::Server()
 	this->registerCommand<Privmsg>("PRIVMSG");
 	this->registerCommand<Invite>("INVITE");
 	this->registerCommand<Part>("PART");
+	this->registerCommand<Kick>("KICK");
 }
 
 Server::~Server()
