@@ -37,17 +37,20 @@ bool	Topic::doesChanExist(std::map<std::string, Channel *> &chan, std::string na
 
 std::vector<std::string> Topic::parseTopic(std::string command) const
 {
-	std::istringstream iss(command);
-	std::string token;
 	std::vector<std::string> param;
-	while (std::getline(iss, token, ' '))
+
+	if (command.find(" ") == std::string::npos)
 	{
-		param.push_back(token);
+		param.push_back(command);
+		return (param);
 	}
+	param.push_back(command.substr(0, command.find(" ")));
+	command.erase(0, command.find(" ") + 1);
+	param.push_back(command);
 	return (param);
 }
 
-void	Topic::sendTopic(Channel *chan, User *user, int fd) const
+void	Topic:: sendTopic(Channel *chan, User *user, int fd) const
 {
 	if (!chan->getTopic().empty())
 	{
@@ -63,14 +66,14 @@ void	Topic::setTopic(User *user, Channel **chan, std::string topic, int fd) cons
 {
 	if ((*chan)->getTopicStatus() == true)
 	{
-		if ((*chan)->isOperator(user->getNickname()) == true)
+		if ((*chan)->isOperator(user->getNickname()) == false)
 		{
 			send(fd, ERR_CHANOPRIVSNEEDED(user->getNickname(), (*chan)->getName()).c_str(), \
 				ERR_CHANOPRIVSNEEDED(user->getNickname(), (*chan)->getName()).length(), 0);
 			return ;
 		}
 	}
-	topic.erase(0, topic.find(" ") + 1);
+	topic.erase(0, topic.find(":") + 1);
 	(*chan)->setTopic(topic);
 	(*chan)->broadcastToMembers(TOPIC(user->getNickname(), user->getUsername(), user->getHost(), \
 		(*chan)->getName(), topic));
@@ -91,7 +94,7 @@ void	Topic::execute(std::map<int, User *> &users, std::map<std::string, Channel 
 			ERR_NOSUCHCHANNEL(users[fd]->getNickname(), args[0]).length(), 0);
 		throw (Topic::unknownCommandException());
 	}
-	if (chan[args[0]]->isWithinChannel(users[fd]->getNickname()) != false)
+	if (chan[args[0]]->isWithinChannel(users[fd]->getNickname()) == false)
 	{
 		send(fd, ERR_NOTONCHANNEL(users[fd]->getNickname(), args[0]).c_str(), \
 			ERR_NOTONCHANNEL(users[fd]->getNickname(), args[0]).length(), 0);
