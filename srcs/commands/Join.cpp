@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Join.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/04 16:01:56 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/13 11:26:45 by mlagrini         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../includes/Join.hpp"
 
 Join::Join() : Command::Command()
@@ -54,12 +42,80 @@ void	Join::parseChannels(std::vector<std::string> &chanVec, std::vector<std::str
 	{
 		chans = param.substr(0, param.find(" "));
 		param.erase(0, param.find(" ") + 1);
-		keys = param.substr(0, param.find("\n"));
+		keys = param.substr(0, param.find("\r"));
 	}
 	else
-		chans = param.substr(0, param.find("\n"));
+		chans = param.substr(0, param.find("\r"));
 	chanVec = setChans(chans);
 	keyVec = setKeys(keys);
+}
+
+int	Join::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+{
+	std::map<int, User *>::iterator it = usrs.begin();
+	while (it != usrs.end())
+	{
+		if (it->second->getNickname() == nick)
+			return it->second->getFd();
+		it++;
+	}
+	return -1;
+}
+
+bool	Join::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+{
+	std::map<std::string, Channel *>::iterator it = chan.begin();
+	while (it != chan.end())
+	{
+		if (it->second->getName() == name)
+			return true;
+		it++;
+	}
+	return false;
+}
+
+void	Join::removeEmptyChannel(std::map<std::string, Channel *> &chan, std::string name) const
+{
+	if (chan[name]->isChannelEmpty() == true)
+		delete chan[name];
+}
+
+void	Join::eraseChanMap(std::map<std::string, Channel *> &chan, std::vector<std::string> names) const
+{
+	std::vector<std::string>::iterator it = names.begin();
+	while (it != names.end())
+	{
+		chan.erase(*it);
+		it++;
+	}
+}
+
+void	Join::leaveAllChan(std::map<std::string, Channel *> &chan, User *user) const
+{
+	if (chan.size() < 1)
+		return ;
+	std::string buffer;
+	std::vector<std::string> chanNames;
+	std::map<std::string, Channel *>::iterator it = chan.begin();
+	while (it != chan.end())
+	{
+		if (it->second->isWithinChannel(user->getNickname()))
+		{
+			buffer += PART(user->getNickname(), user->getUsername(), \
+				user->getHost(), it->second->getName(), PART_MSG);
+			it->second->broadcastToMembers(PART(user->getNickname(), user->getUsername(), \
+				user->getHost(), it->second->getName(), PART_MSG));
+			it->second->removeUser(user);
+			if (it->second->isChannelEmpty())
+			{
+				chanNames.push_back(it->second->getName());
+				this->removeEmptyChannel(chan, it->second->getName());
+			}
+		}
+		it++;
+	}
+	this->eraseChanMap(chan, chanNames);
+	send (user->getFd(), buffer.c_str(), buffer.length(), 0);
 }
 
 void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
@@ -84,7 +140,9 @@ void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 				keyVec.erase(keyVec.begin() + i);
 			continue ;
 		}
-		if (!chan[chanVec[i]])
+		if (chanVec[i] == "0")
+			this->leaveAllChan(chan, users[fd]);
+		else if (this->doesChanExist(chan, chanVec[i]) == false)
 		{
 			chan[chanVec[i]] = new Channel(chanVec[i]);
 			chan[chanVec[i]]->createChannel(users, fd);
@@ -104,7 +162,7 @@ void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 
 bool    Join::isNameValid(const std::string &name) const
 {
-    if (!name.empty() && name.find_first_of("#") == 0)
+    if (name == "0" || (!name.empty() && name.find_first_of("#") == 0))
         return true;
     return false;
 }

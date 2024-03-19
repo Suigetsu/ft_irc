@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   User.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/21 16:00:01 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/09 16:09:03 by mlagrini         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "./includes/User.hpp"
 
 User::User() {}
@@ -125,7 +113,7 @@ void	User::parseCommand(std::string command)
 		cmd[FIRST_PARAM] = command.substr(0, command.find("\r"));
 		return ;
 	}
-	cmd[COMMAND] = command.substr(0, command.find("\n"));
+	cmd[COMMAND] = command.substr(0, command.find("\r"));
 }
 
 std::map<int, std::string>	&User::getCommand()

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   WhoIs.cpp                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/15 15:01:10 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/15 15:53:05 by mlagrini         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../includes/WhoIs.hpp"
 
 WhoIs::WhoIs() : Command::Command()
@@ -20,6 +8,30 @@ WhoIs::WhoIs() : Command::Command()
 WhoIs::~WhoIs()
 {
 
+}
+
+int	WhoIs::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+{
+	std::map<int, User *>::iterator it = usrs.begin();
+	while (it != usrs.end())
+	{
+		if (it->second->getNickname() == nick)
+			return it->second->getFd();
+		it++;
+	}
+	return -1;
+}
+
+bool	WhoIs::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+{
+	std::map<std::string, Channel *>::iterator it = chan.begin();
+	while (it != chan.end())
+	{
+		if (it->second->getName() == name)
+			return true;
+		it++;
+	}
+	return false;
 }
 
 std::string	WhoIs::getWhoIsChannelsBuffer(std::map<std::string, Channel *> &chan, std::string nick) const

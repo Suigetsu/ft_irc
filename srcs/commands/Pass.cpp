@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Pass.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/22 18:18:31 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/09 10:07:26 by mlagrini         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../includes/Pass.hpp"
 #include "../includes/Server.hpp"
 
@@ -21,6 +9,30 @@ Pass::Pass() : Command::Command()
 Pass::~Pass()
 {
 
+}
+
+int	Pass::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+{
+	std::map<int, User *>::iterator it = usrs.begin();
+	while (it != usrs.end())
+	{
+		if (it->second->getNickname() == nick)
+			return it->second->getFd();
+		it++;
+	}
+	return -1;
+}
+
+bool	Pass::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+{
+	std::map<std::string, Channel *>::iterator it = chan.begin();
+	while (it != chan.end())
+	{
+		if (it->second->getName() == name)
+			return true;
+		it++;
+	}
+	return false;
 }
 
 void	Pass::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const

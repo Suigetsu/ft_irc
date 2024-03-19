@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/03 10:43:38 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/16 12:02:31 by hrahmane         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef SERVER_HPP
 # define SERVER_HPP
 
@@ -43,8 +31,13 @@
 # include "Topic.hpp"
 # include "Who.hpp"
 # include "WhoIs.hpp"
-# include "poll.h"
-# include "fstream"
+# include "Motd.hpp"
+# include "Privmsg.hpp"
+# include "Invite.hpp"
+# include "Part.hpp"
+# include "Kick.hpp"
+# include <poll.h>
+# include <fstream>
 
 # define BACKLOG 10
 # define COMMAND 0
@@ -71,6 +64,7 @@ class	Server
 		std::vector<int> registeredFds;
 	public:
 		static bool status;
+		static bool QuitStatus;
 		static void signalHandler(int signum);
 		Server();
 		Server(const Server &obj);
@@ -117,6 +111,7 @@ class	Server
 		void	launchCommand(std::map<int, std::string>cmd, int fd);
 		std::string wrapText(const std::string &input);
 		const std::string	readMotd(const std::string &file, int fd);
+		void	toUpper(std::string &command);
 		
 };
 

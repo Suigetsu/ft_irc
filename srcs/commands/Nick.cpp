@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Nick.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/28 16:47:46 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/14 11:51:10 by mlagrini         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../includes/Nick.hpp"
 
 Nick::Nick() : Command::Command()
@@ -20,6 +8,30 @@ Nick::Nick() : Command::Command()
 Nick::~Nick()
 {
 	
+}
+
+int	Nick::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+{
+	std::map<int, User *>::iterator it = usrs.begin();
+	while (it != usrs.end())
+	{
+		if (it->second->getNickname() == nick)
+			return it->second->getFd();
+		it++;
+	}
+	return -1;
+}
+
+bool	Nick::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+{
+	std::map<std::string, Channel *>::iterator it = chan.begin();
+	while (it != chan.end())
+	{
+		if (it->second->getName() == name)
+			return true;
+		it++;
+	}
+	return false;
 }
 
 void	Nick::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
@@ -33,7 +45,6 @@ void	Nick::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 	}
 	if (users[fd]->getUserPass().empty())
 		throw(Nick::registrationException());
-	std::cout << users[fd]->getCommand()[0] << " " << users[fd]->getCommand()[1] << std::endl;
 	if (users[fd]->getCommand().size() < 2)
 	{
 		send(fd, ERR_NONICKNAMEGIVEN, sizeof(ERR_NONICKNAMEGIVEN), 0);

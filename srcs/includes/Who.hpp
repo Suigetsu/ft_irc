@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Who.hpp                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/15 13:05:13 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/15 13:13:48 by mlagrini         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include "User.hpp"
@@ -24,5 +12,7 @@ class	Who : public Command
 		~Who();
 		void	execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const;
 		void	sendWho(User *usr, Channel *chan, int fd) const;
+		bool	doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const;
+		int		doesUserExist(std::map<int, User *> &usrs, std::string nick) const;
 		Who	*clone() const;
 };

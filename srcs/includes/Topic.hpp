@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Topic.hpp                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/13 12:25:20 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/13 15:42:34 by mlagrini         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include "User.hpp"
@@ -26,5 +14,7 @@ class	Topic : public Command
 		std::vector<std::string> parseTopic(std::string command) const;
 		void	sendTopic(Channel *chan, User *user, int fd) const;
 		void	setTopic(User *user, Channel **chan, std::string topic, int fd) const;
+		bool	doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const;
+		int		doesUserExist(std::map<int, User *> &usrs, std::string nick) const;
 		Topic	*clone() const;
 };

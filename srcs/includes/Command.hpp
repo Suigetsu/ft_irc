@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Command.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/20 18:21:08 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/09 10:07:26 by mlagrini         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include <iostream>
@@ -28,6 +16,8 @@ class	Command
 		virtual ~Command();
 		virtual void	execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const = 0;
 		virtual Command	*clone() const = 0;
+		virtual bool	doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const = 0;
+		virtual int		doesUserExist(std::map<int, User *> &usrs, std::string nick) const = 0;
 		class	registrationException : public std::exception
 		{
 			public:

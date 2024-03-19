@@ -1,18 +1,7 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Server.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: hrahmane <hrahmane@student.1337.ma>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/02/08 17:16:57 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/16 12:02:14 by hrahmane         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "./includes/Server.hpp"
 
 bool Server::status = false;
+bool Server::QuitStatus = false;
 
 void	Server::signalHandler(int signum)
 {
@@ -35,6 +24,11 @@ Server::Server()
 	this->registerCommand<Topic>("TOPIC");
 	this->registerCommand<Who>("WHO");
 	this->registerCommand<WhoIs>("WHOIS");
+	this->registerCommand<Motd>("MOTD");
+	this->registerCommand<Privmsg>("PRIVMSG");
+	this->registerCommand<Invite>("INVITE");
+	this->registerCommand<Part>("PART");
+	this->registerCommand<Kick>("KICK");
 }
 
 Server::~Server()
@@ -211,19 +205,6 @@ void	Server::registerUser(std::string buffer, int fd)
 	this->parser.erase(this->parser.begin(), this->parser.end());
 }
 
-// std::string Server::wrapText(const std::string &input)
-// {
-// 	std::string result;
-// 	size_t pos = 0;
-	
-// 	while (pos < input.length())
-// 	{
-// 		result += input.substr(pos, 80) + "\r\n";
-// 		pos += 80;
-// 	}
-// 	return result;
-// }
-
 const std::string	Server::readMotd(const std::string &fn, int fd)
 {
 	std::ifstream file(fn);
@@ -254,12 +235,21 @@ void	Server::launchCommand(std::map<int, std::string>cmd, int fd)
 	this->commandsMap[cmd[COMMAND]]->execute(this->usersMap, this->channels, fd);
 }
 
+void	Server::toUpper(std::string &command)
+{
+	for (size_t i = 0; i < command.length(); i++)
+	{
+		command[i] = std::toupper(command[i]);
+	}
+}
+
 void	Server::handleRegisteredCommand(std::string command, int fd)
 {
 	try
 	{
 		this->usersMap[fd]->clearCmdMap();
 		this->usersMap[fd]->parseCommand(command);
+		this->toUpper(this->usersMap[fd]->getCommand()[COMMAND]);
 		if(!this->doesCommandExist(this->usersMap[fd]->getCommand()[COMMAND]))
 		{
 			std::string buffer = ERR_UNKNOWNCOMMAND(this->usersMap[fd]->getNickname(), this->usersMap[fd]->getCommand()[COMMAND]);
@@ -297,7 +287,7 @@ void Server::initServer()
 				else
 				{
 					bread = recv(this->fds[i].fd, buffer, 1000, 0);
-					if (bread <= 0)
+					if (bread <= 0 || Server::QuitStatus == true)
 					{
 						std::cout << "connection closed by the client " << this->fds[i].fd << std::endl;
 						close(this->fds[i].fd);
@@ -305,6 +295,7 @@ void Server::initServer()
 						this->usersMap.erase(this->fds[i].fd);
 						if (this->isRegistered(this->fds[i].fd))
 							this->registeredFds.erase(std::find(this->registeredFds.begin(), this->registeredFds.end(), this->fds[i].fd));
+						Server::QuitStatus = false;
 					}
 					else
 					{
@@ -314,7 +305,6 @@ void Server::initServer()
 							this->registerUser(buffer, this->fds[i].fd);
 						
 					}
-					// std::cout << buffer << std::endl;
 					std::memset(&buffer, 0, sizeof(buffer));
 				}
 			}

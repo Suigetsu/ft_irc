@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Who.cpp                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/15 13:05:55 by mlagrini          #+#    #+#             */
-/*   Updated: 2024/03/15 14:38:31 by mlagrini         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../includes/Who.hpp"
 
 Who::Who() : Command::Command()
@@ -20,6 +8,30 @@ Who::Who() : Command::Command()
 Who::~Who()
 {
 
+}
+
+int	Who::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+{
+	std::map<int, User *>::iterator it = usrs.begin();
+	while (it != usrs.end())
+	{
+		if (it->second->getNickname() == nick)
+			return it->second->getFd();
+		it++;
+	}
+	return -1;
+}
+
+bool	Who::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+{
+	std::map<std::string, Channel *>::iterator it = chan.begin();
+	while (it != chan.end())
+	{
+		if (it->second->getName() == name)
+			return true;
+		it++;
+	}
+	return false;
 }
 
 void	Who::sendWho(User *usr, Channel *chan, int fd) const
@@ -45,7 +57,7 @@ void	Who::execute(std::map<int, User *> &users, std::map<std::string, Channel *>
 			ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).length(), 0);
 		throw (Who::unknownCommandException());
 	}
-	if (!chan[users[fd]->getCommand()[FIRST_PARAM]])
+	if (!this->doesChanExist(chan, users[fd]->getCommand()[FIRST_PARAM]))
 	{
 		send (fd, RPL_ENDOFWHO(users[fd]->getNickname(), users[fd]->getCommand()[FIRST_PARAM]).c_str(), \
 			RPL_ENDOFWHO(users[fd]->getNickname(), users[fd]->getCommand()[FIRST_PARAM]).length(), 0);

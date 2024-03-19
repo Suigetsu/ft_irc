@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   Join.hpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mlagrini <mlagrini@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/04 16:01:24 by hrahmane          #+#    #+#             */
-/*   Updated: 2024/03/09 10:07:26 by mlagrini         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #pragma once
 
 #include "User.hpp"
@@ -29,6 +17,11 @@ class	Join : public Command
 		Join	*clone() const;
 		bool	isNameValid(const std::string &name) const;
 		void	parseChannels(std::vector<std::string> &chanVec, std::vector<std::string> &keyVec, std::string param) const;
+		void	removeEmptyChannel(std::map<std::string, Channel *> &chan, std::string name) const;
+		bool	doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const;
+		int		doesUserExist(std::map<int, User *> &usrs, std::string nick) const;
+		void	leaveAllChan(std::map<std::string, Channel *> &chan, User *user) const;
+		void	eraseChanMap(std::map<std::string, Channel *> &chan, std::vector<std::string> names) const;
 		std::vector<std::string>	setChans(const std::string &list) const;
 		std::vector<std::string>	setKeys(const std::string &list) const;
 };

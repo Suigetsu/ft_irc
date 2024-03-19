@@ -5,13 +5,14 @@
 
 class Command;
 
-class	Pass : public Command
+class	Invite : public Command
 {
 	public:
-		Pass();
-		~Pass();
+		Invite();
+		~Invite();
 		void	execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const;
+		void	parseInput(std::vector<std::string> &parsedArgs, std::string param) const;
 		bool	doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const;
-		int		doesUserExist(std::map<int, User *> &usrs, std::string nick) const;
-		Pass	*clone() const;
+		int	doesUserExist(std::map<int, User *> &usrs, std::string nick) const;
+		Invite	*clone() const;
 };
