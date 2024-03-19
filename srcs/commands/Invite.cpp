@@ -97,12 +97,13 @@ void	Invite::execute(std::map<int, User *> &users, std::map<std::string, Channel
 			ERR_USERONCHANNEL(users[fd]->getNickname(), parsedArgs[0], parsedArgs[1]).length(), 0);
 		return ;
 	}
-	send(fd, INVITE(users[fd]->getNickname(), users[fd]->getUsername(), \
+	chan[parsedArgs[1]]->addInvitedUsers(parsedArgs[0]);
+	send(invFd, INVITE(users[fd]->getNickname(), users[fd]->getUsername(), \
 		users[fd]->getHost(), parsedArgs[0], parsedArgs[1]).c_str(), \
 		INVITE(users[fd]->getNickname(), users[fd]->getUsername(), \
 		users[fd]->getHost(), parsedArgs[0], parsedArgs[1]).length(), 0);
-	send (invFd, RPL_INVITING(users[fd]->getNickname(), parsedArgs[1]).c_str(), \
-		RPL_INVITING(users[fd]->getNickname(), parsedArgs[1]).length(), 0);
+	send (fd, RPL_INVITING(users[fd]->getNickname(), parsedArgs[0], parsedArgs[1]).c_str(), \
+		RPL_INVITING(users[fd]->getNickname(), parsedArgs[0], parsedArgs[1]).length(), 0);
 }
 
 Invite	*Invite::clone() const

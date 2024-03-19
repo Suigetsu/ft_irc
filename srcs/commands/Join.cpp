@@ -105,9 +105,12 @@ void	Join::leaveAllChan(std::map<std::string, Channel *> &chan, User *user) cons
 				user->getHost(), it->second->getName(), PART_MSG);
 			it->second->broadcastToMembers(PART(user->getNickname(), user->getUsername(), \
 				user->getHost(), it->second->getName(), PART_MSG));
-			chanNames.push_back(it->second->getName());
 			it->second->removeUser(user);
-			this->removeEmptyChannel(chan, it->second->getName());
+			if (it->second->isChannelEmpty())
+			{
+				chanNames.push_back(it->second->getName());
+				this->removeEmptyChannel(chan, it->second->getName());
+			}
 		}
 		it++;
 	}

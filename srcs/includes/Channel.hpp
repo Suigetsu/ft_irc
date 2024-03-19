@@ -22,6 +22,7 @@ class Channel
         std::string prefix;
         std::vector<User*> users;
         std::vector<std::string> chanops;
+        std::vector<std::string> invited;
         int userLimit;
         bool inviteStatus;
         bool topicStatus;
@@ -56,6 +57,9 @@ class Channel
         void  joinChannel(std::map<int, User*> users, int fd, std::string key);
         size_t   getUserLimit();
         Channel *clone(const std::string &name) const;
+        void    addInvitedUsers(std::string name);
+        bool    isUserInvited(std::string name);
+        void    clearInvitedUser(std::string name);
         void    createChannel(std::map<int, User*> users, int fd);
         void    setLimitStatus(bool status);
         void    setKeyStatus(bool status);

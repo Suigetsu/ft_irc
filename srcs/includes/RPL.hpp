@@ -16,7 +16,7 @@
 #define JOIN(nick, user, host, chan) (":" + nick + "!" + user + "@" + host + " JOIN " + chan + "\r\n")
 #define MODE(nick, user, host, chan, mode) (":" + nick + "!" + user + "@" + host + " MODE " + chan + " " + mode + "\r\n")
 #define PRIVMSG(nick, user, host, recipient, text) (":" + nick + "!" + user + "@" + host + " PRIVMSG " + recipient + " " + text + "\r\n")
-#define INVITE(nick, user, host, inv, chan) (":" + nick + "!" + user + "@" + host + " INVITE " + chan + " " + inv + "\r\n")
+#define INVITE(nick, user, host, inv, chan) (":" + nick + "!" + user + "@" + host + " INVITE " + inv + " " + chan + "\r\n")
 #define RPL_ENDOFNAMES(nick, chan) (":localhost 366 " + nick + " " + chan + " :End of /NAMES list\r\n")
 #define RPL_CHANNELMODEIS(nick, chan, modes) (":localhost 324 " + nick + " " + chan + " " + modes + "\r\n")
 #define RPL_NOTOPIC(nick, chan) (":localhost 331 " + nick + " " + chan + " :No topic is set\r\n")
@@ -29,7 +29,7 @@
 #define RPL_WHOISCHANNELS(client, nick, chan) (":localhost 319 " + client + " " + nick + " :" + chan + "\r\n")
 #define RPL_WHOISSERVER(client, nick) (":localhost 312 " + client + " " + nick + " ircserv :ding dong your opinion on our server is wrong (unless you think it's awesome possum!)\r\n")
 #define RPL_ENDOFWHOIS(client, nick) (":localhost 318 " + client + " " + nick + " :End of WHOIS list\r\n")
-#define RPL_INVITING(client, chan) (":localhost 341 " + client + " " + chan + "\r\n")
+#define RPL_INVITING(client, chan, nick) (":localhost 341 " + client + " " + chan + " " + nick + "\r\n")
 #define PART(nick, user, host, chan, msg) (":" + nick + "!" + user + "@" + host + " PART " + chan + " " + msg + "\r\n")
 #define KICK(nick, user, host, chan, kicked, msg) (":" + nick + "!" + user + "@" + host + " KICK " + chan + " " + kicked + " " + msg + "\r\n")
 #define PART_MSG "Leaving"

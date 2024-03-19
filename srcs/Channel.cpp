@@ -147,15 +147,36 @@ void    Channel::setTopicStatus(bool status)
     this->topicStatus = status;
 }
 
+void    Channel::addInvitedUsers(std::string name)
+{
+    this->invited.push_back(name);
+}
+
+bool    Channel::isUserInvited(std::string name)
+{
+    if (std::find(this->invited.begin(), this->invited.end(), name) != this->invited.end())
+        return true;
+    return false;
+}
+
+void    Channel::clearInvitedUser(std::string name)
+{
+    std::vector<std::string>::iterator it = std::find(this->invited.begin(), this->invited.end(), name);
+    if (it != this->invited.end())
+        this->invited.erase(it);
+}
+
 void	Channel::joinChannel(std::map<int, User*> users, int fd)
 {
+    if (this->isWithinChannel(users[fd]->getNickname()))
+        return ;
     if (this->users.size() + 1 > this->getUserLimit())
     {
         send(fd, ERR_CHANNELISFULL(users[fd]->getNickname(), this->name).c_str(), \
             ERR_CHANNELISFULL(users[fd]->getNickname(), this->name).length(), 0);
         return ;
     }
-    if (this->getInviteStatus())
+    if (this->getInviteStatus() && !isUserInvited(users[fd]->getNickname()))
     {
         send(fd, ERR_INVITEONLYCHAN(users[fd]->getNickname(), this->name).c_str(), \
             ERR_INVITEONLYCHAN(users[fd]->getNickname(), this->name).length(), 0);
@@ -180,6 +201,7 @@ void	Channel::joinChannel(std::map<int, User*> users, int fd)
         it++;
     }
     this->addUser(users[fd]);
+    this->clearInvitedUser(users[fd]->getNickname());
 }
 
 const std::string   Channel::bufferizeModes() const
@@ -213,13 +235,15 @@ const std::string    Channel::bufferizeNames() const
 
 void	Channel::joinChannel(std::map<int, User*> users, int fd, std::string key)
 {
+    if (this->isWithinChannel(users[fd]->getNickname()))
+        return ;
     if (this->users.size() + 1 > this->getUserLimit())
     {
         send(fd, ERR_CHANNELISFULL(users[fd]->getNickname(), this->name).c_str(), \
             ERR_CHANNELISFULL(users[fd]->getNickname(), this->name).length(), 0);
         return ;
     }
-    if (this->getInviteStatus())
+    if (this->getInviteStatus() && !this->isUserInvited(users[fd]->getNickname()))
     {
         send(fd, ERR_INVITEONLYCHAN(users[fd]->getNickname(), this->name).c_str(), \
             ERR_INVITEONLYCHAN(users[fd]->getNickname(), this->name).length(), 0);
@@ -238,6 +262,7 @@ void	Channel::joinChannel(std::map<int, User*> users, int fd, std::string key)
 	send(fd, buffer.c_str(), buffer.length(), 0);
     this->broadcastToMembers(JOIN(users[fd]->getNickname(), users[fd]->getUsername(), users[fd]->getHost(), this->name));
     this->addUser(users[fd]);
+    this->clearInvitedUser(users[fd]->getNickname());
 }
 
 void    Channel::broadcastToMembers(std::string message)
