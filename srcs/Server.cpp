@@ -232,6 +232,8 @@ bool	Server::doesCommandExist(std::string name)
 void	Server::launchCommand(std::map<int, std::string>cmd, int fd)
 {
 	this->commandsMap[cmd[COMMAND]]->execute(this->usersMap, this->channels, fd);
+	if (cmd[COMMAND] == "QUIT")
+		this->registeredFds.erase(std::find(this->registeredFds.begin(), this->registeredFds.end(), fd));
 }
 
 void	Server::toUpper(std::string &command)
@@ -266,9 +268,8 @@ void	Server::handleRegisteredCommand(std::string command, int fd)
 void	Server::deleteUser(size_t index)
 {
 	std::cout << "connection closed by the client " << this->fds[index].fd << std::endl;
-	close(this->fds[index].fd);
-	delete this->usersMap[this->fds[index].fd];
-	this->usersMap.erase(this->fds[index].fd);
+	this->usersMap[this->fds[index].fd]->clearCmdMap();
+	this->commandsMap["QUIT"]->execute(this->usersMap, this->channels, this->fds[index].fd);
 	if (this->isRegistered(this->fds[index].fd))
 		this->registeredFds.erase(std::find(this->registeredFds.begin(), \
 		this->registeredFds.end(), this->fds[index].fd));

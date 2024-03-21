@@ -64,6 +64,7 @@ void	Quit::leaveAllChannels(usrsMap &users, chanMap &chan, std::string reason, i
 
 void	Quit::deleteUser(usrsMap &users, int fd) const
 {
+	std::cout << "connection closed by the client " << fd << std::endl;
 	delete users[fd];
 	users.erase(fd);
 	close (fd);
