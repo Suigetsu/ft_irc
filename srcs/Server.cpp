@@ -29,10 +29,12 @@ Server::Server()
 	this->registerCommand<Invite>("INVITE");
 	this->registerCommand<Part>("PART");
 	this->registerCommand<Kick>("KICK");
+	this->registerCommand<Notice>("NOTICE");
 }
 
 Server::~Server()
 {
+	std::cout << this->channels.size() << std::endl;
 	this->deleteMaps(this->commandsMap);
 	this->deleteMaps(this->channels);
 	this->deleteMaps(this->usersMap);

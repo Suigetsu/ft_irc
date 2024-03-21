@@ -33,6 +33,7 @@
 # include "WhoIs.hpp"
 # include "Motd.hpp"
 # include "Privmsg.hpp"
+# include "Notice.hpp"
 # include "Invite.hpp"
 # include "Part.hpp"
 # include "Kick.hpp"
@@ -97,6 +98,7 @@ class	Server
 					delete it->second;
 				it++;
 			}
+			map.erase(map.begin(), map.end());
 		}
 		long	getPort() const;
 		std::string	getPassword() const;

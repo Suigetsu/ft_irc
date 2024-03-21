@@ -16,6 +16,7 @@
 #define JOIN(nick, user, host, chan) (":" + nick + "!" + user + "@" + host + " JOIN " + chan + "\r\n")
 #define MODE(nick, user, host, chan, mode) (":" + nick + "!" + user + "@" + host + " MODE " + chan + " " + mode + "\r\n")
 #define PRIVMSG(nick, user, host, recipient, text) (":" + nick + "!" + user + "@" + host + " PRIVMSG " + recipient + " " + text + "\r\n")
+#define NOTICE(nick, user, host, recipient, text) (":" + nick + "!" + user + "@" + host + " NOTICE " + recipient + " " + text + "\r\n")
 #define INVITE(nick, user, host, inv, chan) (":" + nick + "!" + user + "@" + host + " INVITE " + inv + " " + chan + "\r\n")
 #define RPL_ENDOFNAMES(nick, chan) (":localhost 366 " + nick + " " + chan + " :End of /NAMES list\r\n")
 #define RPL_CHANNELMODEIS(nick, chan, modes) (":localhost 324 " + nick + " " + chan + " " + modes + "\r\n")
