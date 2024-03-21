@@ -84,7 +84,6 @@ void		Server::createServerSocket()
 		throw(Server::errorException());
 	}
 	int	flag = 1;
-	std::cout << "Socket has been created!" << std::endl;
 	if (setsockopt(this->serverFd, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag)) == -1)
 	{
 		perror("Setsocketopt");
