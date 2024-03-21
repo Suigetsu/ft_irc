@@ -68,6 +68,8 @@ void	Kick::parseInput(strVector &namesVec, std::string &channel, std::string &re
 		reason = PART_MSG;
 	}
 	namesVec = this->parseNamesToKick(names);
+	if (reason.length() > 255)
+		reason = PART_MSG;
 }
 
 void	Kick::removeEmptyChannel(chanMap &chan, std::string name) const
@@ -100,7 +102,6 @@ void	Kick::kickMembers(chanMap &chan, usrsMap &users, std::string channel, strVe
 			users[fd]->getName(), users[fd]->getHost(), channel, *it, reason));
 		chan[channel]->removeUser(chan[channel]->getUser(*it));
 	}
-	send (fd, buffer.c_str(), buffer.length(), 0);
 	this->removeEmptyChannel(chan, channel);
 }
 

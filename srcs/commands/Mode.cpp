@@ -40,8 +40,11 @@ void	Mode::unsetMode(char mode, std::string arg, usrsMap &user, Channel **chan, 
     switch (mode)
     {
         case 'k':
-            (*chan)->removePassword(arg, user, fd);
+        {
+            if ((*chan)->removePassword(arg, user, fd) == 1)
+                return ;
             break;
+        }
         case 'o':
         {
             if (this->doesUserExist(user, arg) == -1)
@@ -301,10 +304,6 @@ void    Mode::parseModes(usrsMap &user, std::string params, chanMap &chan, int f
     }
     if (!this->getModeBuffer().empty())
     {
-        send (fd, MODE(user[fd]->getNick(), user[fd]->getName(), user[fd]->getHost(), \
-            chan[modeargs[0]]->getName(), this->getModeBuffer()).c_str(), \
-            MODE(user[fd]->getNick(), user[fd]->getName(), user[fd]->getHost(), \
-            chan[modeargs[0]]->getName(), this->getModeBuffer()).length(), 0);
         chan[modeargs[0]]->broadcastToMembers(MODE(user[fd]->getNick(), user[fd]->getName(), user[fd]->getHost(), \
             chan[modeargs[0]]->getName(), this->getModeBuffer()));
         this->clearBuffers();

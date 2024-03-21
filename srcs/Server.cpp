@@ -34,7 +34,6 @@ Server::Server()
 
 Server::~Server()
 {
-	std::cout << this->channels.size() << std::endl;
 	this->deleteMaps(this->commandsMap);
 	this->deleteMaps(this->channels);
 	this->deleteMaps(this->usersMap);

@@ -7,7 +7,7 @@
 #define RPL_YOURHOST(nick) ":localhost 002 " + nick + " :Your host is ircserv (localhost), running version 1.2\r\n"
 #define RPL_CREATED(nick) ":localhost 003 " + nick + " :This server was created Tue Mar 5 2024 3:48:54\r\n"
 #define RPL_MYINFO(nick) ":localhost 004 " + nick + " ircserv 1.2 itkol\r\n"
-#define RPL_ISUPPORT(nick) ":localhost 005 " + nick + " CASEMAPPING=ascii CHANNELLEN=50 CHANTYPES=# KICKLEN=255 CHANLIMIT=#50 CHANMODES=o,k,l,it NICKLEN=9 TOPICLEN=490 :are supported by this server\r\n"
+#define RPL_ISUPPORT(nick) ":localhost 005 " + nick + " CASEMAPPING=ascii CHANNELLEN=50 CHANTYPES=# KICKLEN=255 CHANMODES=o,k,l,it NICKLEN=9 TOPICLEN=490 :are supported by this server\r\n"
 #define RPL_MOTDSTART(nick) ":localhost 375 " + nick + " :- ircserv Message of the day - \r\n"
 #define RPL_MOTD(nick, motd) ":localhost 372 " + nick + " :" + motd + "\r\n"
 #define RPL_ENDOFMOTD(nick) ":localhost 376 " + nick + " :End of MOTD command\r\n"

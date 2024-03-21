@@ -333,16 +333,17 @@ void    Channel::unsetChannelKey()
     this->password.clear();
 }
 
-void    Channel::removePassword(std::string arg, usrsMap &user, int fd)
+int    Channel::removePassword(std::string arg, usrsMap &user, int fd)
 {
     if (arg != this->getPassword())
     {
         send (fd, ERR_KEYSET(user[fd]->getNick(), this->getName()).c_str(), \
         ERR_KEYSET(user[fd]->getNick(), this->getName()).length(), 0);
-        return ;
+        return 1;
     }
     this->unsetChannelKey();
     this->setKeyStatus(false);
+    return 0;
 }
 
 void    Channel::createChannel(usrsMap users, int fd)

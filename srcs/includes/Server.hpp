@@ -40,7 +40,7 @@
 # include <poll.h>
 # include <fstream>
 
-# define BACKLOG 200
+# define BACKLOG 10
 # define COMMAND 0
 # define FIRST_PARAM 1
 # define SECOND_PARAM 2

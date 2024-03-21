@@ -74,6 +74,8 @@ void	Topic::setTopic(User *user, Channel **chan, std::string topic, int fd) cons
 		}
 	}
 	topic.erase(0, topic.find(":") + 1);
+	if (topic.length() > 490)
+		return ;
 	(*chan)->setTopic(topic);
 	(*chan)->broadcastToMembers(TOPIC(user->getNick(), user->getName(), user->getHost(), \
 		(*chan)->getName(), topic));

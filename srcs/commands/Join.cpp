@@ -157,7 +157,6 @@ void	Join::execute(usrsMap &users, chanMap &chan, int fd) const
 		if (i < keyVec.size())
 			keyVec.erase(keyVec.begin() + i);
 	}
-	
 }
 
 bool    Join::isNameValid(const std::string &name) const
