@@ -55,7 +55,7 @@ void	Who::execute(usrsMap &users, chanMap &chan, int fd) const
 	{
 		send (fd, ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).c_str(), \
 			ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).length(), 0);
-		throw (Who::unknownCommandException());
+		return ;
 	}
 	if (!this->doesChanExist(chan, users[fd]->getCommand()[FIRST_PARAM]))
 	{

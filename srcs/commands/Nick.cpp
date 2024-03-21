@@ -48,20 +48,20 @@ void	Nick::execute(usrsMap &users, chanMap &chan, int fd) const
 	if (users[fd]->getCommand().size() < 2)
 	{
 		send(fd, ERR_NONICKNAMEGIVEN, sizeof(ERR_NONICKNAMEGIVEN), 0);
-		throw (Nick::registrationException());
+		throw(Nick::registrationException()); ;
 	}
 	else if (this->doesNameExist(users, users[fd]->getCommand()[FIRST_PARAM]))
 	{
 		send(fd, ERR_NICKNAMEINUSE(users[fd]->getCommand()[FIRST_PARAM]).c_str(), \
 			ERR_NICKNAMEINUSE(users[fd]->getCommand()[FIRST_PARAM]).length(), 0);
-		throw (Nick::registrationException());
+		throw(Nick::registrationException()); ;
 	}
 	else if (this->containsRestrictedChar(users[fd]->getCommand()[FIRST_PARAM]) || \
 		users[fd]->getCommand()[FIRST_PARAM].length() > 9)
 	{
 		send(fd, ERR_ERRONEUSNICKNAME(users[fd]->getCommand()[FIRST_PARAM]).c_str(), \
 			ERR_ERRONEUSNICKNAME(users[fd]->getCommand()[FIRST_PARAM]).length(), 0);
-		throw (Nick::registrationException());
+		throw(Nick::registrationException()); ;
 	}
 	users[fd]->setNickname(users[fd]->getCommand()[FIRST_PARAM]);
 }

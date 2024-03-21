@@ -113,14 +113,14 @@ void	Kick::execute(usrsMap &users, chanMap &chan, int fd) const
 	{
 		send (fd, ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).c_str(), \
 			ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).length(), 0);
-		throw (Kick::unknownCommandException());
+		return ;
 	}
 	this->parseInput(names, channel, reason, users[fd]->getCommand()[FIRST_PARAM]);
 	if (names.empty())
 	{
 		send (fd, ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).c_str(), \
 			ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).length(), 0);
-		throw (Kick::unknownCommandException());
+		return ;
 	}
 	if (!this->doesChanExist(chan, channel))
 	{

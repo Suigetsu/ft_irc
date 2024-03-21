@@ -83,7 +83,7 @@ void	WhoIs::execute(usrsMap &users, chanMap &chan, int fd) const
 	{
 		send (fd, ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).c_str(), \
 			ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).length(), 0);
-		throw (WhoIs::unknownCommandException());
+		return ;
 	}
 	if (this->getUser(users, users[fd]->getCommand()[FIRST_PARAM]) == NULL)
 	{

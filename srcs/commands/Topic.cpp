@@ -85,20 +85,20 @@ void	Topic::execute(usrsMap &users, chanMap &chan, int fd) const
 	{
 		send(fd, ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).c_str(), \
 			ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).length(), 0);
-		throw (Topic::unknownCommandException());
+		return ;
 	}
 	strVector args = this->parseTopic(users[fd]->getCommand()[FIRST_PARAM]);
 	if (this->doesChanExist(chan, args[0]) == false)
 	{
 		send(fd, ERR_NOSUCHCHANNEL(users[fd]->getNick(), args[0]).c_str(), \
 			ERR_NOSUCHCHANNEL(users[fd]->getNick(), args[0]).length(), 0);
-		throw (Topic::unknownCommandException());
+		return ;
 	}
 	if (chan[args[0]]->isWithinChannel(users[fd]->getNick()) == false)
 	{
 		send(fd, ERR_NOTONCHANNEL(users[fd]->getNick(), args[0]).c_str(), \
 			ERR_NOTONCHANNEL(users[fd]->getNick(), args[0]).length(), 0);
-		throw (Topic::unknownCommandException());
+		return ;
 	}
 	if (args.size() == 1)
 	{

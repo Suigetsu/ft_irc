@@ -261,13 +261,12 @@ void	Server::handleRegisteredCommand(std::string command, int fd)
 	}
 	catch(const std::exception& e)
 	{
-		// std::cerr << e.what() << std::endl;
+		std::cerr << e.what() << std::endl;
 	}
 }
 
 void	Server::deleteUser(size_t index)
 {
-	std::cout << "connection closed by the client " << this->fds[index].fd << std::endl;
 	this->usersMap[this->fds[index].fd]->clearCmdMap();
 	this->commandsMap["QUIT"]->execute(this->usersMap, this->channels, this->fds[index].fd);
 	if (this->isRegistered(this->fds[index].fd))
