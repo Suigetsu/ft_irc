@@ -16,7 +16,7 @@ class	Quit : public Command
 		bool	doesChanExist(chanMap &chan, std::string name) const;
 		int		doesUserExist(usrsMap &usrs, std::string nick) const;
 		void	leaveAllChannels(usrsMap &users, chanMap &chan,  std::string reason,int fd) const;
-		void	removeEmptyChannel(chanMap &chan, std::string name) const;
+		void	deleteUser(usrsMap &users, int fd) const;
 		void	eraseChanMap(chanMap &chan, strVector names) const;
 		Quit	*clone() const;
 };

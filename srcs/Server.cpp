@@ -263,6 +263,17 @@ void	Server::handleRegisteredCommand(std::string command, int fd)
 	}
 }
 
+void	Server::deleteUser(size_t index)
+{
+	std::cout << "connection closed by the client " << this->fds[index].fd << std::endl;
+	close(this->fds[index].fd);
+	delete this->usersMap[this->fds[index].fd];
+	this->usersMap.erase(this->fds[index].fd);
+	if (this->isRegistered(this->fds[index].fd))
+		this->registeredFds.erase(std::find(this->registeredFds.begin(), \
+		this->registeredFds.end(), this->fds[index].fd));
+}
+
 void Server::initServer()
 {
 	int		bread = 1;
@@ -283,30 +294,22 @@ void Server::initServer()
 			if (this->fds[i].revents & POLLIN)
 			{
 				if (this->fds[i].fd == this->serverFd)
-					this->acceptConnection();
-				else
 				{
-					bread = recv(this->fds[i].fd, buffer, 1000, 0);
-					if (bread <= 0 || Server::QuitStatus == true)
-					{
-						std::cout << "connection closed by the client " << this->fds[i].fd << std::endl;
-						close(this->fds[i].fd);
-						delete this->usersMap[this->fds[i].fd];
-						this->usersMap.erase(this->fds[i].fd);
-						if (this->isRegistered(this->fds[i].fd))
-							this->registeredFds.erase(std::find(this->registeredFds.begin(), this->registeredFds.end(), this->fds[i].fd));
-						Server::QuitStatus = false;
-					}
-					else
-					{
-						if (this->isRegistered(this->fds[i].fd))
-							this->handleRegisteredCommand(buffer, this->fds[i].fd);
-						else
-							this->registerUser(buffer, this->fds[i].fd);
-						
-					}
-					std::memset(&buffer, 0, sizeof(buffer));
+					this->acceptConnection();
+					continue ;
 				}
+				bread = recv(this->fds[i].fd, buffer, 1000, 0);
+				if (bread <= 0)
+				{
+					this->deleteUser(i);
+					continue ;
+				}
+				if (this->isRegistered(this->fds[i].fd))
+					this->handleRegisteredCommand(buffer, this->fds[i].fd);
+				else
+					this->registerUser(buffer, this->fds[i].fd);
+						
+				std::memset(&buffer, 0, sizeof(buffer));
 			}
 		}
 	}

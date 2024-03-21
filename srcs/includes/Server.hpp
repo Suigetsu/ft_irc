@@ -69,15 +69,13 @@ class	Server
 		std::vector<struct pollfd> fds;
 		std::vector<int> registeredFds;
 	public:
-		static bool status;
-		static bool QuitStatus;
-		static void signalHandler(int signum);
+		static bool 		status;
+		static bool 		QuitStatus;
+		static void 		signalHandler(int signum);
 		Server();
 		Server(const Server &obj);
-		Server	&operator=(const Server &obj);
 		~Server();
-		void	checkParameters(char **args);
-		void	init(int port);
+		void				checkParameters(char **args);
 		class	errorException : public std::exception
 		{
 			public:
@@ -100,25 +98,24 @@ class	Server
 			}
 			map.erase(map.begin(), map.end());
 		}
-		long	getPort() const;
-		std::string	getPassword() const;
-		void	initServer();
-		void	createServerSocket();
-		void	bindSocket();
-		void	acceptConnection();
-		void	registerUser(std::string buffer, int clientFd);
-		bool	isRegistered(int fd);
-		void	addUser(int fd);
-		void	closeFds();
-		bool    doesChannelExist(const std::string &name);
-		bool	doesUserExist(const std::string &name);
-		void	joinChannel(User user, const std::string &name);
-		void	handleRegisteredCommand(std::string command, int fd);
-		bool	doesCommandExist(std::string cmdName);
-		void	launchCommand(std::map<int, std::string>cmd, int fd);
-		std::string wrapText(const std::string &input);
+		long				getPort() const;
+		std::string			getPassword() const;
+		void				initServer();
+		void				createServerSocket();
+		void				bindSocket();
+		void				acceptConnection();
+		void				registerUser(std::string buffer, int clientFd);
+		bool				isRegistered(int fd);
+		void				addUser(int fd);
+		void				closeFds();
+		bool    			doesChannelExist(const std::string &name);
+		bool				doesUserExist(const std::string &name);
+		void				handleRegisteredCommand(std::string command, int fd);
+		bool				doesCommandExist(std::string cmdName);
+		void				launchCommand(std::map<int, std::string>cmd, int fd);
 		const std::string	readMotd(const std::string &file, int fd);
-		void	toUpper(std::string &command);
+		void				toUpper(std::string &command);
+		void				deleteUser(size_t index);
 		
 };
 

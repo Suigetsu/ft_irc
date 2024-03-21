@@ -62,6 +62,13 @@ void	Quit::leaveAllChannels(usrsMap &users, chanMap &chan, std::string reason, i
 	this->eraseChanMap(chan, emptyChans);
 }
 
+void	Quit::deleteUser(usrsMap &users, int fd) const
+{
+	delete users[fd];
+	users.erase(fd);
+	close (fd);
+}
+
 void	Quit::execute(usrsMap &users, chanMap &chan, int fd) const
 {
 	(void)chan;
@@ -70,10 +77,10 @@ void	Quit::execute(usrsMap &users, chanMap &chan, int fd) const
 		reason = PART_MSG;
 	else
 		reason = users[fd]->getCommand()[FIRST_PARAM];
-	// send(fd, QUIT_MSG(users[fd]->getNick(),users[fd]->getName(),users[fd]->getHost(), reason).c_str(), \
-	// 	QUIT_MSG(users[fd]->getNick(),users[fd]->getName(),users[fd]->getHost(), reason).length(), 0);
+	send(fd, QUIT_MSG(users[fd]->getNick(),users[fd]->getName(),users[fd]->getHost(), reason).c_str(), \
+		QUIT_MSG(users[fd]->getNick(),users[fd]->getName(),users[fd]->getHost(), reason).length(), 0);
 	this->leaveAllChannels(users, chan, reason, fd);
-	Server::QuitStatus = true;
+	this->deleteUser(users, fd);
 }
 
 Quit	*Quit::clone() const

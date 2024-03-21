@@ -7,7 +7,7 @@ SRC		=	srcs/main.cpp srcs/Server.cpp srcs/Client.cpp srcs/commands/Command.cpp \
 			srcs/commands/Notice.cpp
 OBJ		=	${SRC:.cpp=.o}
 CC		=	c++
-FLAGS	=	-Wall -Wextra -Werror -std=c++98 -fsanitize=address -g
+FLAGS	=	-Wall -Wextra -Werror -std=c++98 #-fsanitize=address -g
 NAME	=	ircserv
 RM		=	rm -rf
 

@@ -11,7 +11,7 @@
 #define RPL_MOTDSTART(nick) ":localhost 375 " + nick + " :- ircserv Message of the day - \r\n"
 #define RPL_MOTD(nick, motd) ":localhost 372 " + nick + " :" + motd + "\r\n"
 #define RPL_ENDOFMOTD(nick) ":localhost 376 " + nick + " :End of MOTD command\r\n"
-#define QUIT_MSG(nick, user, host, reason) (":" + nick + "!" + user + "@" + host + " QUIT :Quit: " + reason + "\r\n")
+#define QUIT_MSG(nick, user, host, reason) (":" + nick + "!" + user + "@" + host + " QUIT " + reason + "\r\n")
 #define RPL_NAMREPLY(nick, chan, list, prefix) (":localhost 353 " + nick + " = " + chan + " :" + prefix + nick + " " + list + "\r\n")
 #define JOIN(nick, user, host, chan) (":" + nick + "!" + user + "@" + host + " JOIN " + chan + "\r\n")
 #define MODE(nick, user, host, chan, mode) (":" + nick + "!" + user + "@" + host + " MODE " + chan + " " + mode + "\r\n")
