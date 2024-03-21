@@ -10,9 +10,9 @@ Join::~Join()
 
 }
 
-std::vector<std::string>	Join::setChans(const std::string &list) const
+strVector	Join::setChans(const std::string &list) const
 {
-	std::vector<std::string> chans;
+	strVector chans;
 	std::istringstream iss(list);
 	std::string token;
 	while (std::getline(iss, token, ','))
@@ -22,9 +22,9 @@ std::vector<std::string>	Join::setChans(const std::string &list) const
 	return (chans);
 }
 
-std::vector<std::string>	Join::setKeys(const std::string &list) const
+strVector	Join::setKeys(const std::string &list) const
 {
-	std::vector<std::string> keys;
+	strVector keys;
 	std::istringstream iss(list);
 	std::string token;
 	while (std::getline(iss, token, ','))
@@ -34,7 +34,7 @@ std::vector<std::string>	Join::setKeys(const std::string &list) const
 	return (keys);
 }
 
-void	Join::parseChannels(std::vector<std::string> &chanVec, std::vector<std::string> &keyVec, std::string param) const
+void	Join::parseChannels(strVector &chanVec, strVector &keyVec, std::string param) const
 {
 	std::string chans;
 	std::string keys;
@@ -50,21 +50,21 @@ void	Join::parseChannels(std::vector<std::string> &chanVec, std::vector<std::str
 	keyVec = setKeys(keys);
 }
 
-int	Join::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+int	Join::doesUserExist(usrsMap &usrs, std::string nick) const
 {
-	std::map<int, User *>::iterator it = usrs.begin();
+	usrsMap::iterator it = usrs.begin();
 	while (it != usrs.end())
 	{
-		if (it->second->getNickname() == nick)
+		if (it->second->getNick() == nick)
 			return it->second->getFd();
 		it++;
 	}
 	return -1;
 }
 
-bool	Join::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+bool	Join::doesChanExist(chanMap &chan, std::string name) const
 {
-	std::map<std::string, Channel *>::iterator it = chan.begin();
+	chanMap::iterator it = chan.begin();
 	while (it != chan.end())
 	{
 		if (it->second->getName() == name)
@@ -74,15 +74,15 @@ bool	Join::doesChanExist(std::map<std::string, Channel *> &chan, std::string nam
 	return false;
 }
 
-void	Join::removeEmptyChannel(std::map<std::string, Channel *> &chan, std::string name) const
+void	Join::removeEmptyChannel(chanMap &chan, std::string name) const
 {
 	if (chan[name]->isChannelEmpty() == true)
 		delete chan[name];
 }
 
-void	Join::eraseChanMap(std::map<std::string, Channel *> &chan, std::vector<std::string> names) const
+void	Join::eraseChanMap(chanMap &chan, strVector names) const
 {
-	std::vector<std::string>::iterator it = names.begin();
+	strVector::iterator it = names.begin();
 	while (it != names.end())
 	{
 		chan.erase(*it);
@@ -90,20 +90,20 @@ void	Join::eraseChanMap(std::map<std::string, Channel *> &chan, std::vector<std:
 	}
 }
 
-void	Join::leaveAllChan(std::map<std::string, Channel *> &chan, User *user) const
+void	Join::leaveAllChan(chanMap &chan, User *user) const
 {
 	if (chan.size() < 1)
 		return ;
 	std::string buffer;
-	std::vector<std::string> chanNames;
-	std::map<std::string, Channel *>::iterator it = chan.begin();
+	strVector chanNames;
+	chanMap::iterator it = chan.begin();
 	while (it != chan.end())
 	{
-		if (it->second->isWithinChannel(user->getNickname()))
+		if (it->second->isWithinChannel(user->getNick()))
 		{
-			buffer += PART(user->getNickname(), user->getUsername(), \
+			buffer += PART(user->getNick(), user->getName(), \
 				user->getHost(), it->second->getName(), PART_MSG);
-			it->second->broadcastToMembers(PART(user->getNickname(), user->getUsername(), \
+			it->second->broadcastToMembers(PART(user->getNick(), user->getName(), \
 				user->getHost(), it->second->getName(), PART_MSG));
 			it->second->removeUser(user);
 			if (it->second->isChannelEmpty())
@@ -118,14 +118,14 @@ void	Join::leaveAllChan(std::map<std::string, Channel *> &chan, User *user) cons
 	send (user->getFd(), buffer.c_str(), buffer.length(), 0);
 }
 
-void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
+void	Join::execute(usrsMap &users, chanMap &chan, int fd) const
 {
-	std::vector<std::string> chanVec;
-	std::vector<std::string> keyVec;
+	strVector chanVec;
+	strVector keyVec;
 	if (users[fd]->getCommand().size() < 2)
 	{
-		send (fd, ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).c_str(), \
-		ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).length(), 0);
+		send (fd, ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).c_str(), \
+		ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).length(), 0);
 		throw (Join::unknownCommandException());
 	}
 	this->parseChannels(chanVec, keyVec, users[fd]->getCommand()[FIRST_PARAM]);
@@ -133,8 +133,8 @@ void	Join::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 	{
 		if (!this->isNameValid(chanVec[i]) || chanVec[i].length() > 50)
 		{
-			send(fd, ERR_NOSUCHCHANNEL(users[fd]->getNickname(), chanVec[i]).c_str(), \
-				ERR_NOSUCHCHANNEL(users[fd]->getNickname(), chanVec[i]).length(), 0);
+			send(fd, ERR_NOSUCHCHANNEL(users[fd]->getNick(), chanVec[i]).c_str(), \
+				ERR_NOSUCHCHANNEL(users[fd]->getNick(), chanVec[i]).length(), 0);
 			chanVec.erase(chanVec.begin() + i);
 			if (i < keyVec.size())
 				keyVec.erase(keyVec.begin() + i);

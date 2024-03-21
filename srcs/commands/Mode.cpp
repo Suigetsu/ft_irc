@@ -11,21 +11,21 @@ Mode::~Mode()
 }
 
 
-int	Mode::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+int	Mode::doesUserExist(usrsMap &usrs, std::string nick) const
 {
-	std::map<int, User *>::iterator it = usrs.begin();
+	usrsMap::iterator it = usrs.begin();
 	while (it != usrs.end())
 	{
-		if (it->second->getNickname() == nick)
+		if (it->second->getNick() == nick)
 			return it->second->getFd();
 		it++;
 	}
 	return -1;
 }
 
-bool	Mode::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+bool	Mode::doesChanExist(chanMap &chan, std::string name) const
 {
-	std::map<std::string, Channel *>::iterator it = chan.begin();
+	chanMap::iterator it = chan.begin();
 	while (it != chan.end())
 	{
 		if (it->second->getName() == name)
@@ -35,7 +35,7 @@ bool	Mode::doesChanExist(std::map<std::string, Channel *> &chan, std::string nam
 	return false;
 }
 
-void	Mode::unsetMode(char mode, std::string arg, std::map<int, User *> &user, Channel **chan, int fd) const
+void	Mode::unsetMode(char mode, std::string arg, usrsMap &user, Channel **chan, int fd) const
 {
     switch (mode)
     {
@@ -46,28 +46,28 @@ void	Mode::unsetMode(char mode, std::string arg, std::map<int, User *> &user, Ch
         {
             if (this->doesUserExist(user, arg) == -1)
             {
-                send (fd, ERR_NOSUCHNICK(user[fd]->getNickname(), arg).c_str(), \
-                    ERR_NOSUCHNICK(user[fd]->getNickname(), arg).length(), 0);
+                send (fd, ERR_NOSUCHNICK(user[fd]->getNick(), arg).c_str(), \
+                    ERR_NOSUCHNICK(user[fd]->getNick(), arg).length(), 0);
                 return ;
             }
             if ((*chan)->isWithinChannel(arg) == false)
             {
-                send (fd, ERR_USERNOTINCHANNEL(user[fd]->getNickname(), arg, (*chan)->getName()).c_str(), \
-                    ERR_USERNOTINCHANNEL(user[fd]->getNickname(), arg, (*chan)->getName()).length(), 0);
+                send (fd, ERR_USERNOTINCHANNEL(user[fd]->getNick(), arg, (*chan)->getName()).c_str(), \
+                    ERR_USERNOTINCHANNEL(user[fd]->getNick(), arg, (*chan)->getName()).length(), 0);
                 return ;
             }
             (*chan)->unsetOperator((*chan)->getUser(arg));
             break;
         }
         default:
-            send (fd, ERR_UNKNOWNMODE(user[fd]->getNickname(), mode).c_str(), \
-                ERR_UNKNOWNMODE(user[fd]->getNickname(), mode).length(), 0);
+            send (fd, ERR_UNKNOWNMODE(user[fd]->getNick(), mode).c_str(), \
+                ERR_UNKNOWNMODE(user[fd]->getNick(), mode).length(), 0);
             break;
     }
     this->bufferizeModes(mode, '-', arg);
 }
 
-void	Mode::unsetMode(char mode, std::map<int, User *> &user, Channel **chan, int fd) const
+void	Mode::unsetMode(char mode, usrsMap &user, Channel **chan, int fd) const
 {
     switch (mode)
     {
@@ -82,8 +82,8 @@ void	Mode::unsetMode(char mode, std::map<int, User *> &user, Channel **chan, int
             (*chan)->setUserLimit(BACKLOG);
             break ;
         default:
-            send (fd, ERR_UNKNOWNMODE(user[fd]->getNickname(), mode).c_str(), \
-                ERR_UNKNOWNMODE(user[fd]->getNickname(), mode).length(), 0);
+            send (fd, ERR_UNKNOWNMODE(user[fd]->getNick(), mode).c_str(), \
+                ERR_UNKNOWNMODE(user[fd]->getNick(), mode).length(), 0);
             return ;
     }
     this->bufferizeModes(mode, '-');
@@ -138,7 +138,7 @@ void Mode::bufferizeModes(char mode, char sign) const
     }
 }
 
-void    Mode::setMode(char mode, std::map<int, User *> &user, Channel **chan, int fd) const
+void    Mode::setMode(char mode, usrsMap &user, Channel **chan, int fd) const
 {
     switch (mode)
     {
@@ -149,14 +149,14 @@ void    Mode::setMode(char mode, std::map<int, User *> &user, Channel **chan, in
             (*chan)->setTopicStatus(true);
             break ;
         default:
-            send (fd, ERR_UNKNOWNMODE(user[fd]->getNickname(), mode).c_str(), \
-                ERR_UNKNOWNMODE(user[fd]->getNickname(), mode).length(), 0);
+            send (fd, ERR_UNKNOWNMODE(user[fd]->getNick(), mode).c_str(), \
+                ERR_UNKNOWNMODE(user[fd]->getNick(), mode).length(), 0);
             return ;
     }
     this->bufferizeModes(mode, '+');
 }
 
-void    Mode::setMode(char mode, std::string arg, std::map<int, User *> &user, Channel **chan, int fd) const
+void    Mode::setMode(char mode, std::string arg, usrsMap &user, Channel **chan, int fd) const
 {
     switch (mode)
     {
@@ -183,14 +183,14 @@ void    Mode::setMode(char mode, std::string arg, std::map<int, User *> &user, C
         {
             if (this->doesUserExist(user, arg) == -1)
             {
-                send (fd, ERR_NOSUCHNICK(user[fd]->getNickname(), arg).c_str(), \
-                    ERR_NOSUCHNICK(user[fd]->getNickname(), arg).length(), 0);
+                send (fd, ERR_NOSUCHNICK(user[fd]->getNick(), arg).c_str(), \
+                    ERR_NOSUCHNICK(user[fd]->getNick(), arg).length(), 0);
                 return ;
             }
             if ((*chan)->isWithinChannel(arg) == false)
             {
-                send (fd, ERR_USERNOTINCHANNEL(user[fd]->getNickname(), arg, (*chan)->getName()).c_str(), \
-                    ERR_USERNOTINCHANNEL(user[fd]->getNickname(), arg, (*chan)->getName()).length(), 0);
+                send (fd, ERR_USERNOTINCHANNEL(user[fd]->getNick(), arg, (*chan)->getName()).c_str(), \
+                    ERR_USERNOTINCHANNEL(user[fd]->getNick(), arg, (*chan)->getName()).length(), 0);
                 return ;
             }
             (*chan)->setOperator((*chan)->getUser(arg));
@@ -198,18 +198,18 @@ void    Mode::setMode(char mode, std::string arg, std::map<int, User *> &user, C
         }
         default:
         {
-            send (fd, ERR_UNKNOWNMODE(user[fd]->getNickname(), mode).c_str(), \
-                ERR_UNKNOWNMODE(user[fd]->getNickname(), mode).length(), 0);
+            send (fd, ERR_UNKNOWNMODE(user[fd]->getNick(), mode).c_str(), \
+                ERR_UNKNOWNMODE(user[fd]->getNick(), mode).length(), 0);
             return ;
         }
     }
     this->bufferizeModes(mode, '+', arg);
 }
 
-void    Mode::parseModes(std::map<int, User *> &user, std::string params, std::map<std::string, Channel *> &chan, int fd) const
+void    Mode::parseModes(usrsMap &user, std::string params, chanMap &chan, int fd) const
 {
     std::map<std::string, std::string> modeMap;
-    std::vector<std::string> modeargs;
+    strVector modeargs;
     std::istringstream iss(params);
     std::string token;
     std::string sign;
@@ -219,26 +219,26 @@ void    Mode::parseModes(std::map<int, User *> &user, std::string params, std::m
     }
     if (this->doesChanExist(chan, modeargs[0]) == false)
     {
-        send(fd, ERR_NOSUCHCHANNEL(user[fd]->getNickname(), modeargs[0]).c_str(), \
-            ERR_NOSUCHCHANNEL(user[fd]->getNickname(), modeargs[0]).length(), 0);
+        send(fd, ERR_NOSUCHCHANNEL(user[fd]->getNick(), modeargs[0]).c_str(), \
+            ERR_NOSUCHCHANNEL(user[fd]->getNick(), modeargs[0]).length(), 0);
         throw (Mode::unknownCommandException());
     }
-    if (!chan[modeargs[0]]->isWithinChannel(user[fd]->getNickname()))
+    if (!chan[modeargs[0]]->isWithinChannel(user[fd]->getNick()))
     {
-        send (fd, ERR_NOTONCHANNEL(user[fd]->getNickname(), modeargs[0]).c_str(), \
-            ERR_NOTONCHANNEL(user[fd]->getNickname(), modeargs[0]).length(), 0);
+        send (fd, ERR_NOTONCHANNEL(user[fd]->getNick(), modeargs[0]).c_str(), \
+            ERR_NOTONCHANNEL(user[fd]->getNick(), modeargs[0]).length(), 0);
         throw (Mode::unknownCommandException());
     }
     if (modeargs.size() < 2)
     {
-        send(fd, RPL_CHANNELMODEIS(user[fd]->getNickname(), modeargs[0], chan[modeargs[0]]->bufferizeModes()).c_str(), \
-            RPL_CHANNELMODEIS(user[fd]->getNickname(), modeargs[0], chan[modeargs[0]]->bufferizeModes()).length(), 0);
+        send(fd, RPL_CHANNELMODEIS(user[fd]->getNick(), modeargs[0], chan[modeargs[0]]->bufferizeModes()).c_str(), \
+            RPL_CHANNELMODEIS(user[fd]->getNick(), modeargs[0], chan[modeargs[0]]->bufferizeModes()).length(), 0);
         throw (Mode::unknownCommandException());
     }
-    if (chan[modeargs[0]]->isOperator(user[fd]->getNickname()) == false)
+    if (chan[modeargs[0]]->isOperator(user[fd]->getNick()) == false)
     {
-        send(fd, ERR_CHANOPRIVSNEEDED(user[fd]->getNickname(), modeargs[0]).c_str(), \
-            ERR_CHANOPRIVSNEEDED(user[fd]->getNickname(), modeargs[0]).length(), 0);
+        send(fd, ERR_CHANOPRIVSNEEDED(user[fd]->getNick(), modeargs[0]).c_str(), \
+            ERR_CHANOPRIVSNEEDED(user[fd]->getNick(), modeargs[0]).length(), 0);
         throw (Mode::unknownCommandException());
     }
     size_t i = 1;
@@ -264,8 +264,8 @@ void    Mode::parseModes(std::map<int, User *> &user, std::string params, std::m
                     modeargs.erase(modeargs.begin() + i + helper);
                 }
                 else
-                    send (fd, ERR_NEEDMOREPARAMS(user[fd]->getNickname(), modeargs[i][j]).c_str(), \
-                        ERR_NEEDMOREPARAMS(user[fd]->getNickname(), modeargs[i][j]).length(), 0);
+                    send (fd, ERR_NEEDMOREPARAMS(user[fd]->getNick(), modeargs[i][j]).c_str(), \
+                        ERR_NEEDMOREPARAMS(user[fd]->getNick(), modeargs[i][j]).length(), 0);
             }
             else if (j < modeargs[i].length() && modeargs[i][j] != 'o' && modeargs[i][j] != 'k')
             {
@@ -279,8 +279,8 @@ void    Mode::parseModes(std::map<int, User *> &user, std::string params, std::m
                             modeargs.erase(modeargs.begin() + i + helper);
                         }
                         else
-                            send (fd, ERR_NEEDMOREPARAMS(user[fd]->getNickname(), modeargs[i][j]).c_str(), \
-                                ERR_NEEDMOREPARAMS(user[fd]->getNickname(), modeargs[i][j]).length(), 0);
+                            send (fd, ERR_NEEDMOREPARAMS(user[fd]->getNick(), modeargs[i][j]).c_str(), \
+                                ERR_NEEDMOREPARAMS(user[fd]->getNick(), modeargs[i][j]).length(), 0);
                     }
                     else
                         setMode(modeargs[i][j], user, &chan[modeargs[0]], fd);
@@ -294,8 +294,8 @@ void    Mode::parseModes(std::map<int, User *> &user, std::string params, std::m
     }
     if (!this->getModeBuffer().empty())
     {
-        send (fd, MODE(user[fd]->getNickname(), user[fd]->getUsername(), user[fd]->getHost(), chan[modeargs[0]]->getName(), this->getModeBuffer()).c_str(), \
-        MODE(user[fd]->getNickname(), user[fd]->getUsername(), user[fd]->getHost(), chan[modeargs[0]]->getName(), this->getModeBuffer()).length(), 0);
+        send (fd, MODE(user[fd]->getNick(), user[fd]->getName(), user[fd]->getHost(), chan[modeargs[0]]->getName(), this->getModeBuffer()).c_str(), \
+        MODE(user[fd]->getNick(), user[fd]->getName(), user[fd]->getHost(), chan[modeargs[0]]->getName(), this->getModeBuffer()).length(), 0);
         this->clearBuffers();
     }
 }
@@ -307,12 +307,12 @@ void    Mode::clearBuffers() const
     const_cast<std::string &>(this->setArgs).clear();
 }
 
-void	Mode::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
+void	Mode::execute(usrsMap &users, chanMap &chan, int fd) const
 {
     if (users[fd]->getCommand().size() < 2)
     {
-        send(fd, ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).c_str(), \
-            ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).length(), 0);
+        send(fd, ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).c_str(), \
+            ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).length(), 0);
         throw (Mode::unknownCommandException());
     }
 	this->parseModes(users, users[fd]->getCommand()[FIRST_PARAM], chan, fd);

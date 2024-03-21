@@ -13,15 +13,15 @@ class	Join : public Command
 	public:
 		Join();
 		~Join();
-		void	execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const;
+		void	execute(usrsMap &users, chanMap &chan, int fd) const;
 		Join	*clone() const;
 		bool	isNameValid(const std::string &name) const;
-		void	parseChannels(std::vector<std::string> &chanVec, std::vector<std::string> &keyVec, std::string param) const;
-		void	removeEmptyChannel(std::map<std::string, Channel *> &chan, std::string name) const;
-		bool	doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const;
-		int		doesUserExist(std::map<int, User *> &usrs, std::string nick) const;
-		void	leaveAllChan(std::map<std::string, Channel *> &chan, User *user) const;
-		void	eraseChanMap(std::map<std::string, Channel *> &chan, std::vector<std::string> names) const;
-		std::vector<std::string>	setChans(const std::string &list) const;
-		std::vector<std::string>	setKeys(const std::string &list) const;
+		void	parseChannels(strVector &chanVec, strVector &keyVec, std::string param) const;
+		void	removeEmptyChannel(chanMap &chan, std::string name) const;
+		bool	doesChanExist(chanMap &chan, std::string name) const;
+		int		doesUserExist(usrsMap &usrs, std::string nick) const;
+		void	leaveAllChan(chanMap &chan, User *user) const;
+		void	eraseChanMap(chanMap &chan, strVector names) const;
+		strVector	setChans(const std::string &list) const;
+		strVector	setKeys(const std::string &list) const;
 };

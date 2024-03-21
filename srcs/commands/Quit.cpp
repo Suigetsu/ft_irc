@@ -10,21 +10,21 @@ Quit::~Quit()
 
 }
 
-int	Quit::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+int	Quit::doesUserExist(usrsMap &usrs, std::string nick) const
 {
-	std::map<int, User *>::iterator it = usrs.begin();
+	usrsMap::iterator it = usrs.begin();
 	while (it != usrs.end())
 	{
-		if (it->second->getNickname() == nick)
+		if (it->second->getNick() == nick)
 			return it->second->getFd();
 		it++;
 	}
 	return -1;
 }
 
-bool	Quit::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+bool	Quit::doesChanExist(chanMap &chan, std::string name) const
 {
-	std::map<std::string, Channel *>::iterator it = chan.begin();
+	chanMap::iterator it = chan.begin();
 	while (it != chan.end())
 	{
 		if (it->second->getName() == name)
@@ -34,15 +34,15 @@ bool	Quit::doesChanExist(std::map<std::string, Channel *> &chan, std::string nam
 	return false;
 }
 
-void	Quit::removeEmptyChannel(std::map<std::string, Channel *> &chan, std::string name) const
+void	Quit::removeEmptyChannel(chanMap &chan, std::string name) const
 {
 	if (chan[name]->isChannelEmpty() == true)
 		delete chan[name];
 }
 
-void	Quit::eraseChanMap(std::map<std::string, Channel *> &chan, std::vector<std::string> names) const
+void	Quit::eraseChanMap(chanMap &chan, strVector names) const
 {
-	std::vector<std::string>::iterator it = names.begin();
+	strVector::iterator it = names.begin();
 	while (it != names.end())
 	{
 		chan.erase(*it);
@@ -50,18 +50,17 @@ void	Quit::eraseChanMap(std::map<std::string, Channel *> &chan, std::vector<std:
 	}
 }
 
-void	Quit::leaveAllChannels(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, std::string reason, int fd) const
+void	Quit::leaveAllChannels(usrsMap &users, chanMap &chan, std::string reason, int fd) const
 {
-	std::vector<std::string> emptyChans;
-	// (void) reason;
-	for (std::map<std::string, Channel *>::iterator it = chan.begin(); it != chan.end(); it++)
+	strVector	emptyChans;
+	for (chanMap::iterator it = chan.begin(); it != chan.end(); it++)
 	{
-		if (!it->second->isWithinChannel(users[fd]->getNickname()))
+		if (!it->second->isWithinChannel(users[fd]->getNick()))
 			continue ;
-		if (it->second->isOperator(users[fd]->getNickname()))
+		if (it->second->isOperator(users[fd]->getNick()))
 			it->second->unsetOperator(users[fd]);
-		it->second->broadcastToMembers(QUIT_MSG(users[fd]->getNickname(), \
-			users[fd]->getUsername(), users[fd]->getHost(), reason));
+		it->second->broadcastToMembers(QUIT_MSG(users[fd]->getNick(), \
+			users[fd]->getName(), users[fd]->getHost(), reason));
 		it->second->removeUser(users[fd]);
 		if (it->second->isChannelEmpty())
 		{
@@ -72,7 +71,7 @@ void	Quit::leaveAllChannels(std::map<int, User *> &users, std::map<std::string, 
 	this->eraseChanMap(chan, emptyChans);
 }
 
-void	Quit::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
+void	Quit::execute(usrsMap &users, chanMap &chan, int fd) const
 {
 	(void)chan;
 	std::string reason;
@@ -80,8 +79,8 @@ void	Quit::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 		reason = PART_MSG;
 	else
 		reason = users[fd]->getCommand()[FIRST_PARAM];
-	send(fd, QUIT_MSG(users[fd]->getNickname(),users[fd]->getUsername(),users[fd]->getHost(), reason).c_str(), \
-		QUIT_MSG(users[fd]->getNickname(),users[fd]->getUsername(),users[fd]->getHost(), reason).length(), 0);
+	send(fd, QUIT_MSG(users[fd]->getNick(),users[fd]->getName(),users[fd]->getHost(), reason).c_str(), \
+		QUIT_MSG(users[fd]->getNick(),users[fd]->getName(),users[fd]->getHost(), reason).length(), 0);
 	this->leaveAllChannels(users, chan, reason, fd);
 	Server::QuitStatus = true;
 }

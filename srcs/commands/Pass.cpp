@@ -11,21 +11,21 @@ Pass::~Pass()
 
 }
 
-int	Pass::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+int	Pass::doesUserExist(usrsMap &usrs, std::string nick) const
 {
-	std::map<int, User *>::iterator it = usrs.begin();
+	usrsMap::iterator it = usrs.begin();
 	while (it != usrs.end())
 	{
-		if (it->second->getNickname() == nick)
+		if (it->second->getNick() == nick)
 			return it->second->getFd();
 		it++;
 	}
 	return -1;
 }
 
-bool	Pass::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+bool	Pass::doesChanExist(chanMap &chan, std::string name) const
 {
-	std::map<std::string, Channel *>::iterator it = chan.begin();
+	chanMap::iterator it = chan.begin();
 	while (it != chan.end())
 	{
 		if (it->second->getName() == name)
@@ -35,19 +35,19 @@ bool	Pass::doesChanExist(std::map<std::string, Channel *> &chan, std::string nam
 	return false;
 }
 
-void	Pass::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
+void	Pass::execute(usrsMap &users, chanMap &chan, int fd) const
 {
 	(void) chan;
 	if (users[fd]->isAuth() == true)
 	{
-		send(fd, ERR_ALREADYREGISTERED(users[fd]->getNickname()).c_str(), \
-			ERR_ALREADYREGISTERED(users[fd]->getNickname()).length(), 0);
+		send(fd, ERR_ALREADYREGISTERED(users[fd]->getNick()).c_str(), \
+			ERR_ALREADYREGISTERED(users[fd]->getNick()).length(), 0);
 		return ;
 	}
 	if (users[fd]->getCommand().size() < 2)
 	{
-		send(fd, ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).c_str(), \
-			ERR_NEEDMOREPARAMS(users[fd]->getNickname(), users[fd]->getCommand()[COMMAND]).length(), 0);
+		send(fd, ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).c_str(), \
+			ERR_NEEDMOREPARAMS(users[fd]->getNick(), users[fd]->getCommand()[COMMAND]).length(), 0);
 		throw (Pass::registrationException());
 	}
 	if (users[fd]->getCommand()[FIRST_PARAM] != users[fd]->getServerPass())

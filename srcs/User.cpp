@@ -59,12 +59,12 @@ void	User::setPrefix(const std::string &prefix)
 	this->prefix = prefix;
 }
 
-const std::string	&User::getNickname() const
+const std::string	&User::getNick() const
 {
 	return (this->nickname);
 }
 
-const std::string	&User::getUsername() const
+const std::string	&User::getName() const
 {
 	return (this->username);
 }

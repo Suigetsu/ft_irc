@@ -10,13 +10,13 @@ class	Privmsg : public Command
 	public:
 		Privmsg();
 		~Privmsg();
-		void	execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const;
-		void	parseInput(std::vector<std::string> &recipVec, std::string &text, std::string param) const;
-		std::vector<std::string>	getRecipients(const std::string &list) const;
-		void	sendMsg(std::map<int, User *> &, std::map<std::string, Channel *> &, int, std::vector<std::string>, std::string) const;
-		int	doesUserExist(std::map<int, User *> &usrs, std::string nick) const;
-		bool	doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const;
-		void	bufferizeChan(User *user, std::map<std::string, Channel *> &chan, std::string recp, std::string text, int fd) const;
-		void	bufferizeUser(User *user, std::map<int, User *> &users, std::string recp, std::string text, int fd) const;
+		void	execute(usrsMap &users, chanMap &chan, int fd) const;
+		void	parseInput(strVector &recipVec, std::string &text, std::string param) const;
+		strVector	getRecipients(const std::string &list) const;
+		void	sendMsg(usrsMap &, chanMap &, int, strVector, std::string) const;
+		int	doesUserExist(usrsMap &usrs, std::string nick) const;
+		bool	doesChanExist(chanMap &chan, std::string name) const;
+		void	bufferizeChan(User *user, chanMap &chan, std::string recp, std::string text, int fd) const;
+		void	bufferizeUser(User *user, usrsMap &users, std::string recp, std::string text, int fd) const;
 		Privmsg	*clone() const;
 };

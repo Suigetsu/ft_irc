@@ -10,21 +10,21 @@ Motd::~Motd()
 
 }
 
-int	Motd::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+int	Motd::doesUserExist(usrsMap &usrs, std::string nick) const
 {
-	std::map<int, User *>::iterator it = usrs.begin();
+	usrsMap::iterator it = usrs.begin();
 	while (it != usrs.end())
 	{
-		if (it->second->getNickname() == nick)
+		if (it->second->getNick() == nick)
 			return it->second->getFd();
 		it++;
 	}
 	return -1;
 }
 
-bool	Motd::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+bool	Motd::doesChanExist(chanMap &chan, std::string name) const
 {
-	std::map<std::string, Channel *>::iterator it = chan.begin();
+	chanMap::iterator it = chan.begin();
 	while (it != chan.end())
 	{
 		if (it->second->getName() == name)
@@ -34,7 +34,7 @@ bool	Motd::doesChanExist(std::map<std::string, Channel *> &chan, std::string nam
 	return false;
 }
 
-void	Motd::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
+void	Motd::execute(usrsMap &users, chanMap &chan, int fd) const
 {
 	(void)chan;
 	std::ifstream file("./srcs/motd.txt");
@@ -42,8 +42,8 @@ void	Motd::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 	std::string line;
 	if (!file.is_open())
 	{
-		send (fd, ERR_NOMOTD(users[fd]->getNickname()).c_str(), \
-			ERR_NOMOTD(users[fd]->getNickname()).length(), 0);
+		send (fd, ERR_NOMOTD(users[fd]->getNick()).c_str(), \
+			ERR_NOMOTD(users[fd]->getNick()).length(), 0);
 		return ;
 	}
 	while (std::getline(file, line))
@@ -51,8 +51,8 @@ void	Motd::execute(std::map<int, User *> &users, std::map<std::string, Channel *
 		buffer += line + "\n";
 	}
 	file.close();
-	buffer = RPL_MOTDSTART(users[fd]->getNickname()) + \
-		RPL_MOTD(users[fd]->getNickname(), buffer) + RPL_ENDOFMOTD(users[fd]->getNickname());
+	buffer = RPL_MOTDSTART(users[fd]->getNick()) + \
+		RPL_MOTD(users[fd]->getNick(), buffer) + RPL_ENDOFMOTD(users[fd]->getNick());
 	send (fd, buffer.c_str(), buffer.length(), 0);
 }
 

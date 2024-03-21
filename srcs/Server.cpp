@@ -1,7 +1,7 @@
 #include "./includes/Server.hpp"
 
-bool Server::status = false;
-bool Server::QuitStatus = false;
+bool 	Server::status = false;
+bool 	Server::QuitStatus = false;
 
 void	Server::signalHandler(int signum)
 {
@@ -43,32 +43,26 @@ const char	*Server::errorException::what() const throw()
 	return ("The parameters you entered are wrong.");
 }
 
-void	Server::checkParameters(char **args)
+void		Server::checkParameters(char **args)
 {
-	char *pEnd = NULL;
-
+	char 		*pEnd = NULL;
+	const long	i = std::strtol(args[1], &pEnd, 10);
 	errno = 0;
-	const long i = std::strtol(args[1], &pEnd, 10);
+
 	if (errno == ERANGE || errno == EINVAL || *pEnd)
 		throw(Server::errorException());
 	this->port = i;
 	this->password = args[2];
 }
 
-long	Server::getPort() const
-{
-	return (this->port);
-}
+std::string	Server::getPassword() const { return (this->password); }
 
-std::string	Server::getPassword() const
-{
-	return (this->password);
-}
+long		Server::getPort() const { return (this->port); }
 
-void	Server::createServerSocket()
+void		Server::createServerSocket()
 {
-	int status = 0;
-	struct pollfd npoll;
+	struct pollfd	npoll;
+	int 			status = 0;
 
 	std::memset(&this->hints, 0, sizeof(this->hints));
 	this->hints.ai_family = AF_INET;
@@ -87,7 +81,7 @@ void	Server::createServerSocket()
 		std::cout << "Error creating socket" << std::endl;
 		throw(Server::errorException());
 	}
-	int flag = 1;
+	int	flag = 1;
 	std::cout << "Socket has been created!" << std::endl;
 	if (setsockopt(this->serverFd, SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(flag)) == -1)
 	{
@@ -96,8 +90,8 @@ void	Server::createServerSocket()
 		freeaddrinfo(this->serverAddr);
 		throw(Server::errorException());
 	}
-	int statuss = bind(this->serverFd, this->serverAddr->ai_addr, this->serverAddr->ai_addrlen);
-	if (statuss != 0)
+	status	= bind(this->serverFd, this->serverAddr->ai_addr, this->serverAddr->ai_addrlen);
+	if (status != 0)
 	{
 		perror("Error binding socket");
 		std::cout << "Binding error details; " << strerror(errno) << std::endl;
@@ -113,6 +107,7 @@ void	Server::createServerSocket()
 
 void	Server::bindSocket()
 {
+	int	status;
 	status = listen(this->serverFd, BACKLOG);
 	if (status != 0)
 	{
@@ -127,8 +122,9 @@ void	Server::bindSocket()
 
 void	Server::acceptConnection()
 {
-	struct sockaddr_in clientAddr = this->clientObj.getClientAddr();
-	socklen_t addrSize = sizeof(this->clientObj.getClientAddr());
+	struct sockaddr_in	clientAddr = this->clientObj.getClientAddr();
+	socklen_t			addrSize = sizeof(this->clientObj.getClientAddr());
+
 	this->clientObj.setClientFd(accept(this->serverFd, (struct sockaddr *)&clientAddr, &addrSize));
 	fcntl(this->clientObj.getClientFd(), F_SETFL, O_NONBLOCK);
 	if (this->clientObj.getClientFd() == -1)
@@ -137,7 +133,7 @@ void	Server::acceptConnection()
 		throw(Server::errorException());
 	}
 	std::cout << "Connection accepted from " << inet_ntoa(this->clientObj.getClientAddr().sin_addr) << std::endl;
-	struct pollfd poll;
+	struct pollfd	poll;
 	poll.fd = this->clientObj.getClientFd();
 	poll.events = POLLIN;
 	poll.revents = 0;
@@ -148,13 +144,13 @@ void	Server::registerUser(std::string buffer, int fd)
 {
 	try
 	{
-		std::istringstream iss(buffer);
-		std::string line;
+		std::istringstream	iss(buffer);
+		std::string			line;
 		while (std::getline(iss, line, '\n'))
 		{
 			this->parser.push_back(line);
 		}
-		std::vector<std::string>::iterator it = parser.begin();
+		strVector::iterator	it = parser.begin();
 		this->addUser(fd);
 		while (it != parser.end())
 		{
@@ -166,7 +162,7 @@ void	Server::registerUser(std::string buffer, int fd)
 			else if (it->find("PASS") != std::string::npos || \
 				it->find("NICK") != std::string::npos || it->find("USER") != std::string::npos)
 			{
-				std::string cmd;
+				std::string	cmd;
 				this->usersMap[fd]->parseCommand(*it);
 				cmd = this->usersMap[fd]->getCommand()[COMMAND];
 				if (!this->commandsMap[cmd])
@@ -194,11 +190,11 @@ void	Server::registerUser(std::string buffer, int fd)
 	}
 	if (this->usersMap[fd] && this->usersMap[fd]->isAuth())
 	{
-		std::string motd = readMotd("./srcs/motd.txt", fd);
-		std::string buffer = RPL_WELCOME(this->usersMap[fd]->getNickname(), \
-			this->usersMap[fd]->getUsername(), this->usersMap[fd]->getHost()) + RPL_YOURHOST(this->usersMap[fd]->getNickname()) \
-			+ RPL_CREATED(this->usersMap[fd]->getNickname()) + RPL_MYINFO(this->usersMap[fd]->getNickname()) \
-			+ RPL_ISUPPORT(this->usersMap[fd]->getNickname()) + motd;
+		std::string	motd = readMotd("./srcs/motd.txt", fd);
+		std::string	buffer = RPL_WELCOME(this->usersMap[fd]->getNick(), \
+			this->usersMap[fd]->getName(), this->usersMap[fd]->getHost()) + RPL_YOURHOST(this->usersMap[fd]->getNick()) \
+			+ RPL_CREATED(this->usersMap[fd]->getNick()) + RPL_MYINFO(this->usersMap[fd]->getNick()) \
+			+ RPL_ISUPPORT(this->usersMap[fd]->getNick()) + motd;
 		send(fd, buffer.c_str(), buffer.length(), 0);
 		this->registeredFds.push_back(fd);
 	}
@@ -207,24 +203,25 @@ void	Server::registerUser(std::string buffer, int fd)
 
 const std::string	Server::readMotd(const std::string &fn, int fd)
 {
-	std::ifstream file(fn);
-	std::string buffer;
-	std::string line;
+	std::ifstream	file(fn);
+	std::string		buffer;
+	std::string		line;
+
 	if (!file.is_open())
-		return (ERR_NOMOTD(this->usersMap[fd]->getNickname()));
+		return (ERR_NOMOTD(this->usersMap[fd]->getNick()));
 	while (std::getline(file, line))
 	{
 		buffer += line + "\n";
 	}
 	file.close();
-	buffer = RPL_MOTDSTART(this->usersMap[fd]->getNickname()) + \
-		RPL_MOTD(usersMap[fd]->getNickname(), buffer) + RPL_ENDOFMOTD(this->usersMap[fd]->getNickname());
+	buffer = RPL_MOTDSTART(this->usersMap[fd]->getNick()) + RPL_MOTD(usersMap[fd]->getNick(), buffer) \
+			+ RPL_ENDOFMOTD(this->usersMap[fd]->getNick());
 	return buffer;
 }
 
 bool	Server::doesCommandExist(std::string name)
 {
-	std::map<std::string, Command *>::iterator it = this->commandsMap.find(name);
+	cmdMap::iterator	it = this->commandsMap.find(name);
 	if (it != this->commandsMap.end())
 		return (true);
 	return (false);
@@ -252,7 +249,7 @@ void	Server::handleRegisteredCommand(std::string command, int fd)
 		this->toUpper(this->usersMap[fd]->getCommand()[COMMAND]);
 		if(!this->doesCommandExist(this->usersMap[fd]->getCommand()[COMMAND]))
 		{
-			std::string buffer = ERR_UNKNOWNCOMMAND(this->usersMap[fd]->getNickname(), this->usersMap[fd]->getCommand()[COMMAND]);
+			std::string buffer = ERR_UNKNOWNCOMMAND(this->usersMap[fd]->getNick(), this->usersMap[fd]->getCommand()[COMMAND]);
 			send(fd, buffer.c_str(), buffer.length(), 0);
 			throw(Command::unknownCommandException());
 		}
@@ -266,8 +263,9 @@ void	Server::handleRegisteredCommand(std::string command, int fd)
 
 void Server::initServer()
 {
-	int bread = 1;
-	char buffer[1024];
+	int		bread = 1;
+	char	buffer[1024];
+
 	std::memset(&buffer, 0, sizeof(buffer));
 	this->createServerSocket();
 	this->bindSocket();
@@ -315,7 +313,7 @@ void Server::initServer()
 
 bool	Server::isRegistered(int fd)
 {
-	std::vector<int>::iterator it = std::find(this->registeredFds.begin(), this->registeredFds.end(), fd);
+	std::vector<int>::iterator	it = std::find(this->registeredFds.begin(), this->registeredFds.end(), fd);
 	if (it == this->registeredFds.end())
 		return (false);
 	return (true);
@@ -325,14 +323,14 @@ void	Server::addUser(int fd)
 {
 	if (!this->usersMap[fd])
 	{
-		User obj;
+		User	obj;
 		this->usersMap[fd] = obj.clone(this->getPassword());
 	}
 }
 
 void	Server::closeFds()
 {
-	std::vector<struct pollfd>::iterator it = this->fds.begin();
+	std::vector<struct pollfd>::iterator	it = this->fds.begin();
 	while (it != this->fds.end())
 	{
 		close ((*it).fd);
@@ -349,10 +347,10 @@ bool    Server::doesChannelExist(const std::string &name)
 
 bool	Server::doesUserExist(const std::string &name)
 {
-	std::map<int, User *>::iterator it = this->usersMap.begin();
+	usrsMap::iterator	it = this->usersMap.begin();
 	while (it != this->usersMap.end())
 	{
-		if ((*it).second->getNickname() == name)
+		if ((*it).second->getNick() == name)
 			return true;
 		it++;
 	}

@@ -39,11 +39,16 @@
 # include <poll.h>
 # include <fstream>
 
-# define BACKLOG 10
+# define BACKLOG 200
 # define COMMAND 0
 # define FIRST_PARAM 1
 # define SECOND_PARAM 2
 # define THIRD_PARAM 3
+
+typedef std::map<int, User *> usrsMap;
+typedef std::map<std::string, Channel *> chanMap;
+typedef std::map<std::string, Command *> cmdMap;
+typedef std::vector<std::string> strVector;
 
 class	Server
 {
@@ -56,10 +61,10 @@ class	Server
 		// int status;
 		int	serverFd;
 		Client clientObj;
-		std::vector<std::string> parser;
-		std::map<int, User *> usersMap;
-		std::map<std::string, Channel *> channels;
-		std::map<std::string, Command *> commandsMap;
+		strVector parser;
+		usrsMap usersMap;
+		chanMap channels;
+		cmdMap commandsMap;
 		std::vector<struct pollfd> fds;
 		std::vector<int> registeredFds;
 	public:

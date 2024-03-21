@@ -10,21 +10,21 @@ Nick::~Nick()
 	
 }
 
-int	Nick::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+int	Nick::doesUserExist(usrsMap &usrs, std::string nick) const
 {
-	std::map<int, User *>::iterator it = usrs.begin();
+	usrsMap::iterator it = usrs.begin();
 	while (it != usrs.end())
 	{
-		if (it->second->getNickname() == nick)
+		if (it->second->getNick() == nick)
 			return it->second->getFd();
 		it++;
 	}
 	return -1;
 }
 
-bool	Nick::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+bool	Nick::doesChanExist(chanMap &chan, std::string name) const
 {
-	std::map<std::string, Channel *>::iterator it = chan.begin();
+	chanMap::iterator it = chan.begin();
 	while (it != chan.end())
 	{
 		if (it->second->getName() == name)
@@ -34,13 +34,13 @@ bool	Nick::doesChanExist(std::map<std::string, Channel *> &chan, std::string nam
 	return false;
 }
 
-void	Nick::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
+void	Nick::execute(usrsMap &users, chanMap &chan, int fd) const
 {
 	(void) chan;
 	if (users[fd]->isAuth())
 	{
-		send(fd, ERR_ALREADYREGISTERED(users[fd]->getNickname()).c_str(), \
-			ERR_ALREADYREGISTERED(users[fd]->getNickname()).length(), 0);
+		send(fd, ERR_ALREADYREGISTERED(users[fd]->getNick()).c_str(), \
+			ERR_ALREADYREGISTERED(users[fd]->getNick()).length(), 0);
 		return;
 	}
 	if (users[fd]->getUserPass().empty())
@@ -71,12 +71,12 @@ Nick	*Nick::clone() const
 	return (new Nick);
 }
 
-bool	Nick::doesNameExist(std::map<int, User *> users, std::string name) const
+bool	Nick::doesNameExist(usrsMap users, std::string name) const
 {
-	std::map<int, User *>::iterator it = users.begin();
+	usrsMap::iterator it = users.begin();
 	while (it != users.end())
 	{
-		if (it->second->getNickname() == name)
+		if (it->second->getNick() == name)
 			return (true);
 		it++;
 	}

@@ -24,7 +24,7 @@ const std::string Channel::getName() const
 {
     return this->name;
 }
-const std::vector<User*> &Channel::getUsers() const
+std::vector<User*> &Channel::getUsers()
 {
     return this->users;
 }
@@ -52,7 +52,7 @@ void  Channel::removeUser(User *user)
     std::vector<User *>::iterator it = this->users.begin();
     while (it != this->users.end())
     {
-        if ((*it)->getNickname() == user->getNickname())
+        if ((*it)->getNick() == user->getNick())
         {
             this->unsetOperator(user);
             this->users.erase(it);
@@ -70,12 +70,12 @@ bool    Channel::isOperator(std::string nick) const
     return (false);
 }
 
-bool  Channel::setChannelKey(std::string key, int fd, std::map<int, User *> &user)
+bool  Channel::setChannelKey(std::string key, int fd, usrsMap &user)
 {
     if (!this->getPassword().empty() && key != this->getPassword())
     {
-        send (fd, ERR_KEYSET(user[fd]->getNickname(), this->getName()).c_str(), \
-        ERR_KEYSET(user[fd]->getNickname(), this->getName()).length(), 0);
+        send (fd, ERR_KEYSET(user[fd]->getNick(), this->getName()).c_str(), \
+        ERR_KEYSET(user[fd]->getNick(), this->getName()).length(), 0);
         return false;
     }
     this->password = key;
@@ -161,47 +161,47 @@ bool    Channel::isUserInvited(std::string name)
 
 void    Channel::clearInvitedUser(std::string name)
 {
-    std::vector<std::string>::iterator it = std::find(this->invited.begin(), this->invited.end(), name);
+    strVector::iterator it = std::find(this->invited.begin(), this->invited.end(), name);
     if (it != this->invited.end())
         this->invited.erase(it);
 }
 
-void	Channel::joinChannel(std::map<int, User*> users, int fd)
+void	Channel::joinChannel(usrsMap users, int fd)
 {
-    if (this->isWithinChannel(users[fd]->getNickname()))
+    if (this->isWithinChannel(users[fd]->getNick()))
         return ;
     if (this->users.size() + 1 > this->getUserLimit())
     {
-        send(fd, ERR_CHANNELISFULL(users[fd]->getNickname(), this->name).c_str(), \
-            ERR_CHANNELISFULL(users[fd]->getNickname(), this->name).length(), 0);
+        send(fd, ERR_CHANNELISFULL(users[fd]->getNick(), this->name).c_str(), \
+            ERR_CHANNELISFULL(users[fd]->getNick(), this->name).length(), 0);
         return ;
     }
-    if (this->getInviteStatus() && !isUserInvited(users[fd]->getNickname()))
+    if (this->getInviteStatus() && !isUserInvited(users[fd]->getNick()))
     {
-        send(fd, ERR_INVITEONLYCHAN(users[fd]->getNickname(), this->name).c_str(), \
-            ERR_INVITEONLYCHAN(users[fd]->getNickname(), this->name).length(), 0);
+        send(fd, ERR_INVITEONLYCHAN(users[fd]->getNick(), this->name).c_str(), \
+            ERR_INVITEONLYCHAN(users[fd]->getNick(), this->name).length(), 0);
         return ;
     }
     if (this->getKeyStatus())
     {
-        send(fd, ERR_BADCHANNELKEY(users[fd]->getNickname(), this->name).c_str(), \
-            ERR_BADCHANNELKEY(users[fd]->getNickname(), this->name).length(), 0);
+        send(fd, ERR_BADCHANNELKEY(users[fd]->getNick(), this->name).c_str(), \
+            ERR_BADCHANNELKEY(users[fd]->getNick(), this->name).length(), 0);
         return ;
     }
-    std::string buffer = JOIN(users[fd]->getNickname(), users[fd]->getUsername(), users[fd]->getHost(), this->name) \
-			+ RPL_NAMREPLY(users[fd]->getNickname(), this->getName(), this->bufferizeNames(), \
-            this->getPrefix(users[fd]->getNickname())) + RPL_ENDOFNAMES(users[fd]->getNickname(), this->name);
+    std::string buffer = JOIN(users[fd]->getNick(), users[fd]->getName(), users[fd]->getHost(), this->name) \
+			+ RPL_NAMREPLY(users[fd]->getNick(), this->getName(), this->bufferizeNames(), \
+            this->getPrefix(users[fd]->getNick())) + RPL_ENDOFNAMES(users[fd]->getNick(), this->name);
 	send(fd, buffer.c_str(), buffer.length(), 0);
     std::vector<User *> tmp = this->getUsers();
     std::vector<User *>::iterator it = tmp.begin();
     while (it != tmp.end())
     {
-        send((*it)->getFd(), JOIN(users[fd]->getNickname(), users[fd]->getUsername(), users[fd]->getHost(), this->name).c_str(), \
-            JOIN(users[fd]->getNickname(), users[fd]->getUsername(), users[fd]->getHost(), this->name).length(), 0);
+        send((*it)->getFd(), JOIN(users[fd]->getNick(), users[fd]->getName(), users[fd]->getHost(), this->name).c_str(), \
+            JOIN(users[fd]->getNick(), users[fd]->getName(), users[fd]->getHost(), this->name).length(), 0);
         it++;
     }
     this->addUser(users[fd]);
-    this->clearInvitedUser(users[fd]->getNickname());
+    this->clearInvitedUser(users[fd]->getNick());
 }
 
 const std::string   Channel::bufferizeModes() const
@@ -218,58 +218,56 @@ const std::string   Channel::bufferizeModes() const
     return (buffer);
 }
 
-const std::string    Channel::bufferizeNames() const
+const std::string    Channel::bufferizeNames()
 {
     std::string buffer = " ";
-    std::vector<User *> tmp = this->getUsers();
-    std::vector<User *>::iterator it = tmp.begin();
-    while (it != tmp.end())
+    std::vector<User *>::iterator it = this->getUsers().begin();
+    while (it != this->getUsers().end())
     {
-        buffer += this->getPrefix((*it)->getNickname()) + (*it)->getNickname();
-        if (it + 1 != tmp.end())
+        buffer += this->getPrefix((*it)->getNick()) + (*it)->getNick();
+        if (it + 1 != this->getUsers().end())
             buffer += " ";
         it++;
     }
     return (buffer);
 }
 
-void	Channel::joinChannel(std::map<int, User*> users, int fd, std::string key)
+void	Channel::joinChannel(usrsMap users, int fd, std::string key)
 {
-    if (this->isWithinChannel(users[fd]->getNickname()))
+    if (this->isWithinChannel(users[fd]->getNick()))
         return ;
     if (this->users.size() + 1 > this->getUserLimit())
     {
-        send(fd, ERR_CHANNELISFULL(users[fd]->getNickname(), this->name).c_str(), \
-            ERR_CHANNELISFULL(users[fd]->getNickname(), this->name).length(), 0);
+        send(fd, ERR_CHANNELISFULL(users[fd]->getNick(), this->name).c_str(), \
+            ERR_CHANNELISFULL(users[fd]->getNick(), this->name).length(), 0);
         return ;
     }
-    if (this->getInviteStatus() && !this->isUserInvited(users[fd]->getNickname()))
+    if (this->getInviteStatus() && !this->isUserInvited(users[fd]->getNick()))
     {
-        send(fd, ERR_INVITEONLYCHAN(users[fd]->getNickname(), this->name).c_str(), \
-            ERR_INVITEONLYCHAN(users[fd]->getNickname(), this->name).length(), 0);
+        send(fd, ERR_INVITEONLYCHAN(users[fd]->getNick(), this->name).c_str(), \
+            ERR_INVITEONLYCHAN(users[fd]->getNick(), this->name).length(), 0);
         return ;
     }
     if (this->getKeyStatus() && key != this->getPassword())
     {
-        send(fd, ERR_BADCHANNELKEY(users[fd]->getNickname(), this->name).c_str(), \
-            ERR_BADCHANNELKEY(users[fd]->getNickname(), this->name).length(), 0);
+        send(fd, ERR_BADCHANNELKEY(users[fd]->getNick(), this->name).c_str(), \
+            ERR_BADCHANNELKEY(users[fd]->getNick(), this->name).length(), 0);
         return ;
     }
-    std::string buffer = JOIN(users[fd]->getNickname(), users[fd]->getUsername(), users[fd]->getHost(), this->name) \
-			+ RPL_NAMREPLY(users[fd]->getNickname(), this->getName(), \
-            this->bufferizeNames(), this->getPrefix(users[fd]->getNickname())) \
-            + RPL_ENDOFNAMES(users[fd]->getNickname(), this->name);
+    std::string buffer = JOIN(users[fd]->getNick(), users[fd]->getName(), users[fd]->getHost(), this->name) \
+			+ RPL_NAMREPLY(users[fd]->getNick(), this->getName(), \
+            this->bufferizeNames(), this->getPrefix(users[fd]->getNick())) \
+            + RPL_ENDOFNAMES(users[fd]->getNick(), this->name);
 	send(fd, buffer.c_str(), buffer.length(), 0);
-    this->broadcastToMembers(JOIN(users[fd]->getNickname(), users[fd]->getUsername(), users[fd]->getHost(), this->name));
+    this->broadcastToMembers(JOIN(users[fd]->getNick(), users[fd]->getName(), users[fd]->getHost(), this->name));
     this->addUser(users[fd]);
-    this->clearInvitedUser(users[fd]->getNickname());
+    this->clearInvitedUser(users[fd]->getNick());
 }
 
 void    Channel::broadcastToMembers(std::string message)
 {
-    std::vector<User *> tmp = this->getUsers();
-    std::vector<User *>::iterator it = tmp.begin();
-    while (it != tmp.end())
+    std::vector<User *>::iterator it = this->getUsers().begin();
+    while (it != this->getUsers().end())
     {
         send((*it)->getFd(), message.c_str(), message.length(), 0);
         it++;
@@ -288,7 +286,7 @@ Channel *Channel::clone(const std::string &name) const
 
 void    Channel::unsetOperator(User *user)
 {
-    std::vector<std::string>::iterator it = std::find(this->chanops.begin(), this->chanops.end(), user->getNickname());
+    strVector::iterator it = std::find(this->chanops.begin(), this->chanops.end(), user->getNick());
     if (it != this->chanops.end())
         this->chanops.erase(it);
 }
@@ -302,16 +300,16 @@ std::string   Channel::getPrefix(std::string nick) const
 
 void    Channel::setOperator(User *user)
 {
-    if (this->isOperator(user->getNickname()) == false)
-        this->chanops.push_back(user->getNickname());
+    if (this->isOperator(user->getNick()) == false)
+        this->chanops.push_back(user->getNick());
 }
 
-User *Channel::getUser(std::string nickname) const
+User *Channel::getUser(std::string nickname)
 {
-    std::vector<User *>::iterator it = const_cast<std::vector<User *> &>(this->getUsers()).begin();
-    while (it != const_cast<std::vector<User *> &>(this->getUsers()).end())
+    std::vector<User *>::iterator it = this->getUsers().begin();
+    while (it != (this->getUsers()).end())
     {
-        if ((*it)->getNickname() == nickname)
+        if ((*it)->getNick() == nickname)
             return (*it);
         it++;
     }
@@ -323,7 +321,7 @@ void    Channel::setTopic(std::string topic)
     this->topic = topic;
 }
 
-bool    Channel::isWithinChannel(std::string nickname) const
+bool    Channel::isWithinChannel(std::string nickname)
 {
     if (this->getUser(nickname) == NULL)
         return false;
@@ -335,24 +333,24 @@ void    Channel::unsetChannelKey()
     this->password.clear();
 }
 
-void    Channel::removePassword(std::string arg, std::map<int, User *> &user, int fd)
+void    Channel::removePassword(std::string arg, usrsMap &user, int fd)
 {
     if (arg != this->getPassword())
     {
-        send (fd, ERR_KEYSET(user[fd]->getNickname(), this->getName()).c_str(), \
-        ERR_KEYSET(user[fd]->getNickname(), this->getName()).length(), 0);
+        send (fd, ERR_KEYSET(user[fd]->getNick(), this->getName()).c_str(), \
+        ERR_KEYSET(user[fd]->getNick(), this->getName()).length(), 0);
         return ;
     }
     this->unsetChannelKey();
     this->setKeyStatus(false);
 }
 
-void    Channel::createChannel(std::map<int, User*> users, int fd)
+void    Channel::createChannel(usrsMap users, int fd)
 {
     this->addUser(users[fd]);
     this->setOperator(users[fd]);
-    std::string buffer = JOIN(users[fd]->getNickname(), users[fd]->getUsername(), users[fd]->getHost(), this->getName()) \
-			+ RPL_NAMREPLY(users[fd]->getNickname(), this->getName(), "", this->getPrefix(users[fd]->getNickname())) + \
-            RPL_ENDOFNAMES(users[fd]->getNickname(), this->name);
+    std::string buffer = JOIN(users[fd]->getNick(), users[fd]->getName(), users[fd]->getHost(), this->getName()) \
+			+ RPL_NAMREPLY(users[fd]->getNick(), this->getName(), "", this->getPrefix(users[fd]->getNick())) + \
+            RPL_ENDOFNAMES(users[fd]->getNick(), this->name);
 	send(fd, buffer.c_str(), buffer.length(), 0);
 }

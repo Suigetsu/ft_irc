@@ -10,9 +10,9 @@ Privmsg::~Privmsg()
 
 }
 
-std::vector<std::string>	Privmsg::getRecipients(const std::string &list) const
+strVector	Privmsg::getRecipients(const std::string &list) const
 {
-	std::vector<std::string> recipients;
+	strVector recipients;
 	std::istringstream iss(list);
 	std::string token;
 	while (std::getline(iss, token, ','))
@@ -22,7 +22,7 @@ std::vector<std::string>	Privmsg::getRecipients(const std::string &list) const
 	return (recipients);
 }
 
-void	Privmsg::parseInput(std::vector<std::string> &recipVec, std::string &text, std::string param) const
+void	Privmsg::parseInput(strVector &recipVec, std::string &text, std::string param) const
 {
 	std::string recipients;
 	if (param.find(" ") == std::string::npos)
@@ -36,21 +36,21 @@ void	Privmsg::parseInput(std::vector<std::string> &recipVec, std::string &text, 
 	recipVec = this->getRecipients(recipients);
 }
 
-int	Privmsg::doesUserExist(std::map<int, User *> &usrs, std::string nick) const
+int	Privmsg::doesUserExist(usrsMap &usrs, std::string nick) const
 {
-	std::map<int, User *>::iterator it = usrs.begin();
+	usrsMap::iterator it = usrs.begin();
 	while (it != usrs.end())
 	{
-		if (it->second->getNickname() == nick)
+		if (it->second->getNick() == nick)
 			return it->second->getFd();
 		it++;
 	}
 	return -1;
 }
 
-bool	Privmsg::doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const
+bool	Privmsg::doesChanExist(chanMap &chan, std::string name) const
 {
-	std::map<std::string, Channel *>::iterator it = chan.begin();
+	chanMap::iterator it = chan.begin();
 	while (it != chan.end())
 	{
 		if (it->second->getName() == name)
@@ -60,48 +60,48 @@ bool	Privmsg::doesChanExist(std::map<std::string, Channel *> &chan, std::string 
 	return false;
 }
 
-void	Privmsg::bufferizeChan(User *user, std::map<std::string, Channel *> &chan, std::string recp, std::string text, int fd) const
+void	Privmsg::bufferizeChan(User *user, chanMap &chan, std::string recp, std::string text, int fd) const
 {
 	std::vector<User *> tmp;;
 	if (this->doesChanExist(chan, recp) == false)
 	{
-		send (fd, ERR_NOSUCHCHANNEL(user->getNickname(), recp).c_str(), \
-			ERR_NOSUCHCHANNEL(user->getNickname(), recp).length(), 0);
+		send (fd, ERR_NOSUCHCHANNEL(user->getNick(), recp).c_str(), \
+			ERR_NOSUCHCHANNEL(user->getNick(), recp).length(), 0);
 		return ;
 	}
 	tmp = chan[recp]->getUsers();
-	if (chan[recp]->isWithinChannel(user->getNickname()) == false)
+	if (chan[recp]->isWithinChannel(user->getNick()) == false)
 	{
-		send (fd, ERR_CANNOTSENDTOCHAN(user->getNickname(), recp).c_str(), \
-			ERR_CANNOTSENDTOCHAN(user->getNickname(), recp).length(), 0);
+		send (fd, ERR_CANNOTSENDTOCHAN(user->getNick(), recp).c_str(), \
+			ERR_CANNOTSENDTOCHAN(user->getNick(), recp).length(), 0);
 		return ;
 	}
 	std::vector<User *>::iterator it = tmp.begin();
 	while (it != tmp.end())
 	{
 		if ((*it)->getFd() != fd)
-			send ((*it)->getFd(), PRIVMSG(user->getNickname(), user->getUsername(), user->getHost(), recp, text).c_str(), \
-				PRIVMSG(user->getNickname(), user->getUsername(), user->getHost(), recp, text).length(), 0);
+			send ((*it)->getFd(), PRIVMSG(user->getNick(), user->getName(), user->getHost(), recp, text).c_str(), \
+				PRIVMSG(user->getNick(), user->getName(), user->getHost(), recp, text).length(), 0);
 		it++;
 	}
 }
 
-void	Privmsg::bufferizeUser(User *user, std::map<int, User *> &users, std::string recp, std::string text, int fd) const
+void	Privmsg::bufferizeUser(User *user, usrsMap &users, std::string recp, std::string text, int fd) const
 {
 	int recFd = this->doesUserExist(users, recp);
 	if (recFd == -1)
 	{
-		send (fd, ERR_NOSUCHNICK(user->getNickname(), recp).c_str(), \
-			ERR_NOSUCHNICK(user->getNickname(), recp).length(), 0);
+		send (fd, ERR_NOSUCHNICK(user->getNick(), recp).c_str(), \
+			ERR_NOSUCHNICK(user->getNick(), recp).length(), 0);
 		return ;
 	}
-	send (recFd, PRIVMSG(user->getNickname(), user->getUsername(), user->getHost(), recp, text).c_str(), \
-		PRIVMSG(user->getNickname(), user->getUsername(), user->getHost(), recp, text).length(), 0);
+	send (recFd, PRIVMSG(user->getNick(), user->getName(), user->getHost(), recp, text).c_str(), \
+		PRIVMSG(user->getNick(), user->getName(), user->getHost(), recp, text).length(), 0);
 }
 
-void	Privmsg::sendMsg(std::map<int, User *> &usrs, std::map<std::string, Channel *> &chan, int fd, std::vector<std::string> recp, std::string text) const
+void	Privmsg::sendMsg(usrsMap &usrs, chanMap &chan, int fd, strVector recp, std::string text) const
 {
-	std::vector<std::string>::iterator it = recp.begin();
+	strVector::iterator it = recp.begin();
 	std::string buffer;
 	while (it != recp.end())
 	{
@@ -113,27 +113,27 @@ void	Privmsg::sendMsg(std::map<int, User *> &usrs, std::map<std::string, Channel
 	}
 }
 
-void	Privmsg::execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const
+void	Privmsg::execute(usrsMap &users, chanMap &chan, int fd) const
 {
 	std::string text;
-	std::vector<std::string> recip;
+	strVector recip;
 	if (users[fd]->getCommand().size() < 2)
 	{
-		send (fd, ERR_NORECIPIENT(users[fd]->getNickname()).c_str(), \
-			ERR_NORECIPIENT(users[fd]->getNickname()).length(), 0);
+		send (fd, ERR_NORECIPIENT(users[fd]->getNick()).c_str(), \
+			ERR_NORECIPIENT(users[fd]->getNick()).length(), 0);
 		return ;
 	}
 	this->parseInput(recip, text, users[fd]->getCommand()[FIRST_PARAM]);
 	if (text.empty())
 	{
-		send (fd, ERR_NOTEXTTOSEND(users[fd]->getNickname()).c_str(), \
-			ERR_NOTEXTTOSEND(users[fd]->getNickname()).length(), 0);
+		send (fd, ERR_NOTEXTTOSEND(users[fd]->getNick()).c_str(), \
+			ERR_NOTEXTTOSEND(users[fd]->getNick()).length(), 0);
 		return ;
 	}
 	if (text.length() > 510)
 	{
-		send (fd, LONG_MESSAGE(users[fd]->getNickname()).c_str(), \
-			LONG_MESSAGE(users[fd]->getNickname()).length(), 0);
+		send (fd, LONG_MESSAGE(users[fd]->getNick()).c_str(), \
+			LONG_MESSAGE(users[fd]->getNick()).length(), 0);
 		return ;
 	}
 	this->sendMsg(users, chan, fd, recip, text);

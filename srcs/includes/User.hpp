@@ -37,8 +37,8 @@ public:
 	void setPrefix(const std::string &prefix);
 	void setAuth(bool auth);
 	int getFd();
-	const std::string &getNickname() const;
-	const std::string &getUsername() const;
+	const std::string &getNick() const;
+	const std::string &getName() const;
 	const std::string &getUserPass() const;
 	const std::string &getServerPass() const;
 	const std::string &getHost() const;

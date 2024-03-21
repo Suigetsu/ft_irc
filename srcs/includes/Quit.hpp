@@ -12,11 +12,11 @@ class	Quit : public Command
 	public:
 		Quit();
 		~Quit();
-		void	execute(std::map<int, User *> &users, std::map<std::string, Channel *> &chan, int fd) const;
-		bool	doesChanExist(std::map<std::string, Channel *> &chan, std::string name) const;
-		int		doesUserExist(std::map<int, User *> &usrs, std::string nick) const;
-		void	leaveAllChannels(std::map<int, User *> &users, std::map<std::string, Channel *> &chan,  std::string reason,int fd) const;
-		void	removeEmptyChannel(std::map<std::string, Channel *> &chan, std::string name) const;
-		void	eraseChanMap(std::map<std::string, Channel *> &chan, std::vector<std::string> names) const;
+		void	execute(usrsMap &users, chanMap &chan, int fd) const;
+		bool	doesChanExist(chanMap &chan, std::string name) const;
+		int		doesUserExist(usrsMap &usrs, std::string nick) const;
+		void	leaveAllChannels(usrsMap &users, chanMap &chan,  std::string reason,int fd) const;
+		void	removeEmptyChannel(chanMap &chan, std::string name) const;
+		void	eraseChanMap(chanMap &chan, strVector names) const;
 		Quit	*clone() const;
 };
