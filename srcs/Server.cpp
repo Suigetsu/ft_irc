@@ -1,7 +1,6 @@
 #include "./includes/Server.hpp"
 
 bool 	Server::status = false;
-bool 	Server::QuitStatus = false;
 
 void	Server::signalHandler(int signum)
 {
@@ -265,11 +264,14 @@ void	Server::handleRegisteredCommand(std::string command, int fd)
 
 void	Server::deleteUser(size_t index)
 {
-	this->usersMap[this->fds[index].fd]->clearCmdMap();
-	this->commandsMap["QUIT"]->execute(this->usersMap, this->channels, this->fds[index].fd);
 	if (this->isRegistered(this->fds[index].fd))
-		this->registeredFds.erase(std::find(this->registeredFds.begin(), \
-		this->registeredFds.end(), this->fds[index].fd));
+	{
+		this->usersMap[this->fds[index].fd]->clearCmdMap();
+		this->commandsMap["QUIT"]->execute(this->usersMap, this->channels, this->fds[index].fd);
+		if (this->isRegistered(this->fds[index].fd))
+			this->registeredFds.erase(std::find(this->registeredFds.begin(), \
+			this->registeredFds.end(), this->fds[index].fd));
+	}
 }
 
 void Server::initServer()
