@@ -52,6 +52,7 @@ void		Server::checkParameters(char **args)
 	if (errno == ERANGE || errno == EINVAL || *pEnd)
 		throw(Server::errorException());
 	this->port = i;
+	this->portString = args[1];
 	this->password = args[2];
 }
 
@@ -68,7 +69,7 @@ void		Server::createServerSocket()
 	this->hints.ai_family = AF_INET;
 	this->hints.ai_socktype = SOCK_STREAM;
 	this->hints.ai_flags = AI_PASSIVE;
-	status = getaddrinfo(NULL, std::to_string(this->port).c_str(), &this->hints, &this->serverAddr);
+	status = getaddrinfo(NULL, this->portString.c_str(), &this->hints, &this->serverAddr);
 	if (status != 0)
 	{
 		std::cout << "Error getting address info" << std::endl;
@@ -202,10 +203,11 @@ void	Server::registerUser(std::string buffer, int fd)
 
 const std::string	Server::readMotd(const std::string &fn, int fd)
 {
-	std::ifstream	file(fn);
+	std::fstream	file;
 	std::string		buffer;
 	std::string		line;
 
+	file.open(fn.c_str(), std::ios::in);
 	if (!file.is_open())
 		return (ERR_NOMOTD(this->usersMap[fd]->getNick()));
 	while (std::getline(file, line))

@@ -4,6 +4,7 @@
 #include <map>
 #include <iterator>
 #include <algorithm>
+#include <cerrno>
 #include "User.hpp"
 #include "Channel.hpp"
 #include "RPL.hpp"

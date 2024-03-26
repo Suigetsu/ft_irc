@@ -2,7 +2,11 @@
 # define SERVER_HPP
 
 # include <iostream>
+# include <cstring>
+# include <string>
 # include <sstream>
+# include <fstream>
+# include <cerrno>
 # include <sys/socket.h>
 # include <unistd.h>
 # include <netdb.h>
@@ -55,11 +59,11 @@ class	Server
 {
 	private:
 		int	port;
+		std::string portString;
 		std::string password;
 		struct addrinfo hints;
 		struct addrinfo *serverAddr;
 		struct sockaddr_in servAddr;
-		// int status;
 		int	serverFd;
 		Client clientObj;
 		strVector parser;
