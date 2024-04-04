@@ -4,10 +4,8 @@ bool 	Server::status = false;
 
 void	Server::signalHandler(int signum)
 {
-	if (signum == SIGINT)
-		std::cout << "We received SIGINT" << std::endl;
-	else if (signum == SIGQUIT)
-		std::cout << "This is SIGQUIT" << std::endl;
+	if (signum == SIGINT || signum == SIGQUIT)
+		std::cout << "The server is closed." << std::endl;
 	Server::status = true;
 }
 
@@ -162,6 +160,8 @@ void	Server::registerUser(std::string buffer, int fd)
 			else if (it->find("PASS") != std::string::npos || \
 				it->find("NICK") != std::string::npos || it->find("USER") != std::string::npos)
 			{
+				if (it->find("USER") != std::string::npos)
+					std::cout << *it << std::endl;
 				std::string	cmd;
 				this->usersMap[fd]->parseCommand(*it);
 				cmd = this->usersMap[fd]->getCommand()[COMMAND];

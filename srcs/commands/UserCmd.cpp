@@ -49,7 +49,7 @@ strVector	UserCmd::parseParams(std::map<int, std::string> cmd, int fd, std::stri
         }
         params.push_back(token);
 	}
-	if (params.size() != 4)
+	if (params.size() < 4)
 	{
 		send(fd, ERR_NEEDMOREPARAMS(nickname, cmd[COMMAND]).c_str(), \
 			ERR_NEEDMOREPARAMS(nickname, cmd[COMMAND]).length(), 0);
