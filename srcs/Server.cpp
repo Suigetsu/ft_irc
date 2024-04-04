@@ -114,7 +114,7 @@ void	Server::bindSocket()
 		freeaddrinfo(this->serverAddr);
 		throw(Server::errorException());
 	}
-	std::cout << "Server is listening on port " << port << "..." << std::endl;
+	std::cout << "ircserv is running and listening on port " << port << "..." << std::endl;
 	freeaddrinfo(this->serverAddr);
 }
 
@@ -160,8 +160,6 @@ void	Server::registerUser(std::string buffer, int fd)
 			else if (it->find("PASS") != std::string::npos || \
 				it->find("NICK") != std::string::npos || it->find("USER") != std::string::npos)
 			{
-				if (it->find("USER") != std::string::npos)
-					std::cout << *it << std::endl;
 				std::string	cmd;
 				this->usersMap[fd]->parseCommand(*it);
 				cmd = this->usersMap[fd]->getCommand()[COMMAND];
