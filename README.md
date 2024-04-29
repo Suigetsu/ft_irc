@@ -24,7 +24,7 @@ IRC, short for Internet Relay Chat, is a text-based chat protocol that allows cl
 | ------------- | ------------- | ------------- |
 | INVITE | The INVITE command is used to invite a user to a channel. | INVITE \<nickname\> \<channel\> |
 | JOIN | The JOIN command is used by a user to request to start listening to the specific or multiple channels. You can leave all the channels by using 0 as a parameter | JOIN ( \<channel\> *( "," \<channel\> ) [ \<key\> *( "," \<key\> ) ] )/"0" |
-| KICK | The KICK command can be used to request the forced removal of a user from one or multiple channels. | KICK \<channel\> *( "," \<channel\> ) \<user\> *( "," \<user\> ) [<comment>] |
+| KICK | The KICK command can be used to request the forced removal of a user from one or multiple channels. | KICK \<channel\> *( "," \<channel\> ) \<user\> *( "," \<user\> ) [\<comment\>] |
 | MODE (user) | The user MODE's are typically changes which affect either how the client is seen by others or what 'extra' messages the client is sent. | MODE \<nickname\> *( ( "+" / "-" ) *(modes) ) |
 | MODE (channel) | The MODE command is provided so that users may query and change the characteristics of a channel. | MODE \<channel\> *( ( "-" / "+" ) *\<modes\> *\<modeparams\> ) |
 | MOTD | The MOTD command is used to get the "Message Of The Day" of the given server | MOTD |
