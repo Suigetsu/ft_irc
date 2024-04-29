@@ -63,7 +63,6 @@ class	Server
 		std::string password;
 		struct addrinfo hints;
 		struct addrinfo *serverAddr;
-		struct sockaddr_in servAddr;
 		int	serverFd;
 		Client clientObj;
 		strVector parser;
