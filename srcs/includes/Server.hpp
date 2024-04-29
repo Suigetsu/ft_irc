@@ -75,11 +75,8 @@ class	Server
 	public:
 		static bool 		status;
 		static bool 		QuitStatus;
-		static void 		signalHandler(int signum);
 		Server();
-		Server(const Server &obj);
 		~Server();
-		void				checkParameters(char **args);
 		class	errorException : public std::exception
 		{
 			public:
@@ -106,6 +103,8 @@ class	Server
 		std::string			getPassword() const;
 		void				initServer();
 		void				createServerSocket();
+		static void 		signalHandler(int signum);
+		void				checkParameters(char **args);
 		void				bindSocket();
 		void				acceptConnection();
 		void				registerUser(std::string buffer, int clientFd);
