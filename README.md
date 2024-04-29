@@ -1,5 +1,5 @@
 # FT_IRC
-TBD
+![irc gif](https://github.com/Suigetsu/ft_irc/assets/57911923/35a77d1d-e128-40fe-861b-8e72c647bcc5)
 
 ## Table of contents
 1. [What is IRC?](https://github.com/Suigetsu/ft_irc?tab=readme-ov-file#what-is-irc)
